@@ -1,0 +1,4419 @@
+{
+    "geometries": [
+        {
+            "meshNode": "nt.Mesh(u'Axle_shaft_fShape')", 
+            "textureFiles": null, 
+            "UVs": 168, 
+            "lamina": null, 
+            "Edges": 260, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Axle_shaft_f')", 
+                    "pivots": "(dt.Vector([4.28406595022e-07, 5.76098889124, 24.5052867013]), dt.Vector([4.28406595022e-07, 5.76098889124, 24.5052867013]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 140, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 240, 
+            "Verts": 122
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Axle_shaft_rShape')", 
+            "textureFiles": null, 
+            "UVs": 168, 
+            "lamina": null, 
+            "Edges": 260, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Axle_shaft_r')", 
+                    "pivots": "(dt.Vector([4.28406601756e-07, 5.76098889124, -30.4809842812]), dt.Vector([4.28406601756e-07, 5.76098889124, -30.4809842812]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 140, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 240, 
+            "Verts": 122
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'BumperShape')", 
+            "textureFiles": null, 
+            "UVs": 118, 
+            "lamina": null, 
+            "Edges": 182, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Bumper')", 
+                    "pivots": "(dt.Vector([-5.73535112325, 7.42816656166, 47.2968673668]), dt.Vector([-5.73535112325, 7.42816656166, 47.2968673668]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 94, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 176, 
+            "Verts": 90
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Bumper_rearShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 100, 
+            "lamina": null, 
+            "Edges": 76, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Bumper_rear')", 
+                    "pivots": "(dt.Vector([-11.1093085314, 5.79382014712, -49.1880596749]), dt.Vector([-11.1093085314, 5.79382014712, -49.1880596749]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 38, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 76, 
+            "Verts": 40
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Cab_door_front_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 136, 
+            "lamina": [
+                "Cab_door_front_leftShape.f[120]", 
+                "Cab_door_front_leftShape.f[130]"
+            ], 
+            "Edges": 272, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Cab_door_front_left')", 
+                    "pivots": "(dt.Vector([10.4889684321, 13.5704649681, 42.4555485987]), dt.Vector([10.4889684321, 13.5704649681, 42.4555485987]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 138, 
+            "shaderName": "mat_fire_truck_body", 
+            "Tris": 276, 
+            "Verts": 136
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Cab_door_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 136, 
+            "lamina": [
+                "Cab_door_front_rightShape.f[120]", 
+                "Cab_door_front_rightShape.f[130]"
+            ], 
+            "Edges": 272, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Cab_door_front_right')", 
+                    "pivots": "(dt.Vector([-10.4889675753, 13.5704649681, 42.4555485987]), dt.Vector([-10.4889675753, 13.5704649681, 42.4555485987]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 138, 
+            "shaderName": "mat_fire_truck_body", 
+            "Tris": 276, 
+            "Verts": 136
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Cab_door_rear_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 88, 
+            "lamina": [
+                "Cab_door_rear_leftShape.f[69]", 
+                "Cab_door_rear_leftShape.f[82]"
+            ], 
+            "Edges": 176, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Cab_door_rear_left')", 
+                    "pivots": "(dt.Vector([10.5782467639, 18.5274032728, 19.6237141101]), dt.Vector([10.5782467639, 18.5274032728, 19.6237141101]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 90, 
+            "shaderName": "mat_fire_truck_body", 
+            "Tris": 180, 
+            "Verts": 88
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Cab_door_rear_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 88, 
+            "lamina": [
+                "Cab_door_rear_rightShape.f[69]", 
+                "Cab_door_rear_rightShape.f[82]"
+            ], 
+            "Edges": 176, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Cab_door_rear_right')", 
+                    "pivots": "(dt.Vector([-10.5816114001, 18.5274032728, 19.6259346244]), dt.Vector([-10.5816114001, 18.5274032728, 19.6259346244]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 90, 
+            "shaderName": "mat_fire_truck_body", 
+            "Tris": 180, 
+            "Verts": 88
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'DashboardShape')", 
+            "textureFiles": null, 
+            "UVs": 47, 
+            "lamina": null, 
+            "Edges": 64, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Dashboard')", 
+                    "pivots": "(dt.Vector([4.2840658762e-07, 17.6342103617, 44.3060685557]), dt.Vector([4.2840658762e-07, 17.6342103617, 44.3060685557]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 29, 
+            "shaderName": "mat_Interior", 
+            "Tris": 58, 
+            "Verts": 35
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_r_l_GRP|Disk_brake_front_right|Disk_brake_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 340, 
+            "lamina": null, 
+            "Edges": 582, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_r_l_GRP|Disk_brake_front_right')", 
+                    "pivots": "(dt.Vector([8.12098649704, 5.74167953973, -30.4747214638]), dt.Vector([8.12098649704, 5.74167953973, -30.4747214638]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 301, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 560, 
+            "Verts": 281
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_r_r_GRP|Disk_brake_front_right|Disk_brake_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 340, 
+            "lamina": null, 
+            "Edges": 582, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_r_r_GRP|Disk_brake_front_right')", 
+                    "pivots": "(dt.Vector([-7.85164438312, 5.74167953973, -30.4747214638]), dt.Vector([-7.85164438312, 5.74167953973, -30.4747214638]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 301, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 560, 
+            "Verts": 281
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_f_l_GRP|Disk_brake_front_right|Disk_brake_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 340, 
+            "lamina": null, 
+            "Edges": 582, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_f_l_GRP|Disk_brake_front_right')", 
+                    "pivots": "(dt.Vector([8.12098649704, 5.74167953973, 24.5241559243]), dt.Vector([8.12098649704, 5.74167953973, 24.5241559243]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 301, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 560, 
+            "Verts": 281
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_f_r_GRP|Disk_brake_front_right|Disk_brake_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 340, 
+            "lamina": null, 
+            "Edges": 582, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_f_r_GRP|Disk_brake_front_right')", 
+                    "pivots": "(dt.Vector([-7.85164438312, 5.74167953973, 24.5241559243]), dt.Vector([-7.85164438312, 5.74167953973, 24.5241559243]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 301, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 560, 
+            "Verts": 281
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Drive_shaftShape')", 
+            "textureFiles": null, 
+            "UVs": 84, 
+            "lamina": null, 
+            "Edges": 100, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Drive_shaft')", 
+                    "pivots": "(dt.Vector([4.28406593504e-07, 6.01392404681, -3.73684448011]), dt.Vector([4.28406593504e-07, 6.01392404681, -3.73684448011]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 60, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 80, 
+            "Verts": 42
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Front_flasher_base_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 56, 
+            "lamina": null, 
+            "Edges": 92, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Front_flasher_base_left')", 
+                    "pivots": "(dt.Vector([6.98759988006, 15.0930621154, 46.3267772256]), dt.Vector([6.98759988006, 15.0930621154, 46.3267772256]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 46, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 92, 
+            "Verts": 48
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Front_flasher_base_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 56, 
+            "lamina": null, 
+            "Edges": 92, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Front_flasher_base_right')", 
+                    "pivots": "(dt.Vector([-6.98759902325, 15.0930621154, 46.3267772256]), dt.Vector([-6.98759902325, 15.0930621154, 46.3267772256]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 46, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 92, 
+            "Verts": 48
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Front_flasher_coverShape1')", 
+            "textureFiles": null, 
+            "UVs": 42, 
+            "lamina": null, 
+            "Edges": 61, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Front_flasher_cover1')", 
+                    "pivots": "(dt.Vector([7.83228044673, 15.28194696, 46.4866287526]), dt.Vector([7.83228044673, 15.28194696, 46.4866287526]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 20, 
+            "shaderName": "mat_light_cover_1", 
+            "Tris": 40, 
+            "Verts": 42
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Front_flasher_coverShape2')", 
+            "textureFiles": null, 
+            "UVs": 42, 
+            "lamina": null, 
+            "Edges": 61, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Front_flasher_cover2')", 
+                    "pivots": "(dt.Vector([6.15590732312, 15.28194696, 46.4866287526]), dt.Vector([6.15590732312, 15.28194696, 46.4866287526]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 20, 
+            "shaderName": "mat_light_cover_1", 
+            "Tris": 40, 
+            "Verts": 42
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Front_flasher_cover_right1Shape')", 
+            "textureFiles": null, 
+            "UVs": 42, 
+            "lamina": null, 
+            "Edges": 61, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Front_flasher_cover_right1')", 
+                    "pivots": "(dt.Vector([-7.83227958991, 15.28194696, 46.4866287526]), dt.Vector([-7.83227958991, 15.28194696, 46.4866287526]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 20, 
+            "shaderName": "mat_light_cover_1", 
+            "Tris": 40, 
+            "Verts": 42
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Front_flasher_cover_rightShape2')", 
+            "textureFiles": null, 
+            "UVs": 42, 
+            "lamina": null, 
+            "Edges": 61, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Front_flasher_cover_right2')", 
+                    "pivots": "(dt.Vector([-6.1559064663, 15.28194696, 46.4866287526]), dt.Vector([-6.1559064663, 15.28194696, 46.4866287526]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 20, 
+            "shaderName": "mat_light_cover_1", 
+            "Tris": 40, 
+            "Verts": 42
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'GrillShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/fire_truck_grill.png"
+            ], 
+            "UVs": 24, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Grill')", 
+                    "pivots": "(dt.Vector([4.28406587369e-07, 13.7160969895, 46.355700719]), dt.Vector([4.28406587369e-07, 13.7160969895, 46.355700719]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_grill", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Handle1Shape')", 
+            "textureFiles": null, 
+            "UVs": 54, 
+            "lamina": null, 
+            "Edges": 52, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle1')", 
+                    "pivots": "(dt.Vector([-11.4494413664, 18.208976242, 31.8068343682]), dt.Vector([-11.4494413664, 18.208976242, 31.8068343682]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 28
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Handle7Shape')", 
+            "textureFiles": null, 
+            "UVs": 406, 
+            "lamina": null, 
+            "Edges": 700, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle7')", 
+                    "pivots": "(dt.Vector([11.4433898391, 20.4102414366, 28.8267599881]), dt.Vector([11.4433898391, 20.4102414366, 28.8267599881]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 360, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 680, 
+            "Verts": 342
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'HandleShape2')", 
+            "textureFiles": null, 
+            "UVs": 54, 
+            "lamina": null, 
+            "Edges": 52, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle2')", 
+                    "pivots": "(dt.Vector([-11.4494413664, 18.208976242, 11.2752662168]), dt.Vector([-11.4494413664, 18.208976242, 11.2752662168]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 28
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'HandleShape3')", 
+            "textureFiles": null, 
+            "UVs": 54, 
+            "lamina": null, 
+            "Edges": 52, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle3')", 
+                    "pivots": "(dt.Vector([18.9514392263, 18.208976242, 19.0208655538]), dt.Vector([18.9514392263, 18.208976242, 19.0208655538]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 28
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'HandleShape4')", 
+            "textureFiles": null, 
+            "UVs": 54, 
+            "lamina": null, 
+            "Edges": 52, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle4')", 
+                    "pivots": "(dt.Vector([11.4419119371, 18.208976242, 31.8068343682]), dt.Vector([11.4419119371, 18.208976242, 31.8068343682]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 28
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'HandleShape5')", 
+            "textureFiles": null, 
+            "UVs": 406, 
+            "lamina": null, 
+            "Edges": 700, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle5')", 
+                    "pivots": "(dt.Vector([-11.4433889823, 20.4102414366, 28.8267599881]), dt.Vector([-11.4433889823, 20.4102414366, 28.8267599881]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 360, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 680, 
+            "Verts": 342
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'HandleShape6')", 
+            "textureFiles": null, 
+            "UVs": 406, 
+            "lamina": null, 
+            "Edges": 700, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle6')", 
+                    "pivots": "(dt.Vector([-11.4433889823, 20.4102414366, 8.70414477761]), dt.Vector([-11.4433889823, 20.4102414366, 8.70414477761]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 360, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 680, 
+            "Verts": 342
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'HandleShape8')", 
+            "textureFiles": null, 
+            "UVs": 406, 
+            "lamina": null, 
+            "Edges": 700, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle8')", 
+                    "pivots": "(dt.Vector([11.4433898391, 20.4102414366, 8.70414477761]), dt.Vector([11.4433898391, 20.4102414366, 8.70414477761]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 360, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 680, 
+            "Verts": 342
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Headlight_base_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 56, 
+            "lamina": null, 
+            "Edges": 92, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Headlight_base_left')", 
+                    "pivots": "(dt.Vector([6.98759988006, 12.9229734258, 46.3267772256]), dt.Vector([6.98759988006, 12.9229734258, 46.3267772256]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 46, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 92, 
+            "Verts": 48
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Headlight_base_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 56, 
+            "lamina": null, 
+            "Edges": 92, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Headlight_base_right')", 
+                    "pivots": "(dt.Vector([-6.98759902325, 12.9229734258, 46.3267772256]), dt.Vector([-6.98759902325, 12.9229734258, 46.3267772256]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 46, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 92, 
+            "Verts": 48
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Headlight_cover_leftShape1')", 
+            "textureFiles": null, 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 24, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Headlight_cover_left1')", 
+                    "pivots": "(dt.Vector([7.83489705666, 12.925529495, 46.6271181804]), dt.Vector([7.83489705666, 12.925529495, 46.6271181804]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 9, 
+            "shaderName": "mat_light_cover_2", 
+            "Tris": 18, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Headlight_cover_leftShape2')", 
+            "textureFiles": null, 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 24, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Headlight_cover_left2')", 
+                    "pivots": "(dt.Vector([6.203153055, 12.925529495, 46.6271181804]), dt.Vector([6.203153055, 12.925529495, 46.6271181804]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 9, 
+            "shaderName": "mat_light_cover_2", 
+            "Tris": 18, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Headlight_cover_rightShape1')", 
+            "textureFiles": null, 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 24, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Headlight_cover_right1')", 
+                    "pivots": "(dt.Vector([-7.83489619985, 12.925529495, 46.6271181804]), dt.Vector([-7.83489619985, 12.925529495, 46.6271181804]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 9, 
+            "shaderName": "mat_light_cover_2", 
+            "Tris": 18, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Headlight_cover_rightShape2')", 
+            "textureFiles": null, 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 24, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Headlight_cover_right2')", 
+                    "pivots": "(dt.Vector([-6.20315219818, 12.925529495, 46.6271181804]), dt.Vector([-6.20315219818, 12.925529495, 46.6271181804]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 9, 
+            "shaderName": "mat_light_cover_2", 
+            "Tris": 18, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'InteriorShape')", 
+            "textureFiles": null, 
+            "UVs": 638, 
+            "lamina": null, 
+            "Edges": 384, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Interior')", 
+                    "pivots": "(dt.Vector([4.28406588244e-07, 8.42630535165, 39.2099266043]), dt.Vector([4.28406588244e-07, 8.42630535165, 39.2099266043]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 166, 
+            "shaderName": "mat_Interior", 
+            "Tris": 328, 
+            "Verts": 213
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Mid_cabinet_leftShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 24, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Mid_cabinet_left')", 
+                    "pivots": "(dt.Vector([8.36281139953, 19.2673778742, 0.499306458729]), dt.Vector([8.36281139953, 19.2673778742, 0.499306458729]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Mid_cabinet_rightShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 24, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Mid_cabinet_right')", 
+                    "pivots": "(dt.Vector([-8.36281054272, 19.2673778742, 0.499306458729]), dt.Vector([-8.36281054272, 19.2673778742, 0.499306458729]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Mini_mirror_base_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 481, 
+            "lamina": null, 
+            "Edges": 820, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Mini_mirror_base_right')", 
+                    "pivots": "(dt.Vector([-12.2671264234, 20.925044893, 39.8035122798]), dt.Vector([-12.2671264234, 20.925044893, 39.8035122798]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 420, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 800, 
+            "Verts": 402
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Mini_mirror_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 230, 
+            "lamina": null, 
+            "Edges": 400, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Mini_mirror_left')", 
+                    "pivots": "(dt.Vector([12.2690031756, 20.925044893, 39.8210429877]), dt.Vector([12.2690031756, 20.925044893, 39.8210429877]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 200, 
+            "shaderName": "mat_Mirror", 
+            "Tris": 380, 
+            "Verts": 201
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Mini_mirror_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 230, 
+            "lamina": null, 
+            "Edges": 400, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Mirrors_right_GRP|Mini_mirror_right|Mini_mirror_right')", 
+                    "pivots": "(dt.Vector([-12.2690023188, 20.925044893, 39.8210429877]), dt.Vector([-12.2690023188, 20.925044893, 39.8210429877]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 200, 
+            "shaderName": "mat_Mirror", 
+            "Tris": 380, 
+            "Verts": 201
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Panel_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Panel_left')", 
+                    "pivots": "(dt.Vector([8.36281139953, 11.282033596, 0.499306458729]), dt.Vector([8.36281139953, 11.282033596, 0.499306458729]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Panel_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Panel_right')", 
+                    "pivots": "(dt.Vector([-8.36281054272, 11.282033596, 0.499306458729]), dt.Vector([-8.36281054272, 11.282033596, 0.499306458729]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'RearShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 292, 
+            "lamina": null, 
+            "Edges": 243, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Rear')", 
+                    "pivots": "(dt.Vector([-5.31240399899, 10.2824239287, -53.4853472556]), dt.Vector([-5.31240399899, 10.2824239287, -53.4853472556]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 126, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 236, 
+            "Verts": 118
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Rear_compartmentShape')", 
+            "textureFiles": null, 
+            "UVs": 642, 
+            "lamina": [
+                "Rear_compartmentShape.f[173]", 
+                "Rear_compartmentShape.f[287]", 
+                "Rear_compartmentShape.f[492]", 
+                "Rear_compartmentShape.f[606]"
+            ], 
+            "Edges": 1268, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Rear_compartment')", 
+                    "pivots": "(dt.Vector([-10.8313864929, 15.7680812404, -7.65607786506]), dt.Vector([-10.8313864929, 15.7680812404, -7.65607786506]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 638, 
+            "shaderName": "mat_fire_truck_rear", 
+            "Tris": 1276, 
+            "Verts": 632
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Rear_cross_barShape')", 
+            "textureFiles": null, 
+            "UVs": 24, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Rear_cross_bar')", 
+                    "pivots": "(dt.Vector([4.28406599443e-07, 28.297640637, -52.237892553]), dt.Vector([4.28406599443e-07, 28.297640637, -52.237892553]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_r_l_GRP|Rim_front_right|Rim_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 203, 
+            "lamina": null, 
+            "Edges": 360, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_r_l_GRP|Rim_front_right')", 
+                    "pivots": "(dt.Vector([9.98197667094, 5.77157699605, -30.4264138741]), dt.Vector([9.98197667094, 5.77157699605, -30.4264138741]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 180, 
+            "shaderName": "mat_hub_cap", 
+            "Tris": 340, 
+            "Verts": 181
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_r_r_GRP|Rim_front_right|Rim_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 203, 
+            "lamina": null, 
+            "Edges": 360, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_r_r_GRP|Rim_front_right')", 
+                    "pivots": "(dt.Vector([-9.71263455702, 5.77157699605, -30.4264138741]), dt.Vector([-9.71263455702, 5.77157699605, -30.4264138741]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 180, 
+            "shaderName": "mat_hub_cap", 
+            "Tris": 340, 
+            "Verts": 181
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_f_l_GRP|Rim_front_right|Rim_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 203, 
+            "lamina": null, 
+            "Edges": 360, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_f_l_GRP|Rim_front_right')", 
+                    "pivots": "(dt.Vector([9.98197667094, 5.77157699605, 24.572463514]), dt.Vector([9.98197667094, 5.77157699605, 24.572463514]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 180, 
+            "shaderName": "mat_hub_cap", 
+            "Tris": 340, 
+            "Verts": 181
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_f_r_GRP|Rim_front_right|Rim_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 203, 
+            "lamina": null, 
+            "Edges": 360, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_f_r_GRP|Rim_front_right')", 
+                    "pivots": "(dt.Vector([-9.71263455702, 5.77157699605, 24.572463514]), dt.Vector([-9.71263455702, 5.77157699605, 24.572463514]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 180, 
+            "shaderName": "mat_hub_cap", 
+            "Tris": 340, 
+            "Verts": 181
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Seat1Shape')", 
+            "textureFiles": null, 
+            "UVs": 669, 
+            "lamina": null, 
+            "Edges": 1067, 
+            "ngons": [
+                "Seat1Shape.f[275]", 
+                "Seat1Shape.f[338]"
+            ], 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Seat1')", 
+                    "pivots": "(dt.Vector([-4.83182389025, 19.4907115583, 33.7010156107]), dt.Vector([-4.83182389025, 19.4907115583, 33.7010156107]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 534, 
+            "shaderName": "mat_Seat", 
+            "Tris": 1066, 
+            "Verts": 535
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Seat2Shape')", 
+            "textureFiles": null, 
+            "UVs": 669, 
+            "lamina": null, 
+            "Edges": 1067, 
+            "ngons": [
+                "Seat2Shape.f[275]", 
+                "Seat2Shape.f[338]"
+            ], 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Seat2')", 
+                    "pivots": "(dt.Vector([4.99825888637, 19.4907115583, 33.7010156107]), dt.Vector([4.99825888637, 19.4907115583, 33.7010156107]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 534, 
+            "shaderName": "mat_Seat", 
+            "Tris": 1066, 
+            "Verts": 535
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Seat3Shape')", 
+            "textureFiles": null, 
+            "UVs": 669, 
+            "lamina": null, 
+            "Edges": 1067, 
+            "ngons": [
+                "Seat3Shape.f[275]", 
+                "Seat3Shape.f[338]"
+            ], 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Seat3')", 
+                    "pivots": "(dt.Vector([4.99825888637, 19.7722514395, 17.1351528629]), dt.Vector([4.99825888637, 19.7722514395, 17.1351528629]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 534, 
+            "shaderName": "mat_Seat", 
+            "Tris": 1066, 
+            "Verts": 535
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Seat4Shape')", 
+            "textureFiles": null, 
+            "UVs": 669, 
+            "lamina": null, 
+            "Edges": 1067, 
+            "ngons": [
+                "Seat4Shape.f[275]", 
+                "Seat4Shape.f[338]"
+            ], 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Seat4')", 
+                    "pivots": "(dt.Vector([-4.83182389025, 19.7722514395, 17.1351528629]), dt.Vector([-4.83182389025, 19.7722514395, 17.1351528629]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 534, 
+            "shaderName": "mat_Seat", 
+            "Tris": 1066, 
+            "Verts": 535
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Shield_rear_leftShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Shield_rear_left')", 
+                    "pivots": "(dt.Vector([7.92205722904, 7.58822542279, -55.2782038911]), dt.Vector([7.92205722904, 7.58822542279, -55.2782038911]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Shield_rear_rightShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Shield_rear_right')", 
+                    "pivots": "(dt.Vector([-7.92205637223, 7.58822542279, -55.2782038911]), dt.Vector([-7.92205637223, 7.58822542279, -55.2782038911]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Side_mirror_array_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 394, 
+            "lamina": [
+                "Side_mirror_array_leftShape.f[105]", 
+                "Side_mirror_array_leftShape.f[175]", 
+                "Side_mirror_array_leftShape.f[282]", 
+                "Side_mirror_array_leftShape.f[352]"
+            ], 
+            "Edges": 676, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Side_mirror_array_left')", 
+                    "pivots": "(dt.Vector([12.7875611466, 22.9096989197, 40.0932064842]), dt.Vector([12.7875611466, 22.9096989197, 40.0932064842]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 354, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 656, 
+            "Verts": 326
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Side_mirror_array_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 394, 
+            "lamina": [
+                "Side_mirror_array_rightShape.f[105]", 
+                "Side_mirror_array_rightShape.f[175]", 
+                "Side_mirror_array_rightShape.f[282]", 
+                "Side_mirror_array_rightShape.f[352]"
+            ], 
+            "Edges": 676, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Side_mirror_array_right')", 
+                    "pivots": "(dt.Vector([-12.7875602898, 22.9096989197, 40.0932064842]), dt.Vector([-12.7875602898, 22.9096989197, 40.0932064842]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 354, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 656, 
+            "Verts": 326
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Side_mirror_base_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 22, 
+            "lamina": null, 
+            "Edges": 28, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Side_mirror_base_left')", 
+                    "pivots": "(dt.Vector([12.3151228072, 24.1225860415, 39.8753077196]), dt.Vector([12.3151228072, 24.1225860415, 39.8753077196]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 14, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 28, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Side_mirror_base_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 22, 
+            "lamina": null, 
+            "Edges": 28, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Side_mirror_base_right')", 
+                    "pivots": "(dt.Vector([-12.3151219503, 24.1225860415, 39.8753077196]), dt.Vector([-12.3151219503, 24.1225860415, 39.8753077196]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 14, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 28, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Side_mirror_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 4, 
+            "lamina": null, 
+            "Edges": 4, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Side_mirror_left')", 
+                    "pivots": "(dt.Vector([11.1711182513, 24.1225860415, 36.8765514004]), dt.Vector([11.1711182513, 24.1225860415, 36.8765514004]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 1, 
+            "shaderName": "mat_Mirror", 
+            "Tris": 2, 
+            "Verts": 4
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Side_mirror_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 4, 
+            "lamina": null, 
+            "Edges": 4, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Mirrors_right_GRP|Side_mirror_right|Side_mirror_right')", 
+                    "pivots": "(dt.Vector([-11.1711173945, 24.1225860415, 36.8765514004]), dt.Vector([-11.1711173945, 24.1225860415, 36.8765514004]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 1, 
+            "shaderName": "mat_Mirror", 
+            "Tris": 2, 
+            "Verts": 4
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Signal_base_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 34, 
+            "lamina": null, 
+            "Edges": 52, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Signal_base_left')", 
+                    "pivots": "(dt.Vector([8.95223862322, 16.8772186688, 46.1755052312]), dt.Vector([8.95223862322, 16.8772186688, 46.1755052312]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 28
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Signal_base_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 34, 
+            "lamina": null, 
+            "Edges": 52, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Signal_base_right')", 
+                    "pivots": "(dt.Vector([-8.95223776641, 16.8772186688, 46.1755052312]), dt.Vector([-8.95223776641, 16.8772186688, 46.1755052312]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 28
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Signal_cover_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 24, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Signal_cover_left')", 
+                    "pivots": "(dt.Vector([8.97204890235, 16.8870733242, 46.4323841276]), dt.Vector([8.97204890235, 16.8870733242, 46.4323841276]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 9, 
+            "shaderName": "mat_Flasher_light", 
+            "Tris": 18, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Signal_cover_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 24, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Signal_cover_right')", 
+                    "pivots": "(dt.Vector([-8.97204804553, 16.8870733242, 46.4323841276]), dt.Vector([-8.97204804553, 16.8870733242, 46.4323841276]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 9, 
+            "shaderName": "mat_Flasher_light", 
+            "Tris": 18, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_base6Shape')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base6')", 
+                    "pivots": "(dt.Vector([-10.1434357781, 32.1181185027, 11.8626717977]), dt.Vector([-10.1434357781, 32.1181185027, 11.8626717977]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape1')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base1')", 
+                    "pivots": "(dt.Vector([-9.51628860999, 29.3663240815, 38.2777027657]), dt.Vector([-9.51628860999, 29.3663240815, 38.2777027657]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape2')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base2')", 
+                    "pivots": "(dt.Vector([-7.67690639464, 29.3663240815, 38.2777027657]), dt.Vector([-7.67690639464, 29.3663240815, 38.2777027657]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape3')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base3')", 
+                    "pivots": "(dt.Vector([-5.85947509057, 29.3663240815, 38.2777027657]), dt.Vector([-5.85947509057, 29.3663240815, 38.2777027657]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape4')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base4')", 
+                    "pivots": "(dt.Vector([-4.0420437865, 29.3663240815, 38.2777027657]), dt.Vector([-4.0420437865, 29.3663240815, 38.2777027657]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape5')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base5')", 
+                    "pivots": "(dt.Vector([-10.1325795239, 32.1181185027, 13.733483689]), dt.Vector([-10.1325795239, 32.1181185027, 13.733483689]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape7')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base7')", 
+                    "pivots": "(dt.Vector([-9.93936696289, 29.4294204158, -52.2897332996]), dt.Vector([-9.93936696289, 29.4294204158, -52.2897332996]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "lambert1", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape8')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base8')", 
+                    "pivots": "(dt.Vector([9.51628946681, 29.3663240815, 38.2777027657]), dt.Vector([9.51628946681, 29.3663240815, 38.2777027657]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape9')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base9')", 
+                    "pivots": "(dt.Vector([7.67690725145, 29.3663240815, 38.2777027657]), dt.Vector([7.67690725145, 29.3663240815, 38.2777027657]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape10')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base10')", 
+                    "pivots": "(dt.Vector([5.85947594738, 29.3663240815, 38.2777027657]), dt.Vector([5.85947594738, 29.3663240815, 38.2777027657]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape11')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base11')", 
+                    "pivots": "(dt.Vector([4.04204464331, 29.3663240815, 38.2777027657]), dt.Vector([4.04204464331, 29.3663240815, 38.2777027657]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape12')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base12')", 
+                    "pivots": "(dt.Vector([10.1325803807, 32.1181185027, 13.733483689]), dt.Vector([10.1325803807, 32.1181185027, 13.733483689]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape13')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base13')", 
+                    "pivots": "(dt.Vector([10.1434366349, 32.1181185027, 11.8626717977]), dt.Vector([10.1434366349, 32.1181185027, 11.8626717977]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_baseShape14')", 
+            "textureFiles": null, 
+            "UVs": 124, 
+            "lamina": null, 
+            "Edges": 180, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base14')", 
+                    "pivots": "(dt.Vector([9.9393678197, 29.4294204158, -52.2897332996]), dt.Vector([9.9393678197, 29.4294204158, -52.2897332996]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 100, 
+            "shaderName": "lambert1", 
+            "Tris": 160, 
+            "Verts": 82
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_base_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 38, 
+            "lamina": null, 
+            "Edges": 60, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base_left')", 
+                    "pivots": "(dt.Vector([6.83201006871, 28.8793434373, 37.2245999786]), dt.Vector([6.83201006871, 28.8793434373, 37.2245999786]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 32
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_base_mid_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 38, 
+            "lamina": null, 
+            "Edges": 60, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base_mid_left')", 
+                    "pivots": "(dt.Vector([11.1240656994, 31.6483410428, 12.7878779277]), dt.Vector([11.1240656994, 31.6483410428, 12.7878779277]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 32
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_base_mid_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 38, 
+            "lamina": null, 
+            "Edges": 60, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base_mid_right')", 
+                    "pivots": "(dt.Vector([-11.1240648426, 31.6483410428, 12.7878779277]), dt.Vector([-11.1240648426, 31.6483410428, 12.7878779277]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 32
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_base_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 38, 
+            "lamina": null, 
+            "Edges": 60, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_base_right')", 
+                    "pivots": "(dt.Vector([-6.83200921189, 28.8793434373, 37.2245999786]), dt.Vector([-6.83200921189, 28.8793434373, 37.2245999786]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 26, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 52, 
+            "Verts": 32
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape1')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap1')", 
+                    "pivots": "(dt.Vector([-9.5163026537, 30.2049671669, 38.2777535212]), dt.Vector([-9.5163026537, 30.2049671669, 38.2777535212]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape2')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap2')", 
+                    "pivots": "(dt.Vector([-7.67692043835, 30.2049671669, 38.2777535212]), dt.Vector([-7.67692043835, 30.2049671669, 38.2777535212]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_white_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape3')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap3')", 
+                    "pivots": "(dt.Vector([-5.85948913428, 30.2049671669, 38.2777535212]), dt.Vector([-5.85948913428, 30.2049671669, 38.2777535212]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape4')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap4')", 
+                    "pivots": "(dt.Vector([-4.04205783021, 30.2049671669, 38.2777535212]), dt.Vector([-4.04205783021, 30.2049671669, 38.2777535212]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_white_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape5')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap5')", 
+                    "pivots": "(dt.Vector([-10.1325935676, 32.9567615881, 13.7335344445]), dt.Vector([-10.1325935676, 32.9567615881, 13.7335344445]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape6')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap6')", 
+                    "pivots": "(dt.Vector([-10.1434498218, 32.9567615881, 11.8627225533]), dt.Vector([-10.1434498218, 32.9567615881, 11.8627225533]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape7')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap7')", 
+                    "pivots": "(dt.Vector([-9.9393810066, 30.2680635012, -52.289682544]), dt.Vector([-9.9393810066, 30.2680635012, -52.289682544]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape8')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap8')", 
+                    "pivots": "(dt.Vector([9.51630351052, 30.2049671669, 38.2777535212]), dt.Vector([9.51630351052, 30.2049671669, 38.2777535212]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape9')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap9')", 
+                    "pivots": "(dt.Vector([7.67692129516, 30.2049671669, 38.2777535212]), dt.Vector([7.67692129516, 30.2049671669, 38.2777535212]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_white_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape10')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap10')", 
+                    "pivots": "(dt.Vector([5.85948999109, 30.2049671669, 38.2777535212]), dt.Vector([5.85948999109, 30.2049671669, 38.2777535212]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape11')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap11')", 
+                    "pivots": "(dt.Vector([4.04205868703, 30.2049671669, 38.2777535212]), dt.Vector([4.04205868703, 30.2049671669, 38.2777535212]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_white_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_capShape14')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cap14')", 
+                    "pivots": "(dt.Vector([9.93938186341, 30.2680635012, -52.289682544]), dt.Vector([9.93938186341, 30.2680635012, -52.289682544]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_coverShape12')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cover12')", 
+                    "pivots": "(dt.Vector([10.1325944244, 32.9567615881, 13.7335344445]), dt.Vector([10.1325944244, 32.9567615881, 13.7335344445]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Siren_coverShape13')", 
+            "textureFiles": null, 
+            "UVs": 147, 
+            "lamina": null, 
+            "Edges": 220, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Siren_cover13')", 
+                    "pivots": "(dt.Vector([10.1434506786, 32.9567615881, 11.8627225533]), dt.Vector([10.1434506786, 32.9567615881, 11.8627225533]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 120, 
+            "shaderName": "mat_red_siren", 
+            "Tris": 200, 
+            "Verts": 102
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Steering_columnShape')", 
+            "textureFiles": null, 
+            "UVs": 84, 
+            "lamina": null, 
+            "Edges": 100, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Steering_column')", 
+                    "pivots": "(dt.Vector([5.16391347876, 14.9331693098, 42.3139774051]), dt.Vector([5.16391347876, 14.9331693098, 42.3139774051]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 60, 
+            "shaderName": "mat_Interior", 
+            "Tris": 80, 
+            "Verts": 42
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_leftShape1')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 68, 
+            "lamina": null, 
+            "Edges": 48, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_left1')", 
+                    "pivots": "(dt.Vector([11.1093093882, 5.36241045416, 37.8145812362]), dt.Vector([11.1093093882, 5.36241045416, 37.8145812362]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 24, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 48, 
+            "Verts": 26
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_leftShape2')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 52, 
+            "lamina": null, 
+            "Edges": 36, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_left2')", 
+                    "pivots": "(dt.Vector([11.1093093882, 5.36241045416, 12.6922589803]), dt.Vector([11.1093093882, 5.36241045416, 12.6922589803]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 18, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 36, 
+            "Verts": 20
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_leftShape3')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 23, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_left3')", 
+                    "pivots": "(dt.Vector([10.3037136758, 5.79382014712, 0.541161872358]), dt.Vector([10.3037136758, 5.79382014712, 0.541161872358]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 11, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 22, 
+            "Verts": 14
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_leftShape4')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 23, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_left4')", 
+                    "pivots": "(dt.Vector([11.1093093882, 5.79382014712, -14.2844697398]), dt.Vector([11.1093093882, 5.79382014712, -14.2844697398]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 11, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 22, 
+            "Verts": 14
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_rear_leftShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 18, 
+            "lamina": null, 
+            "Edges": 9, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_rear_left')", 
+                    "pivots": "(dt.Vector([6.34724600345, 11.058667964, -55.0956745663]), dt.Vector([6.34724600345, 11.058667964, -55.0956745663]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 5, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 8, 
+            "Verts": 6
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_rear_rightShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 18, 
+            "lamina": null, 
+            "Edges": 9, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_rear_right')", 
+                    "pivots": "(dt.Vector([-6.34724514664, 11.058667964, -55.0956745663]), dt.Vector([-6.34724514664, 11.058667964, -55.0956745663]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 5, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 8, 
+            "Verts": 6
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_rightShape1')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 68, 
+            "lamina": null, 
+            "Edges": 48, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_right1')", 
+                    "pivots": "(dt.Vector([-11.1093085314, 5.36241045416, 37.8145812362]), dt.Vector([-11.1093085314, 5.36241045416, 37.8145812362]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 24, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 48, 
+            "Verts": 26
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_rightShape2')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 52, 
+            "lamina": null, 
+            "Edges": 36, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_right2')", 
+                    "pivots": "(dt.Vector([-11.1093085314, 5.36241045416, 12.6922589803]), dt.Vector([-11.1093085314, 5.36241045416, 12.6922589803]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 18, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 36, 
+            "Verts": 20
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_rightShape3')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 23, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_right3')", 
+                    "pivots": "(dt.Vector([-10.303712819, 5.79382014712, 0.541161872358]), dt.Vector([-10.303712819, 5.79382014712, 0.541161872358]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 11, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 22, 
+            "Verts": 14
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_rightShape4')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 23, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_right4')", 
+                    "pivots": "(dt.Vector([-11.1093085314, 5.79382014712, -14.2844697398]), dt.Vector([-11.1093085314, 5.79382014712, -14.2844697398]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 11, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 22, 
+            "Verts": 14
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Tail_flasher_base_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 52, 
+            "lamina": null, 
+            "Edges": 76, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Tail_flasher_base_left')", 
+                    "pivots": "(dt.Vector([9.39112124282, 12.8720564744, -53.8530367838]), dt.Vector([9.39112124282, 12.8720564744, -53.8530367838]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 38, 
+            "shaderName": "mat_Black", 
+            "Tris": 76, 
+            "Verts": 40
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Tail_flasher_base_rear_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 52, 
+            "lamina": null, 
+            "Edges": 76, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Tail_flasher_base_rear_right')", 
+                    "pivots": "(dt.Vector([-9.39112038601, 12.8720564744, -53.8530367838]), dt.Vector([-9.39112038601, 12.8720564744, -53.8530367838]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 38, 
+            "shaderName": "mat_Black", 
+            "Tris": 76, 
+            "Verts": 40
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Tail_flasher_cover_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 8, 
+            "lamina": null, 
+            "Edges": 10, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Tail_flasher_cover_left')", 
+                    "pivots": "(dt.Vector([9.39112124282, 12.8720564744, -53.9512272094]), dt.Vector([9.39112124282, 12.8720564744, -53.9512272094]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 3, 
+            "shaderName": "mat_Rear_Light", 
+            "Tris": 6, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Tail_flasher_cover_rear_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 8, 
+            "lamina": null, 
+            "Edges": 10, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Tail_flasher_cover_rear_right')", 
+                    "pivots": "(dt.Vector([-9.39112038601, 12.8720564744, -53.9512272094]), dt.Vector([-9.39112038601, 12.8720564744, -53.9512272094]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 3, 
+            "shaderName": "mat_Rear_Light", 
+            "Tris": 6, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Tail_light_base_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 204, 
+            "lamina": null, 
+            "Edges": 340, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Tail_light_base_left')", 
+                    "pivots": "(dt.Vector([9.55216247432, 10.6290321546, -53.6642050297]), dt.Vector([9.55216247432, 10.6290321546, -53.6642050297]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 180, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 320, 
+            "Verts": 162
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Tail_light_base_rear_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 204, 
+            "lamina": null, 
+            "Edges": 340, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Tail_light_base_rear_right')", 
+                    "pivots": "(dt.Vector([-9.55216161751, 10.6290321546, -53.6642050297]), dt.Vector([-9.55216161751, 10.6290321546, -53.6642050297]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 180, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 320, 
+            "Verts": 162
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Tail_light_cover_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 104, 
+            "lamina": null, 
+            "Edges": 160, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Tail_light_cover_left')", 
+                    "pivots": "(dt.Vector([9.54543634827, 10.6294377139, -52.331442333]), dt.Vector([9.54543634827, 10.6294377139, -52.331442333]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 80, 
+            "shaderName": "mat_Rear_Light", 
+            "Tris": 140, 
+            "Verts": 81
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Tail_light_cover_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 104, 
+            "lamina": null, 
+            "Edges": 160, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Tail_light_cover_right')", 
+                    "pivots": "(dt.Vector([-9.54543549145, 10.6294377139, -52.331442333]), dt.Vector([-9.54543549145, 10.6294377139, -52.331442333]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 80, 
+            "shaderName": "mat_Rear_Light", 
+            "Tris": 140, 
+            "Verts": 81
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_r_l_GRP|Tire_front_right|Tire_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 792, 
+            "lamina": null, 
+            "Edges": 1200, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_r_l_GRP|Tire_front_right')", 
+                    "pivots": "(dt.Vector([9.22914024275, 5.75764939579, -30.4296736888]), dt.Vector([9.22914024275, 5.75764939579, -30.4296736888]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 600, 
+            "shaderName": "mat_tire", 
+            "Tris": 1200, 
+            "Verts": 600
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_r_r_GRP|Tire_front_right|Tire_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 792, 
+            "lamina": null, 
+            "Edges": 1200, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_r_r_GRP|Tire_front_right')", 
+                    "pivots": "(dt.Vector([-8.95979812882, 5.75764939579, -30.4296736888]), dt.Vector([-8.95979812882, 5.75764939579, -30.4296736888]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 600, 
+            "shaderName": "mat_tire", 
+            "Tris": 1200, 
+            "Verts": 600
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_f_l_GRP|Tire_front_right|Tire_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 792, 
+            "lamina": null, 
+            "Edges": 1200, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_f_l_GRP|Tire_front_right')", 
+                    "pivots": "(dt.Vector([9.22914024275, 5.75764939579, 24.5692036992]), dt.Vector([9.22914024275, 5.75764939579, 24.5692036992]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 600, 
+            "shaderName": "mat_tire", 
+            "Tris": 1200, 
+            "Verts": 600
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_f_r_GRP|Tire_front_right|Tire_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 792, 
+            "lamina": null, 
+            "Edges": 1200, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_f_r_GRP|Tire_front_right')", 
+                    "pivots": "(dt.Vector([-8.95979812882, 5.75764939579, 24.5692036992]), dt.Vector([-8.95979812882, 5.75764939579, 24.5692036992]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 600, 
+            "shaderName": "mat_tire", 
+            "Tris": 1200, 
+            "Verts": 600
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Top_cabinet_leftShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Top_cabinet_left')", 
+                    "pivots": "(dt.Vector([8.36281139953, 24.0860624827, -2.68385711117]), dt.Vector([8.36281139953, 24.0860624827, -2.68385711117]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Top_cabinet_rightShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Top_cabinet_right')", 
+                    "pivots": "(dt.Vector([-8.36281054272, 24.0860624827, -2.68385711117]), dt.Vector([-8.36281054272, 24.0860624827, -2.68385711117]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Top_shelfShape')", 
+            "textureFiles": null, 
+            "UVs": 84, 
+            "lamina": null, 
+            "Edges": 120, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Top_shelf')", 
+                    "pivots": "(dt.Vector([-3.90164095233, 24.4102840041, -29.2363688215]), dt.Vector([-3.90164095233, 24.4102840041, -29.2363688215]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 60, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 120, 
+            "Verts": 64
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Trunk_b_lShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Trunk_b_l')", 
+                    "pivots": "(dt.Vector([4.38010108701, 11.3148405957, -53.5691668735]), dt.Vector([4.38010108701, 11.3148405957, -53.5691668735]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "-0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Trunk_b_rShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Trunk_b_r')", 
+                    "pivots": "(dt.Vector([-4.3801002302, 11.3148405957, -53.5691668735]), dt.Vector([-4.3801002302, 11.3148405957, -53.5691668735]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Trunk_interior_rearShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Trunk_interior_rear')", 
+                    "pivots": "(dt.Vector([4.28406598723e-07, 11.3041591968, -46.3549168662]), dt.Vector([4.28406598723e-07, 11.3041591968, -46.3549168662]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 5, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 10, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Trunk_interior_rear_topShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Trunk_interior_rear_top')", 
+                    "pivots": "(dt.Vector([4.28406598525e-07, 20.1050360228, -44.7406425976]), dt.Vector([4.28406598525e-07, 20.1050360228, -44.7406425976]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 5, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 10, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Trunk_topShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Trunk_top')", 
+                    "pivots": "(dt.Vector([4.284065994e-07, 22.886052223, -51.8818752144]), dt.Vector([4.284065994e-07, 22.886052223, -51.8818752144]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_well_frontShape')", 
+            "textureFiles": null, 
+            "UVs": 649, 
+            "lamina": null, 
+            "Edges": 1196, 
+            "ngons": [
+                "Wheel_well_frontShape.f[12]", 
+                "Wheel_well_frontShape.f[47]", 
+                "Wheel_well_frontShape.f[49]", 
+                "Wheel_well_frontShape.f[51]", 
+                "Wheel_well_frontShape.f[53]", 
+                "Wheel_well_frontShape.f[55]", 
+                "Wheel_well_frontShape.f[57]", 
+                "Wheel_well_frontShape.f[59]", 
+                "Wheel_well_frontShape.f[61]", 
+                "Wheel_well_frontShape.f[63]", 
+                "Wheel_well_frontShape.f[65]", 
+                "Wheel_well_frontShape.f[67]", 
+                "Wheel_well_frontShape.f[69]", 
+                "Wheel_well_frontShape.f[71]", 
+                "Wheel_well_frontShape.f[74]", 
+                "Wheel_well_frontShape.f[76]", 
+                "Wheel_well_frontShape.f[300]", 
+                "Wheel_well_frontShape.f[335]", 
+                "Wheel_well_frontShape.f[337]", 
+                "Wheel_well_frontShape.f[339]", 
+                "Wheel_well_frontShape.f[341]", 
+                "Wheel_well_frontShape.f[343]", 
+                "Wheel_well_frontShape.f[345]", 
+                "Wheel_well_frontShape.f[347]", 
+                "Wheel_well_frontShape.f[349]", 
+                "Wheel_well_frontShape.f[351]", 
+                "Wheel_well_frontShape.f[353]", 
+                "Wheel_well_frontShape.f[355]", 
+                "Wheel_well_frontShape.f[357]", 
+                "Wheel_well_frontShape.f[359]", 
+                "Wheel_well_frontShape.f[362]", 
+                "Wheel_well_frontShape.f[364]"
+            ], 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_well_front')", 
+                    "pivots": "(dt.Vector([4.28406593455e-07, 28.6437473237, -3.33782211553]), dt.Vector([4.28406593455e-07, 28.6437473237, -3.33782211553]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 578, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 1192, 
+            "Verts": 595
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Wheel_well_rearShape')", 
+            "textureFiles": [
+                "C:/Users/t_zakob/Desktop/maya2013_gettingstartedlessondata/GettingStarted2013LessonData/Assets/sourceimages/bump_metal.jpg"
+            ], 
+            "UVs": 580, 
+            "lamina": null, 
+            "Edges": 563, 
+            "ngons": [
+                "Wheel_well_rearShape.f[64]", 
+                "Wheel_well_rearShape.f[70]", 
+                "Wheel_well_rearShape.f[209]", 
+                "Wheel_well_rearShape.f[215]"
+            ], 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Wheel_well_rear')", 
+                    "pivots": "(dt.Vector([-10.6470583082, 9.39961268935, -30.2392881214]), dt.Vector([-10.6470583082, 9.39961268935, -30.2392881214]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 290, 
+            "shaderName": "mat_bump_metal", 
+            "Tris": 576, 
+            "Verts": 276
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Window_front_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 28, 
+            "lamina": null, 
+            "Edges": 22, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Window_front_left')", 
+                    "pivots": "(dt.Vector([11.08885292, 23.0269986634, 35.4955530224]), dt.Vector([11.08885292, 23.0269986634, 35.4955530224]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 7, 
+            "shaderName": "mat_Window", 
+            "Tris": 14, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Window_front_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 28, 
+            "lamina": null, 
+            "Edges": 22, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Window_front_right')", 
+                    "pivots": "(dt.Vector([-11.0888520632, 23.0269986634, 35.4955530224]), dt.Vector([-11.0888520632, 23.0269986634, 35.4955530224]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 7, 
+            "shaderName": "mat_Window", 
+            "Tris": 14, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Window_mid_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 28, 
+            "lamina": null, 
+            "Edges": 22, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Window_mid_left')", 
+                    "pivots": "(dt.Vector([11.08885292, 22.7281869259, 23.1872967392]), dt.Vector([11.08885292, 22.7281869259, 23.1872967392]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 7, 
+            "shaderName": "mat_Window", 
+            "Tris": 14, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Window_middle_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 28, 
+            "lamina": null, 
+            "Edges": 22, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Window_middle_right')", 
+                    "pivots": "(dt.Vector([-11.0888520632, 22.7281869259, 23.1872967392]), dt.Vector([-11.0888520632, 22.7281869259, 23.1872967392]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 7, 
+            "shaderName": "mat_Window", 
+            "Tris": 14, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Window_rear_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 28, 
+            "lamina": null, 
+            "Edges": 22, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Window_rear_left')", 
+                    "pivots": "(dt.Vector([15.4270483943, 23.0235306603, 19.2838052265]), dt.Vector([15.4270483943, 23.0235306603, 19.2838052265]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 7, 
+            "shaderName": "mat_Window", 
+            "Tris": 14, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Window_rear_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 28, 
+            "lamina": null, 
+            "Edges": 22, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Window_rear_right')", 
+                    "pivots": "(dt.Vector([-11.0888520632, 23.0235306603, 14.7917726278]), dt.Vector([-11.0888520632, 23.0235306603, 14.7917726278]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 7, 
+            "shaderName": "mat_Window", 
+            "Tris": 14, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Windshield_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 20, 
+            "lamina": null, 
+            "Edges": 16, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Windshield_left')", 
+                    "pivots": "(dt.Vector([4.28406581572e-07, 23.3098609091, 45.2272559261]), dt.Vector([4.28406581572e-07, 23.3098609091, 45.2272559261]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 5, 
+            "shaderName": "mat_Window", 
+            "Tris": 10, 
+            "Verts": 12
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Windshield_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 20, 
+            "lamina": null, 
+            "Edges": 16, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Windshield_right')", 
+                    "pivots": "(dt.Vector([4.28406587507e-07, 23.3098609091, 45.2272559261]), dt.Vector([4.28406587507e-07, 23.3098609091, 45.2272559261]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 5, 
+            "shaderName": "mat_Window", 
+            "Tris": 10, 
+            "Verts": 12
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'front_center_light_baseShape')", 
+            "textureFiles": null, 
+            "UVs": 150, 
+            "lamina": null, 
+            "Edges": 100, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'front_center_light_base')", 
+                    "pivots": "(dt.Vector([-0.0128760678661, 18.6469929111, 46.5016355357]), dt.Vector([-0.0128760678661, 18.6469929111, 46.5016355357]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 50, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 100, 
+            "Verts": 52
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'front_center_light_capShape')", 
+            "textureFiles": null, 
+            "UVs": 36, 
+            "lamina": null, 
+            "Edges": 24, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'front_center_light_cap')", 
+                    "pivots": "(dt.Vector([-0.0308093243698, 18.6511622948, 46.9285543728]), dt.Vector([-0.0308093243698, 18.6511622948, 46.9285543728]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 9, 
+            "shaderName": "mat_light_cover_2", 
+            "Tris": 18, 
+            "Verts": 16
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'mini_mirror_base_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 481, 
+            "lamina": null, 
+            "Edges": 820, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'mini_mirror_base_left')", 
+                    "pivots": "(dt.Vector([12.2671272803, 20.925044893, 39.8035122798]), dt.Vector([12.2671272803, 20.925044893, 39.8035122798]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 420, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 800, 
+            "Verts": 402
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'pCubeShape26')", 
+            "textureFiles": null, 
+            "UVs": 58, 
+            "lamina": null, 
+            "Edges": 68, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'pCube26')", 
+                    "pivots": "(dt.Vector([-5.05131698286, 24.3448535164, 1.35739869158]), dt.Vector([-5.05131698286, 24.3448535164, 1.35739869158]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 34, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 68, 
+            "Verts": 36
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'pCylinderShape17')", 
+            "textureFiles": null, 
+            "UVs": 163, 
+            "lamina": null, 
+            "Edges": 280, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'pCylinder17')", 
+                    "pivots": "(dt.Vector([-10.2909460984, 10.8253745076, 0.0986259633603]), dt.Vector([-10.2909460984, 10.8253745076, 0.0986259633603]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 140, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 260, 
+            "Verts": 141
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'pCylinderShape18')", 
+            "textureFiles": null, 
+            "UVs": 84, 
+            "lamina": null, 
+            "Edges": 100, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'pCylinder18')", 
+                    "pivots": "(dt.Vector([-11.0714529473, 10.8052322398, 0.0928483350942]), dt.Vector([-11.0714529473, 10.8052322398, 0.0928483350942]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 60, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 80, 
+            "Verts": 42
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'pCylinderShape46')", 
+            "textureFiles": null, 
+            "UVs": 163, 
+            "lamina": null, 
+            "Edges": 280, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'pCylinder46')", 
+                    "pivots": "(dt.Vector([10.2909469553, 10.8253745076, 0.0986259633603]), dt.Vector([10.2909469553, 10.8253745076, 0.0986259633603]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 140, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 260, 
+            "Verts": 141
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'pCylinderShape47')", 
+            "textureFiles": null, 
+            "UVs": 84, 
+            "lamina": null, 
+            "Edges": 100, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'pCylinder47')", 
+                    "pivots": "(dt.Vector([11.0714538041, 10.8052322398, 0.0928483350942]), dt.Vector([11.0714538041, 10.8052322398, 0.0928483350942]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 60, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 80, 
+            "Verts": 42
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'panel_leftShape')", 
+            "textureFiles": null, 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'panel_left')", 
+                    "pivots": "(dt.Vector([8.44289408641, 16.5854186373, 0.503368832237]), dt.Vector([8.44289408641, 16.5854186373, 0.503368832237]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_red", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'panel_rightShape')", 
+            "textureFiles": null, 
+            "UVs": 14, 
+            "lamina": null, 
+            "Edges": 12, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'panel_right')", 
+                    "pivots": "(dt.Vector([-8.4428932296, 16.5854186373, 0.503368832237]), dt.Vector([-8.4428932296, 16.5854186373, 0.503368832237]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 6, 
+            "shaderName": "mat_red", 
+            "Tris": 12, 
+            "Verts": 8
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'polySurfaceShape1')", 
+            "textureFiles": null, 
+            "UVs": 408, 
+            "lamina": [
+                "polySurfaceShape1.f[6]", 
+                "polySurfaceShape1.f[40]", 
+                "polySurfaceShape1.f[42]", 
+                "polySurfaceShape1.f[50]", 
+                "polySurfaceShape1.f[123]", 
+                "polySurfaceShape1.f[157]", 
+                "polySurfaceShape1.f[159]", 
+                "polySurfaceShape1.f[167]"
+            ], 
+            "Edges": 434, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'polySurface1')", 
+                    "pivots": "(dt.Vector([-5.83109634981, 28.6437473237, -3.33782211553]), dt.Vector([-5.83109634981, 28.6437473237, -3.33782211553]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 234, 
+            "shaderName": "mat_red", 
+            "Tris": 462, 
+            "Verts": 205
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_right2|polySurfaceShape3')", 
+            "textureFiles": null, 
+            "UVs": 18, 
+            "lamina": null, 
+            "Edges": 20, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_right2')", 
+                    "pivots": "(dt.Vector([-11.1093085314, 5.36241045416, 12.6922589803]), dt.Vector([-11.1093085314, 5.36241045416, 12.6922589803]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 10, 
+            "shaderName": null, 
+            "Tris": 20, 
+            "Verts": 12
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'Step_left2|polySurfaceShape3')", 
+            "textureFiles": null, 
+            "UVs": 18, 
+            "lamina": null, 
+            "Edges": 20, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Step_left2')", 
+                    "pivots": "(dt.Vector([11.1093093882, 5.36241045416, 12.6922589803]), dt.Vector([11.1093093882, 5.36241045416, 12.6922589803]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 10, 
+            "shaderName": null, 
+            "Tris": 20, 
+            "Verts": 12
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'polySurfaceShape9')", 
+            "textureFiles": null, 
+            "UVs": 1171, 
+            "lamina": [
+                "polySurfaceShape9.f[93]", 
+                "polySurfaceShape9.f[107]", 
+                "polySurfaceShape9.f[117]", 
+                "polySurfaceShape9.f[131]", 
+                "polySurfaceShape9.f[171]", 
+                "polySurfaceShape9.f[181]", 
+                "polySurfaceShape9.f[223:228]", 
+                "polySurfaceShape9.f[349:353]", 
+                "polySurfaceShape9.f[355:357]", 
+                "polySurfaceShape9.f[371]", 
+                "polySurfaceShape9.f[378]", 
+                "polySurfaceShape9.f[381]", 
+                "polySurfaceShape9.f[385]", 
+                "polySurfaceShape9.f[391]", 
+                "polySurfaceShape9.f[393]", 
+                "polySurfaceShape9.f[395]", 
+                "polySurfaceShape9.f[397:398]", 
+                "polySurfaceShape9.f[400]", 
+                "polySurfaceShape9.f[402]", 
+                "polySurfaceShape9.f[404]", 
+                "polySurfaceShape9.f[437]", 
+                "polySurfaceShape9.f[455]", 
+                "polySurfaceShape9.f[481]", 
+                "polySurfaceShape9.f[503]", 
+                "polySurfaceShape9.f[683]", 
+                "polySurfaceShape9.f[697]", 
+                "polySurfaceShape9.f[707]", 
+                "polySurfaceShape9.f[721]", 
+                "polySurfaceShape9.f[761]", 
+                "polySurfaceShape9.f[771]", 
+                "polySurfaceShape9.f[813:818]", 
+                "polySurfaceShape9.f[939:943]", 
+                "polySurfaceShape9.f[945:947]", 
+                "polySurfaceShape9.f[961]", 
+                "polySurfaceShape9.f[968]", 
+                "polySurfaceShape9.f[971]", 
+                "polySurfaceShape9.f[975]", 
+                "polySurfaceShape9.f[981]", 
+                "polySurfaceShape9.f[983]", 
+                "polySurfaceShape9.f[985]", 
+                "polySurfaceShape9.f[987:988]", 
+                "polySurfaceShape9.f[990]", 
+                "polySurfaceShape9.f[992]", 
+                "polySurfaceShape9.f[994]", 
+                "polySurfaceShape9.f[1027]", 
+                "polySurfaceShape9.f[1045]", 
+                "polySurfaceShape9.f[1071]", 
+                "polySurfaceShape9.f[1093]"
+            ], 
+            "Edges": 2238, 
+            "ngons": [
+                "polySurfaceShape9.f[107]", 
+                "polySurfaceShape9.f[121]", 
+                "polySurfaceShape9.f[131]", 
+                "polySurfaceShape9.f[159]", 
+                "polySurfaceShape9.f[169]", 
+                "polySurfaceShape9.f[176:178]", 
+                "polySurfaceShape9.f[230]", 
+                "polySurfaceShape9.f[232]", 
+                "polySurfaceShape9.f[235]", 
+                "polySurfaceShape9.f[237]", 
+                "polySurfaceShape9.f[239]", 
+                "polySurfaceShape9.f[244]", 
+                "polySurfaceShape9.f[292]", 
+                "polySurfaceShape9.f[301]", 
+                "polySurfaceShape9.f[347]", 
+                "polySurfaceShape9.f[382]", 
+                "polySurfaceShape9.f[440]", 
+                "polySurfaceShape9.f[452]", 
+                "polySurfaceShape9.f[568:569]", 
+                "polySurfaceShape9.f[697]", 
+                "polySurfaceShape9.f[711]", 
+                "polySurfaceShape9.f[721]", 
+                "polySurfaceShape9.f[749]", 
+                "polySurfaceShape9.f[759]", 
+                "polySurfaceShape9.f[766:768]", 
+                "polySurfaceShape9.f[820]", 
+                "polySurfaceShape9.f[822]", 
+                "polySurfaceShape9.f[825]", 
+                "polySurfaceShape9.f[827]", 
+                "polySurfaceShape9.f[829]", 
+                "polySurfaceShape9.f[834]", 
+                "polySurfaceShape9.f[882]", 
+                "polySurfaceShape9.f[891]", 
+                "polySurfaceShape9.f[937]", 
+                "polySurfaceShape9.f[972]", 
+                "polySurfaceShape9.f[1030]", 
+                "polySurfaceShape9.f[1042]", 
+                "polySurfaceShape9.f[1158:1159]"
+            ], 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'polySurface9')", 
+                    "pivots": "(dt.Vector([4.28406593455e-07, 28.6437473237, -3.33782211553]), dt.Vector([4.28406593455e-07, 28.6437473237, -3.33782211553]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 1180, 
+            "shaderName": "mat_fire_truck_body", 
+            "Tris": 2334, 
+            "Verts": 1088
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'polySurfaceShape15')", 
+            "textureFiles": null, 
+            "UVs": 446, 
+            "lamina": null, 
+            "Edges": 800, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'Handle8')", 
+                    "pivots": "(dt.Vector([11.4433898391, 20.4102414366, 8.70414477761]), dt.Vector([11.4433898391, 20.4102414366, 8.70414477761]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 400, 
+            "shaderName": null, 
+            "Tris": 760, 
+            "Verts": 402
+        }, 
+        {
+            "meshNode": "nt.Mesh(u'wheelShape')", 
+            "textureFiles": null, 
+            "UVs": 693, 
+            "lamina": null, 
+            "Edges": 1100, 
+            "ngons": null, 
+            "transforms": [
+                {
+                    "node": "nt.Transform(u'wheel')", 
+                    "pivots": "(dt.Vector([5.24213801388, 20.030765437, 39.6336337529]), dt.Vector([5.24213801388, 20.030765437, 39.6336337529]))", 
+                    "sy": "1.00", 
+                    "sx": "1.00", 
+                    "tz": "0.00", 
+                    "tx": "0.00", 
+                    "ty": "0.00", 
+                    "rx": "0.00", 
+                    "ry": "0.00", 
+                    "rz": "0.00", 
+                    "sz": "1.00"
+                }
+            ], 
+            "Faces": 580, 
+            "shaderName": "mat_Shiny_Metal", 
+            "Tris": 1040, 
+            "Verts": 526
+        }
+    ], 
+    "totalUVs": 25976, 
+    "overlappingVertices": null, 
+    "totalVerts": 19534, 
+    "totalTris": 38064, 
+    "totalEdges": 39494, 
+    "totalFaces": 20210
+}
