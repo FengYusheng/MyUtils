@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'pm_view.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created by: PyQt5 UI code generator 5.7.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -41,9 +41,9 @@ class Ui_PM_View(object):
         self.selected_label = QtWidgets.QLabel(self.centralwidget)
         self.selected_label.setObjectName("selected_label")
         self.verticalLayout_2.addWidget(self.selected_label)
-        self.selectedView = QtWidgets.QListView(self.centralwidget)
-        self.selectedView.setObjectName("selectedView")
-        self.verticalLayout_2.addWidget(self.selectedView)
+        self.selectedList = QtWidgets.QListView(self.centralwidget)
+        self.selectedList.setObjectName("selectedList")
+        self.verticalLayout_2.addWidget(self.selectedList)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.line = QtWidgets.QFrame(self.centralwidget)
@@ -64,7 +64,7 @@ class Ui_PM_View(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout)
         PM_View.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(PM_View)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 793, 28))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 793, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")

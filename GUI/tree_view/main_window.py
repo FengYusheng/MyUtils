@@ -25,6 +25,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if isinstance(data, dict):
                 for k, v in data.items():
                     item = QtGui.QStandardItem(k)
+                    item.setEditable(False)
                     parent.appendRow(item)
                     row = self.model.indexFromItem(item).row()
                     actual = str(v) if not isinstance(v, list) and not isinstance(v, dict) else '...'
@@ -40,6 +41,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         _fill_data(parent, d)
                     else:
                         item = QtGui.QStandardItem(str(d))
+                        item.setEditable(False)
                         parent.appendRow(item)
 
         _fill_data(self.model, self.data)
