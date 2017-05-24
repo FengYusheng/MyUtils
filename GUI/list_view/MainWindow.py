@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import os
+import re
 import sys
+import configparser
 
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
 from ui_pm_view import Ui_PM_View
+from dialog import (NewSaveDialog, SaveDialog)
 
 suite = set([
     'Overlapping ertices',
@@ -32,6 +36,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         self.selected = set()
         self.item_to_add = None # item text
         self.index_to_remove = None # item index
+        self.isChanged = False
 
         self.saveButton.clicked.connect(self.save)
         self.cancelButtion.clicked.connect(self.quit)
@@ -39,6 +44,34 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         self.removeButtion.clicked.connect(self.remove)
         self.testList.selectionModel().selectionChanged.connect(self.currentItemToAdd)
         self.selectedList.selectionModel().currentChanged.connect(self.currentItemToRemove)
+        self.actionReset.triggered.connect(self.reset)
+        self.project_combo.currentTextChanged.connect(self.read_config)
+
+        self._init_project_list()
+
+    def _init_project_list(self):
+        pattern = re.compile(r'([\w\d]+)\.ini')
+        files = ' '.join(os.listdir())
+        ret = re.findall(pattern, files)
+        if ret is not None:
+            self.project_combo.insertItems(0, ret)
+        self.current_project = self.project_combo.currentText()
+        self.read_config()
+
+    def read_config(self):
+        self.current_project = self.project_combo.currentText()
+        self.isSaved()
+        self.selected_model.clear()
+        self.selected.clear()
+        if self.current_project != 'New project':
+            project = self.current_project + '.ini'
+            config = configparser.ConfigParser()
+            config.read(project, encoding='utf-8')
+            self.selected = set(i for i in config['TEST SUITE'])
+            for i in self.selected:
+                item = QtGui.QStandardItem(i)
+                item.setEditable(False)
+                self.selected_model.appendRow(item)
 
     def add(self):
         if self.text_to_add is None or self.text_to_add in self.selected:
@@ -47,6 +80,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         item.setEditable(False)
         self.selected_model.appendRow(item)
         self.selected.add(self.text_to_add)
+        self.isChanged = True
 
 
     def remove(self):
@@ -58,6 +92,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         self.index_to_remove = self.selectedList.selectionModel().currentIndex()
         if self.index_to_remove.row() < 0:
             self.index_to_remove = None
+        self.isChanged = True
 
     def currentItemToAdd(self):
         index = self.testList.selectionModel().currentIndex()
@@ -70,8 +105,35 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
     def quit(self):
         QtWidgets.QApplication.quit()
 
+    def isSaved(self):
+        if self.isChanged is True:
+            pass
+
     def save(self):
-        QtWidgets.QApplication.quit()
+        project_name = 'default.ini'
+        if len(self.selected) > 0:
+            config = configparser.ConfigParser()
+            config['TEST SUITE'] = {}
+            for s in self.selected:
+                config['TEST SUITE'][s] = 'on'
+            if self.current_project == 'New project':
+                dialog = NewSaveDialog(self)
+                # dialog.show()
+            else:
+                diaolog = SaveDialog(self)
+                # dialog.show()
+            dialog.exec_()
+
+    def save_slot(self, project):
+        self.current_project = project
+        project_name = self.current_project = '.ini'
+        with open(project_name, 'w', encoding='utf-8') as f:
+            config.write(f)
+        self.isChanged = False
+
+    def reset(self):
+        self.selected_model.clear()
+        self.selected.clear()
 
 
 if __name__ == '__main__':
