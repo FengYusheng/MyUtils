@@ -13,12 +13,12 @@ from ui_pm_view import Ui_PM_View
 from dialog import (NewSaveDialog, SaveDialog)
 
 suite = set([
-    'Overlapping ertices',
-    'N-gons counts',
-    'Overlapping faces',
-    'Shader name',
-    'Texture file path',
-    'Pivot and transform'
+    'overlapping vertices',
+    'n-gons counts',
+    'overlapping faces',
+    'shader name',
+    'texture file path',
+    'pivot and transform'
 ])
 
 class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
@@ -37,9 +37,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         self.item_to_add = None # item text
         self.index_to_remove = None # item index
         self.isChanged = False
+        self.current_project = 'New project'
 
         self.saveButton.clicked.connect(self.save)
-        self.cancelButtion.clicked.connect(self.quit)
+        self.cancelButton.clicked.connect(self.quit)
         self.addButton.clicked.connect(self.add)
         self.removeButtion.clicked.connect(self.remove)
         self.testList.selectionModel().selectionChanged.connect(self.currentItemToAdd)
@@ -60,7 +61,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
 
     def read_config(self):
         self.current_project = self.project_combo.currentText()
-        self.isSaved()
         self.selected_model.clear()
         self.selected.clear()
         if self.current_project != 'New project':
@@ -105,31 +105,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
     def quit(self):
         QtWidgets.QApplication.quit()
 
-    def isSaved(self):
-        if self.isChanged is True:
-            pass
-
     def save(self):
-        project_name = 'default.ini'
-        if len(self.selected) > 0:
-            config = configparser.ConfigParser()
-            config['TEST SUITE'] = {}
-            for s in self.selected:
-                config['TEST SUITE'][s] = 'on'
-            if self.current_project == 'New project':
-                dialog = NewSaveDialog(self)
-                # dialog.show()
-            else:
-                diaolog = SaveDialog(self)
-                # dialog.show()
+        if self.isChanged is True and len(self.selected) > 0:
+            dialog = NewSaveDialog(self) if self.current_project == 'New project' else SaveDialog(self)
             dialog.exec_()
 
+    def delete(self):
+        pass
+
     def save_slot(self, project):
-        self.current_project = project
-        project_name = self.current_project = '.ini'
+        project_name = project + '.ini'
+        config = configparser.ConfigParser()
+        config['TEST SUITE'] = {}
+        for s in self.selected:
+            config['TEST SUITE'][s] = 'on'
         with open(project_name, 'w', encoding='utf-8') as f:
             config.write(f)
         self.isChanged = False
+        if self.current_project != project:
+            self.project_combo.insertItem(0, project)
+            self.project_combo.setCurrentIndex(0)
+        self.current_project = project
 
     def reset(self):
         self.selected_model.clear()
