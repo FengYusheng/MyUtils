@@ -1,0 +1,13 @@
+{
+    "overlapping vertices" : 0,
+    "n-gons counts" : 0,
+    "overlapping faces" : 0,
+    "pivot and transform" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+    "shader name" : "just a placeholder, ignore it",
+    "shader name suffix" :  ["_N", "_D", "_MC", "_MD", "_AO"],
+    "shader name prefix" :  ["A", "B", "C"],
+    "texture file path"  :  [
+        "D:\\project\\MindwalkToolsDevWorkspace\\DOC",
+        "D:\\public"
+    ]
+}

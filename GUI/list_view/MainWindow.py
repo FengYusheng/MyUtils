@@ -10,7 +10,7 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
 from ui_pm_view import Ui_PM_View
-from dialog import (NewSaveDialog, SaveDialog)
+from dialog import (NewSaveDialog, SaveDialog, DeleteDialog, DetailsDialog)
 
 suite = set([
     'overlapping vertices',
@@ -20,6 +20,7 @@ suite = set([
     'texture file path',
     'pivot and transform'
 ])
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
     def __init__(self, parent=None):
@@ -37,12 +38,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         self.item_to_add = None # item text
         self.index_to_remove = None # item index
         self.isChanged = False
-        self.current_project = 'New project'
+        self.nextButton.setEnabled(False)
 
-        self.saveButton.clicked.connect(self.save)
+        # self.saveButton.clicked.connect(self.save)
+        self.nextButton.clicked.connect(self.set_details)
         self.cancelButton.clicked.connect(self.quit)
         self.addButton.clicked.connect(self.add)
         self.removeButtion.clicked.connect(self.remove)
+        self.deleteButton.clicked.connect(self.delete)
         self.testList.selectionModel().selectionChanged.connect(self.currentItemToAdd)
         self.selectedList.selectionModel().currentChanged.connect(self.currentItemToRemove)
         self.actionReset.triggered.connect(self.reset)
@@ -56,15 +59,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         ret = re.findall(pattern, files)
         if ret is not None:
             self.project_combo.insertItems(0, ret)
-        self.current_project = self.project_combo.currentText()
         self.read_config()
 
     def read_config(self):
-        self.current_project = self.project_combo.currentText()
+        current_project = self.project_combo.currentText()
         self.selected_model.clear()
         self.selected.clear()
-        if self.current_project != 'New project':
-            project = self.current_project + '.ini'
+        if current_project != 'New project':
+            self.nextButton.setEnabled(True)
+            project = current_project + '.ini'
             config = configparser.ConfigParser()
             config.read(project, encoding='utf-8')
             self.selected = set(i for i in config['TEST SUITE'])
@@ -72,6 +75,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
                 item = QtGui.QStandardItem(i)
                 item.setEditable(False)
                 self.selected_model.appendRow(item)
+        else:
+            self.nextButton.setEnabled(False)
 
     def add(self):
         if self.text_to_add is None or self.text_to_add in self.selected:
@@ -80,6 +85,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         item.setEditable(False)
         self.selected_model.appendRow(item)
         self.selected.add(self.text_to_add)
+        self.nextButton.setEnabled(True)
         self.isChanged = True
 
 
@@ -92,6 +98,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         self.index_to_remove = self.selectedList.selectionModel().currentIndex()
         if self.index_to_remove.row() < 0:
             self.index_to_remove = None
+            self.nextButton.setEnabled(False)
         self.isChanged = True
 
     def currentItemToAdd(self):
@@ -107,14 +114,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
 
     def save(self):
         if self.isChanged is True and len(self.selected) > 0:
-            dialog = NewSaveDialog(self) if self.current_project == 'New project' else SaveDialog(self)
+            current_project = self.project_combo.currentText()
+            dialog = NewSaveDialog(self) if current_project == 'New project' else SaveDialog(self)
             dialog.exec_()
 
     def delete(self):
-        pass
+        project = self.project_combo.currentText()
+        if 'New project' == project:
+            self.reset()
+        else:
+            file_path = os.path.abspath(os.path.realpath(project+'.ini'))
+            if os.access(file_path, os.F_OK):
+                dialog = DeleteDialog(file_path, self)
+                dialog.exec_()
 
     def save_slot(self, project):
         project_name = project + '.ini'
+        current_project = self.project_combo.currentText()
         config = configparser.ConfigParser()
         config['TEST SUITE'] = {}
         for s in self.selected:
@@ -122,14 +138,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         with open(project_name, 'w', encoding='utf-8') as f:
             config.write(f)
         self.isChanged = False
-        if self.current_project != project:
+        if current_project != project:
             self.project_combo.insertItem(0, project)
             self.project_combo.setCurrentIndex(0)
-        self.current_project = project
 
     def reset(self):
         self.selected_model.clear()
         self.selected.clear()
+        self.nextButton.setEnabled(False)
+
+    def set_details(self):
+        dialog = DetailsDialog(self)
+        dialog.exec_()
 
 
 if __name__ == '__main__':
