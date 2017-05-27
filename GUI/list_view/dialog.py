@@ -153,7 +153,7 @@ class DetailsDialog(QtWidgets.QDialog, Ui_details_dialog):
     def _init_table(self, reset=False):
         details = self.project + '.json'
         details = os.path.realpath(os.path.abspath(details))
-        details = details if os.access(details, os.F_OK) and reset else os.path.realpath(os.path.abspath('templete.json'))
+        details = details if os.access(details, os.F_OK) and not reset else os.path.realpath(os.path.abspath('templete.json'))
         with open(details, 'r', encoding='utf-8') as f:
             templete = json.load(f)
 
@@ -189,7 +189,7 @@ class DetailsDialog(QtWidgets.QDialog, Ui_details_dialog):
 
     def reset(self):
         self.model.clear()
-        self._init_table()
+        self._init_table(reset=True)
 
     def save(self):
         path = self.project + '.json'
