@@ -10,7 +10,7 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
 from ui_pm_view import Ui_PM_View
-from dialog import (NewSaveDialog, SaveDialog, DeleteDialog, DetailsDialog)
+from dialog import (DeleteDialog, DetailsDialog)
 
 suite = set([
     'overlapping vertices',
@@ -37,10 +37,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         self.selected = set()
         self.item_to_add = None # item text
         self.index_to_remove = None # item index
-        self.isChanged = False
         self.nextButton.setEnabled(False)
 
-        # self.saveButton.clicked.connect(self.save)
         self.nextButton.clicked.connect(self.set_details)
         self.cancelButton.clicked.connect(self.quit)
         self.addButton.clicked.connect(self.add)
@@ -86,8 +84,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         self.selected_model.appendRow(item)
         self.selected.add(self.text_to_add)
         self.nextButton.setEnabled(True)
-        self.isChanged = True
-
 
     def remove(self):
         if self.index_to_remove is None:
@@ -99,7 +95,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
         if self.index_to_remove.row() < 0:
             self.index_to_remove = None
             self.nextButton.setEnabled(False)
-        self.isChanged = True
 
     def currentItemToAdd(self):
         index = self.testList.selectionModel().currentIndex()
@@ -112,35 +107,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
     def quit(self):
         QtWidgets.QApplication.quit()
 
-    def save(self):
-        if self.isChanged is True and len(self.selected) > 0:
-            current_project = self.project_combo.currentText()
-            dialog = NewSaveDialog(self) if current_project == 'New project' else SaveDialog(self)
-            dialog.exec_()
-
     def delete(self):
         project = self.project_combo.currentText()
         if 'New project' == project:
             self.reset()
         else:
-            file_path = os.path.abspath(os.path.realpath(project+'.ini'))
+            file_path = os.path.realpath(os.path.abspath(project+'.ini'))
             if os.access(file_path, os.F_OK):
                 dialog = DeleteDialog(file_path, self)
                 dialog.exec_()
-
-    def save_slot(self, project):
-        project_name = project + '.ini'
-        current_project = self.project_combo.currentText()
-        config = configparser.ConfigParser()
-        config['TEST SUITE'] = {}
-        for s in self.selected:
-            config['TEST SUITE'][s] = 'on'
-        with open(project_name, 'w', encoding='utf-8') as f:
-            config.write(f)
-        self.isChanged = False
-        if current_project != project:
-            self.project_combo.insertItem(0, project)
-            self.project_combo.setCurrentIndex(0)
 
     def reset(self):
         self.selected_model.clear()
