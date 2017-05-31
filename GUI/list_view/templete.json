@@ -1,8 +1,8 @@
 {
-    "overlapping vertices" : "0",
-    "n-gons counts" : "0",
-    "overlapping faces" : "0",
-    "pivot and transform" : "(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (1, 1, 1)",
+    "overlapping vertices" : "No overlapping vertices (Uneditable)",
+    "n-gons counts" : "No n-gons (Uneditable)",
+    "overlapping faces" : "No overlapping faces(laminas) (Uneditable)",
+    "pivot and transform" : "Centralized pivot and freeze transform (Uneditable)",
     "shader name" : "just a placeholder, ignore it",
     "shader name suffix" :  "_N, _D, _MC, _MD, _AO",
     "shader name prefix" :  "A, B, C",

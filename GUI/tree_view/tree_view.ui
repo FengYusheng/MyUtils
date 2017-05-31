@@ -20,14 +20,21 @@
       <item>
        <widget class="QPushButton" name="suiteButton">
         <property name="text">
-         <string>suite</string>
+         <string>Suite</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="detailButton">
         <property name="text">
-         <string>save</string>
+         <string>Detail</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="simpleButton">
+        <property name="text">
+         <string>Simple</string>
         </property>
        </widget>
       </item>
@@ -57,18 +64,14 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>28</height>
+     <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>edit</string>
     </property>
+    <addaction name="actionRead_configuration"/>
    </widget>
    <widget class="QMenu" name="menusuite">
     <property name="title">
@@ -80,12 +83,16 @@
      <string>help</string>
     </property>
    </widget>
-   <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
    <addaction name="menusuite"/>
    <addaction name="menuhelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionRead_configuration">
+   <property name="text">
+    <string>Read configuration</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

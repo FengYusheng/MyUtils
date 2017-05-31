@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'tree_view.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created by: PyQt5 UI code generator 5.7.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -21,9 +21,12 @@ class Ui_MainWindow(object):
         self.suiteButton = QtWidgets.QPushButton(self.centralwidget)
         self.suiteButton.setObjectName("suiteButton")
         self.horizontalLayout.addWidget(self.suiteButton)
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout.addWidget(self.pushButton_2)
+        self.detailButton = QtWidgets.QPushButton(self.centralwidget)
+        self.detailButton.setObjectName("detailButton")
+        self.horizontalLayout.addWidget(self.detailButton)
+        self.simpleButton = QtWidgets.QPushButton(self.centralwidget)
+        self.simpleButton.setObjectName("simpleButton")
+        self.horizontalLayout.addWidget(self.simpleButton)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -32,10 +35,8 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.treeView)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 28))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
-        self.menuFile = QtWidgets.QMenu(self.menubar)
-        self.menuFile.setObjectName("menuFile")
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         self.menusuite = QtWidgets.QMenu(self.menubar)
@@ -46,7 +47,9 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        self.menubar.addAction(self.menuFile.menuAction())
+        self.actionRead_configuration = QtWidgets.QAction(MainWindow)
+        self.actionRead_configuration.setObjectName("actionRead_configuration")
+        self.menuHelp.addAction(self.actionRead_configuration)
         self.menubar.addAction(self.menuHelp.menuAction())
         self.menubar.addAction(self.menusuite.menuAction())
         self.menubar.addAction(self.menuhelp.menuAction())
@@ -57,10 +60,11 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.suiteButton.setText(_translate("MainWindow", "suite"))
-        self.pushButton_2.setText(_translate("MainWindow", "save"))
-        self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.suiteButton.setText(_translate("MainWindow", "Suite"))
+        self.detailButton.setText(_translate("MainWindow", "Detail"))
+        self.simpleButton.setText(_translate("MainWindow", "Simple"))
         self.menuHelp.setTitle(_translate("MainWindow", "edit"))
         self.menusuite.setTitle(_translate("MainWindow", "suite"))
         self.menuhelp.setTitle(_translate("MainWindow", "help"))
+        self.actionRead_configuration.setText(_translate("MainWindow", "Read configuration"))
 

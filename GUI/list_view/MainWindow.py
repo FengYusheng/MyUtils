@@ -109,12 +109,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_PM_View):
 
     def delete(self):
         project = self.project_combo.currentText()
+        config = os.path.realpath(os.path.abspath(project+'.ini'))
         if 'New project' == project:
             self.reset()
         else:
-            file_path = os.path.realpath(os.path.abspath(project+'.ini'))
-            if os.access(file_path, os.F_OK):
-                dialog = DeleteDialog(file_path, self)
+            if os.access(config, os.F_OK):
+                dialog = DeleteDialog(self)
                 dialog.exec_()
 
     def reset(self):

@@ -99,27 +99,31 @@ class SaveDialog(QtWidgets.QDialog, Ui_save_dialog):
             json.dump(self.parent.details, f, indent=4)
 
 class DeleteDialog(QtWidgets.QDialog, Ui_deletePojectDailog):
-    def __init__(self, file_path, parent=None):
+    def __init__(self, parent=None):
         super(DeleteDialog, self).__init__(parent)
         self.setupUi(self)
-        self.file_path = file_path
         self.parent = parent
+        self.project = self.parent.project_combo.currentText()
         self.project_la.setText(
             'Delete configuration "{0}" ?'\
-            .format(self.file_path.split('\\')[-1].split('.')[0])
+            .format(self.project)
         )
 
-        self.path_la.setText('File path: {0}'.format(self.file_path))
+        config = os.path.realpath(os.path.abspath(self.project+'.ini'))
+        self.path_la.setText('File path: {0}'.format(config))
         self.setWindowTitle(
             'Delete "{0}" ?'\
-            .format(self.file_path.split('\\')[-1].split('.')[0])
+            .format(self.project)
         )
 
         self.yes_button.clicked.connect(self.delete)
         self.no_button.clicked.connect(self.cancel)
 
     def delete(self):
-        os.remove(self.file_path)
+        config = os.path.realpath(os.path.abspath(self.project+'.ini'))
+        not os.access(config, os.F_OK) or os.remove(config)
+        details = os.path.realpath(os.path.abspath(self.project+'.json'))
+        not os.access(details, os.F_OK) or os.remove(details)
         self.parent.reset()
         self.parent.project_combo.removeItem(
             self.parent.project_combo.currentIndex()
@@ -178,6 +182,7 @@ class DetailsDialog(QtWidgets.QDialog, Ui_details_dialog):
                 item.setEditable(False)
                 self.model.setItem(self.row, 0, item)
                 item = QtGui.QStandardItem(templete[t])
+                not '(Uneditable)' in templete[t] or item.setEditable(False)
                 self.model.setItem(self.row, 1, item)
                 self.row += 1
 
