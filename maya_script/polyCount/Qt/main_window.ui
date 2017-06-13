@@ -30,7 +30,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit"/>
+         <widget class="QLineEdit" name="vertices_le"/>
         </item>
        </layout>
       </item>
@@ -44,7 +44,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_2"/>
+         <widget class="QLineEdit" name="edges_le"/>
         </item>
        </layout>
       </item>
@@ -58,7 +58,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_3"/>
+         <widget class="QLineEdit" name="faces_le"/>
         </item>
        </layout>
       </item>
@@ -72,7 +72,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_4"/>
+         <widget class="QLineEdit" name="uv_le"/>
         </item>
        </layout>
       </item>
@@ -86,7 +86,7 @@
      <x>0</x>
      <y>0</y>
      <width>584</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuEdit">
