@@ -27,11 +27,26 @@ class MyTimer(QMainWindow, Ui_myLitteTimer):
         self.dateTimeEdit.setDateTime(QDateTime.currentDateTime())
         self.timer = QTimer(self)
         self.worker = Worker()
+        self.tray = None
         self.interval = 2000 # 1 min
         self.progressBar.setMaximum(60)
+        self.createTray()
 
         self.timer.timeout.connect(self.updateDateTime)
         self.worker.finished.connect(self.finishWork)
+
+
+    def createAction(self):
+        pass
+
+
+    def createTray(self):
+        menu = QMenu(self)
+        restoreAction = QAction(self)
+        menu.addAction(restoreAction)
+        self.tray = QSystemTrayIcon(self)
+        self.tray.setContextMenu(menu)
+        self.tray.show()
 
 
     def updateDateTime(self):
