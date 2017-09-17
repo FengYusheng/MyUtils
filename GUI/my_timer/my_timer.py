@@ -40,6 +40,10 @@ class MyTimer(QMainWindow, Ui_myLitteTimer):
         pass
 
 
+    def showCurrentStage(self):
+        pass
+
+
     def createTray(self):
         menu = QMenu(self)
         restoreAction = QAction(self)
