@@ -41,6 +41,16 @@ def loadBudgetUI():
     with open(py_file, 'w') as pyfile:
         compileUi(source, pyfile, False, 4, False)
 
+    source = ui_dir + '\polyCountBudget3.ui'
+    py_file = desination + '\ui_polyCountBudget3.py'
+    with open(py_file, 'w') as pyfile:
+        compileUi(source, pyfile, False, 4, False)
+
+    source = ui_dir + '\\addBudgetDialog.ui'
+    py_file = desination + '\ui_addBudgetDialog.py'
+    with open(py_file, 'w') as pyfile:
+        compileUi(source, pyfile, False, 4, False)
+
 
 if __name__ == '__main__':
     loadBudgetUI()

@@ -23,10 +23,10 @@ def savePolyCountGroupByContainer(hierarchy={}):
 
 
 def _createtContainerNode():
-    return {'container':'', 'Verts':0, 'Edges':0, 'Faces':0, 'UVs':0, 'Tris':0, 'children':{}, 'parent':'None'}
+    return {'container':'', 'Verts':0, 'Edges':0, 'Faces':0, 'UVs':0, 'Tris':0, 'surface area':0, 'children':{}, 'parent':'None'}
 
 
-def _buildHierarchy(scenePolyCount, stack, shape):
+def _buildHierarchy(scenePolyCount, stack, **shape):
     root             = None
     parent           = None
     currentContainer = None
@@ -39,13 +39,15 @@ def _buildHierarchy(scenePolyCount, stack, shape):
             containerName in parent['children'].keys() or parent['children'].setdefault(containerName, _createtContainerNode())
             currentContainer = parent['children'][containerName]
 
-        currentContainer['container'] = containerName
-        currentContainer['parent']    = parent['container'] if parent else parent
-        currentContainer['Verts']     += shape['Verts']
-        currentContainer['Edges']     += shape['Edges']
-        currentContainer['Faces']     += shape['Faces']
-        currentContainer['UVs']       += shape['UVs']
-        currentContainer['Tris']      += shape['Tris']
+        currentContainer['container']    = containerName
+        currentContainer['parent']       = parent['container'] if parent else parent
+        currentContainer['Verts']        += shape['Verts']
+        currentContainer['Edges']        += shape['Edges']
+        currentContainer['Faces']        += shape['Faces']
+        currentContainer['UVs']          += shape['UVs']
+        currentContainer['Tris']         += shape['Tris']
+        currentContainer['surface area'] += shape['surface area']
+
         parent = currentContainer
 
 
@@ -88,34 +90,46 @@ def getContainerStackUsingPymel(container=None):
 
 
 def getPoyCountGroupByContainerUsingPymel2():
-    scenePolyCount = {'Verts':0, 'Edges':0, 'Faces':0, 'UVs':0, 'Tris':0, 'hierarchy':{}}
+    scenePolyCount = {'Verts':0, 'Edges':0, 'Faces':0, 'UVs':0, 'Tris':0, 'surface area':0, 'hierarchy':{}}
     Verts = Edges = Faces = UVs = Tris = 0
     if pm.system.sceneName():
         for shape in pm.ls(type='mesh', noIntermediate=True):
             instanceCount = len(shape.getAllPaths())
-            Verts = shape.numVertices()                                                    * instanceCount
-            Edges = shape.numEdges()                                                       * instanceCount
-            Faces = shape.numFaces()                                                       * instanceCount
-            UVs   = shape.numUVs()                                                         * instanceCount
-            Tris  = int(pm.mel.eval('polyEvaluate -triangle {0}'.format(shape.name()))[0]) * instanceCount
+            Verts         = shape.numVertices()                                                    * instanceCount
+            Edges         = shape.numEdges()                                                       * instanceCount
+            Faces         = shape.numFaces()                                                       * instanceCount
+            UVs           = shape.numUVs()                                                         * instanceCount
+            Tris          = int(pm.mel.eval('polyEvaluate -triangle {0}'.format(shape.name()))[0]) * instanceCount
+            surfaceArea   = pm.polyEvaluate(shape, wa=True)
 
-            scenePolyCount['Verts'] += Verts
-            scenePolyCount['Edges'] += Edges
-            scenePolyCount['Faces'] += Faces
-            scenePolyCount['UVs']   += UVs
-            scenePolyCount['Tris']  += Tris
+            scenePolyCount['Verts']        += Verts
+            scenePolyCount['Edges']        += Edges
+            scenePolyCount['Faces']        += Faces
+            scenePolyCount['UVs']          += UVs
+            scenePolyCount['Tris']         += Tris
+            scenePolyCount['surface area'] += int(surfaceArea)
 
             container = pm.container(shape, query=True, findContainer=shape.name())
             if container is not None:
                 containerStack = getContainerStackUsingPymel(container)
-                _buildHierarchy(scenePolyCount, containerStack, {'container':container.name(), 'Verts':Verts, 'Edges':Edges, 'Faces':Faces, 'UVs':UVs, 'Tris':Tris})
+                _buildHierarchy(scenePolyCount, containerStack, **{'container':container.name(), 'Verts':Verts, 'Edges':Edges, 'Faces':Faces, 'UVs':UVs, 'Tris':Tris, 'surface area': int(surfaceArea)})
 
     return scenePolyCount
+
+
+def getModelingSurfaceAreaUsingPymel():
+    surfaceArea = 0
+    if pm.system.sceneName():
+        surfaceArea = sum((pm.polyEvaluate(shape, wa=True) for shape in pm.ls(type='mesh', noIntermediate=True)))
+        surfaceArea = int(surfaceArea)
+
+    return surfaceArea
 
 
 def getPolyCountGroupByContainer():
     scenePolyCount = getPoyCountGroupByContainerUsingPymel2()
     savePolyCountGroupByContainer(scenePolyCount)
+
 
 
 if __name__ == '__main__':

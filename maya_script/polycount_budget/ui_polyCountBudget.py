@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\Draft\polycount_budget\Qt\UI\polyCountBudget.ui'
 #
-# Created: Wed Sep 27 14:19:08 2017
+# Created: Wed Oct 11 10:34:15 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!

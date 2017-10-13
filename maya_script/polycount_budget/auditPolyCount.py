@@ -22,6 +22,7 @@ import pymel.core as pm
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(os.path.abspath(__file__))))
 from ui_auditMainWindow import Ui_AuditMainWindow
+import polycount
 sys.path.remove(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))
 
 MAYA_VERION = pm.mel.eval('getApplicationVersionAsFloat();')
@@ -258,6 +259,8 @@ class AuditPolyCount(QMainWindow, Ui_AuditMainWindow):
 
 
     def getPolyCount(self):
+        polycount.getPolyCountGroupByContainer()
+
         scene_path = pm.system.sceneName().dirname()
         path = pm.fileDialog2(cap='Open', ds=2, fm=1, dir=scene_path, okc='Open', ff='All Json Files (*.json)')
         if path is not None:
