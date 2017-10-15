@@ -67,6 +67,53 @@ def getMayaWindow():
 
 
 
+class DelegateInBudgetTableView(QStyledItemDelegate):
+    def __init__(self, data=[], parent=None):
+        # Items in table view must be editable.
+        super(DelegateInBudgetTableView, self).__init__(parent)
+        self.data = data
+        self.parent = parent
+
+
+    def createEditor(self, parent, option, index):
+        col = index.column()
+        row = index.row()
+        # print parent.objectName()
+        if col == 1:
+            editor = QDoubleSpinBox(parent)
+            editor.setMaximum(1000.0)
+            editor.setMinimum(0)
+            editor.setDecimals(1)
+            row == 0 or editor.setMinimum(self.data[row-2][1])
+            editor.setSuffix('K')
+            editor.setFrame(False)
+
+        return editor
+
+
+    def setEditorData(self, editor, index):
+        col = index.column()
+        row = index.row()
+        if col == 1:
+            valueInModel = index.model().data(index, Qt.EditRole).partition('K')[0]
+            editor.setValue(float(valueInModel))
+
+
+    def setModelData(self, editor, model, index):
+        col = index.column()
+        row = index.row()
+        if col == 1:
+            editor.interpretText()
+            value = editor.value()
+            model.setData(index, str(value)+'K', Qt.EditRole)
+
+
+
+    def updateEditorGeometry(self, editor, option, index):
+        editor.setGeometry(option.rect)
+
+
+
 class AddBudgetDialog(QDialog, Ui_addBudgetDialog):
     def __init__(self, parent):
         super(AddBudgetDialog, self).__init__(parent)
@@ -124,19 +171,21 @@ class AddBudgetDialog(QDialog, Ui_addBudgetDialog):
 class PolyCountBudgetMainWindow(QMainWindow, Ui_polyCountBudgetMainWindow):
     def __init__(self, parent=None):
         super(PolyCountBudgetMainWindow, self).__init__(parent)
+        self.budgetList = deque()
+        self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setupUi(self)
         self.budgetModelInSetBudgetTableView = QStandardItemModel(self.setBudgetTableView)
         self.setBudgetTableView.setModel(self.budgetModelInSetBudgetTableView)
         self.selectionModelInTableView = QItemSelectionModel(self.budgetModelInSetBudgetTableView, self.setBudgetTableView)
         self.setBudgetTableView.setSelectionModel(self.selectionModelInTableView)
+        self.delegateInBudgetTableView = DelegateInBudgetTableView(self.budgetList, self.setBudgetTableView)
+        self.setBudgetTableView.setItemDelegate(self.delegateInBudgetTableView)
         self.modelInPolycountTreeView = QStandardItemModel(self.polycountTreeView)
         self.polycountTreeView.setModel(self.modelInPolycountTreeView)
         self.selectionModelInTreeView = QItemSelectionModel(self.modelInPolycountTreeView, self.polycountTreeView)
         self.polycountTreeView.setSelectionModel(self.selectionModelInTreeView)
         self.viewMenu.addAction(self.budgetDock.toggleViewAction())
-        self.budgetList = deque()
-        self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.dashboard = DashboardRender(self.budgetList, self)
         self.setCentralWidget(self.dashboard)
         self.setBudgetTableView.mouseDoubleClickEvent = self._mouseDoubleClickEventInSetBudgetTableView
@@ -155,30 +204,30 @@ class PolyCountBudgetMainWindow(QMainWindow, Ui_polyCountBudgetMainWindow):
         for col in ('LOD', 'Budget', 'Tris/Verts', 'Color'):
             item = QStandardItem(col)
             item.setFont(self.font)
-            item.setEditable(False)
+            # item.setEditable(False)
             self.budgetModelInSetBudgetTableView.setHorizontalHeaderItem(index, item)
             index += 1
 
         for lod, budget, primitiveType, color in self.budgetList:
             item = QStandardItem(lod)
             item.setFont(self.font)
-            item.setEditable(False)
+            # item.setEditable(False)
             self.budgetModelInSetBudgetTableView.appendRow(item)
             row = self.budgetModelInSetBudgetTableView.indexFromItem(item).row()
 
             item = QStandardItem(budget+'K')
             item.setFont(self.font)
-            item.setEditable(False)
+            # item.setEditable(False)
             self.budgetModelInSetBudgetTableView.setItem(row, 1, item)
 
             item = QStandardItem(primitiveType)
             item.setFont(self.font)
-            item.setEditable(False)
+            # item.setEditable(False)
             self.budgetModelInSetBudgetTableView.setItem(row, 2, item)
 
             item = QStandardItem(color[0])
             item.setFont(self.font)
-            item.setEditable(False)
+            # item.setEditable(False)
             item.setData(color[1], Qt.DecorationRole)
             self.budgetModelInSetBudgetTableView.setItem(row, 3, item)
 
