@@ -84,9 +84,30 @@ class DelegateInBudgetTableView(QStyledItemDelegate):
             editor.setMaximum(1000.0)
             editor.setMinimum(0)
             editor.setDecimals(1)
-            row == 0 or editor.setMinimum(self.data[row-2][1])
+            row == 0 or editor.setMinimum(float(self.data[row-1][1]))
             editor.setSuffix('K')
             editor.setFrame(False)
+        elif col == 0:
+            editor = QComboBox(parent)
+            editor.setEditable(True)
+            editor.addItems([
+                'Extremely Low',
+                'Low',
+                'Medium',
+                'High',
+                'Very High',
+                'Extremely High'
+            ])
+        elif col == 2:
+            editor = QComboBox(parent)
+            editor.addItems(['Tris', 'Verts'])
+        elif col == 3:
+            editor = QComboBox(parent)
+            index = 0
+            for name, color in gColorTuple:
+                editor.addItem(name)
+                editor.setItemData(index, color, Qt.DecorationRole)
+                index += 1
 
         return editor
 
@@ -97,6 +118,13 @@ class DelegateInBudgetTableView(QStyledItemDelegate):
         if col == 1:
             valueInModel = index.model().data(index, Qt.EditRole).partition('K')[0]
             editor.setValue(float(valueInModel))
+        elif col == 0 or col == 2:
+            valueInModel = index.model().data(index, Qt.EditRole)
+            editor.setEditText(valueInModel)
+        elif col == 3:
+            colorName = index.model().data(index, Qt.EditRole)
+            color = index.model().data(index, Qt.DecorationRole)
+            editor.setEditText(colorName)
 
 
     def setModelData(self, editor, model, index):
@@ -104,9 +132,23 @@ class DelegateInBudgetTableView(QStyledItemDelegate):
         row = index.row()
         if col == 1:
             editor.interpretText()
-            value = editor.value()
-            model.setData(index, str(value)+'K', Qt.EditRole)
+            value = str(editor.value())
+            model.setData(index, value+'K', Qt.EditRole)
+        elif col == 0:
+            value = editor.currentText()
+            model.setData(index, value, Qt.EditRole)
+        elif col == 2:
+            value = editor.currentText()
+            model.setData(index, value, Qt.EditRole)
+            for r in range(len(self.data)):
+                self.data[r][col] = value
+        elif col == 3:
+            index = editor.currentIndex()
+            colorName = editor.itemData(index, Qt.EditRole)
+            color = editor.itemData(index, Qt.DecorationRole)
+            value = (colorName, color)
 
+        self.data[row][col] = value
 
 
     def updateEditorGeometry(self, editor, option, index):
@@ -162,7 +204,7 @@ class AddBudgetDialog(QDialog, Ui_addBudgetDialog):
         lod = self.lodComboBox.currentText()
         primitive = 'Tris' if self.triRadio.isChecked() else 'Verts'
         colorIndex = self.colorComboBox.currentIndex()
-        (len(self.parent.budgetList) and polyCount == self.parent.budgetList[-1][1]) or self.parent.budgetList.append((lod, polyCount, primitive, gColorTuple[colorIndex]))
+        (len(self.parent.budgetList) and polyCount == self.parent.budgetList[-1][1]) or self.parent.budgetList.append([lod, polyCount, primitive, gColorTuple[colorIndex]])
         self._initPolyCountSpinBox()
         self.accept()
 
@@ -173,6 +215,7 @@ class PolyCountBudgetMainWindow(QMainWindow, Ui_polyCountBudgetMainWindow):
         super(PolyCountBudgetMainWindow, self).__init__(parent)
         self.budgetList = deque()
         self.font = QFont('OldEnglish', 10, QFont.Bold)
+        self.brushForUselessItem = QBrush(Qt.darkGray)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setupUi(self)
         self.budgetModelInSetBudgetTableView = QStandardItemModel(self.setBudgetTableView)
@@ -195,7 +238,10 @@ class PolyCountBudgetMainWindow(QMainWindow, Ui_polyCountBudgetMainWindow):
         self._displayBudget()
 
         self.resetAction.triggered.connect(self.resetBudget)
+        self.saveBudgetAction.triggered.connect(self.saveBudget)
+        self.readBudgetAction.triggered.connect(self.readBudget)
         self.selectionModelInTreeView.selectionChanged.connect(self.selectMayaObjectFromView)
+        self.delegateInBudgetTableView.closeEditor.connect(self._displayBudget)
 
 
     def _displayBudget(self):
@@ -208,28 +254,35 @@ class PolyCountBudgetMainWindow(QMainWindow, Ui_polyCountBudgetMainWindow):
             self.budgetModelInSetBudgetTableView.setHorizontalHeaderItem(index, item)
             index += 1
 
+        prevLODBudget = 0.0
         for lod, budget, primitiveType, color in self.budgetList:
             item = QStandardItem(lod)
             item.setFont(self.font)
             # item.setEditable(False)
+            prevLODBudget < float(budget) or item.setBackground(self.brushForUselessItem)
             self.budgetModelInSetBudgetTableView.appendRow(item)
             row = self.budgetModelInSetBudgetTableView.indexFromItem(item).row()
 
             item = QStandardItem(budget+'K')
             item.setFont(self.font)
             # item.setEditable(False)
+            prevLODBudget < float(budget) or item.setBackground(self.brushForUselessItem)
             self.budgetModelInSetBudgetTableView.setItem(row, 1, item)
 
             item = QStandardItem(primitiveType)
             item.setFont(self.font)
             # item.setEditable(False)
+            prevLODBudget < float(budget) or item.setBackground(self.brushForUselessItem)
             self.budgetModelInSetBudgetTableView.setItem(row, 2, item)
 
             item = QStandardItem(color[0])
             item.setFont(self.font)
             # item.setEditable(False)
+            prevLODBudget < float(budget) or item.setBackground(self.brushForUselessItem)
             item.setData(color[1], Qt.DecorationRole)
             self.budgetModelInSetBudgetTableView.setItem(row, 3, item)
+
+            prevLODBudget = float(budget)
 
         self.setBudgetTableView.resizeColumnsToContents()
         self.dashboard.moveHand(0)
@@ -368,6 +421,34 @@ class PolyCountBudgetMainWindow(QMainWindow, Ui_polyCountBudgetMainWindow):
         '''
         self.polycountTreeView.clearSelection()
         QTreeView.mousePressEvent(self.polycountTreeView, event)
+
+
+    def saveBudget(self):
+        if len(self.budgetList):
+            scene_path = pm.system.sceneName().dirname()
+            destination = pm.fileDialog2(cap='Save', ds=2, fm=0, dir=scene_path, okc='Save', ff='All CSV Files (*.csv)')
+            if destination is not None:
+                with open(destination[0], 'wb') as csvfile:
+                    writer = csv.writer(csvfile, dialect=csv.excel)
+                    for row in self.budgetList:
+                        _ = [col.encode('utf-8') if not isinstance(col, tuple) else col[0].encode('utf-8') for col in row]
+                        writer.writerow(_)
+
+
+    def readBudget(self):
+        currentDir = pm.sceneName().dirname()
+        destination = pm.fileDialog2(cap='Open', ds=2, fm=1, dir=currentDir, okc='Open', ff='All CSV Files (*.csv)')
+        if destination is not None:
+            self.budgetList.clear()
+            with open(destination[0], 'rb') as csvfile:
+                reader = csv.reader(csvfile, dialect=csv.excel)
+                for row in reader:
+                    colorName = row[-1]
+                    index = int(colorName.rpartition(' ')[2])-1
+                    row[-1] = gColorTuple[index]
+                    self.budgetList.append(row)
+
+            self._displayBudget()
 
 
 
