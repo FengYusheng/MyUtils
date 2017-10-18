@@ -168,7 +168,24 @@ def getPolyCountUsingMayaAPI():
 
 
 def getPolyCountByDagPathUsingMayaAPI():
-    pass
+    meshIterator   = om.MItDag(om.MItDag.kDepthFirst, om.MItDag.kMesh)
+    meshFn         = om.MFnMesh()
+    polyCountTuple = namedtuple('polyCountTuple', ['Verts', 'Edges', 'Faces', 'Tris', 'UVs'])
+    Verts = Edges = Faces = Tris = UVs = 0
+    while not meshIterator.isDone():
+        meshNode = meshIterator.currentItem()
+        meshFn.setObject(meshNode)
+        instanceNumber = meshIterator.getPath().instanceNumber()
+
+        Verts += meshFn.numVertices            * instanceNumber
+        Edges += meshFn.numEdges               * instanceNumber
+        Faces += meshFn.numPolygons            * instanceNumber
+        UVs   += meshFn.numUVs()               * instanceNumber
+        Tris  += int(meshFn.getTriangles()[0]) * instanceNumber
+
+        meshIterator.next()
+
+    return polyCountTuple(Verts, Edges, Faces, Tris, UVs)
 
 
 
