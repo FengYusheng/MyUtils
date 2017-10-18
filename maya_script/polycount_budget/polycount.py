@@ -4,8 +4,10 @@ import os
 import sys
 import json
 from collections import deque
+from collections import namedtuple
 
 import pymel.core as pm
+import maya.api.OpenMaya as om # Python API 2.0
 
 """
 https://www.highend3d.com/maya/script/polyscatter-spread-objects-across-a-surface-for-maya
@@ -68,7 +70,8 @@ def getPolyCountUsingPymel():
     polyCount['Faces'] = Faces
     polyCount['UVs']   = UVs
     polyCount['Tris']  = Tris
-    print(polyCount)
+
+    return polyCount
 
 
 def getContainerStackUsingPymel(container=None):
@@ -131,8 +134,46 @@ def getPolyCountGroupByContainer():
     savePolyCountGroupByContainer(scenePolyCount)
 
 
+def maya_useNewAPI():
+    """ Use Maya Python API 2.0 """
+    pass
+
+
+def getPolyCountUsingMayaAPI():
+    """ Use Maya Python API 2.0 """
+    meshIterator = om.MItDag(om.MItDag.kDepthFirst, om.MFn.kMesh)
+    meshNodeFn   = om.MFnMesh()
+    # fmt = '{0} : {1}'
+    Verts = Edges = Faces = Tris = UVs = 0
+    polyCountTuple = namedtuple('polyCountTuple', ['Verts', 'Edges', 'Faces', 'Tris', 'UVs'])
+    while not meshIterator.isDone():
+        meshNode = meshIterator.currentItem()
+        meshNodeFn.setObject(meshNode)
+
+        if not meshNodeFn.isIntermediateObject:
+            # om.MFnDagNode.instanceCount() documentation says: If indirect is True then the instancing of ancestor
+            # nodes further up the DAG path is included, otherwise only the immediate instancing of this node is counted.
+            # Here I choice True because om.MFnDagNode.isInstanced(indirect=True)
+            # print fmt.format(meshNodeFn.name(), meshNodeFn.instanceCount(True))
+            instanceNumber  = meshNodeFn.instanceCount(True)
+            Verts          += meshNodeFn.numVertices
+            Edges          += meshNodeFn.numEdges
+            Faces          += meshNodeFn.numPolygons
+            UVs            += meshNodeFn.numUVs()
+            Tris           += sum(meshNodeFn.getTriangles()[0])
+
+        meshIterator.next()
+
+    return polyCountTuple(Verts, Edges, Faces, Tris, UVs)
+
+
+def getPolyCountByDagPathUsingMayaAPI():
+    pass
+
+
 
 if __name__ == '__main__':
-    scenePolyCount = getPoyCountGroupByContainerUsingPymel2()
-    printHierarchy(scenePolyCount)
-    savePolyCountGroupByContainer(scenePolyCount)
+    # scenePolyCount = getPoyCountGroupByContainerUsingPymel2()
+    # printHierarchy(scenePolyCount)
+    # savePolyCountGroupByContainer(scenePolyCount)
+    print getPolyCountUsingMayaAPI()
