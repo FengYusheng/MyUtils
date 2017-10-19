@@ -156,32 +156,13 @@ def getPolyCountUsingMayaAPI():
             # Here I choice True because om.MFnDagNode.isInstanced(indirect=True)
             # print fmt.format(meshNodeFn.name(), meshNodeFn.instanceCount(True))
             instanceNumber  = meshNodeFn.instanceCount(True)
+
+            # This kind of iterator doesn't need instance number.
             Verts          += meshNodeFn.numVertices
             Edges          += meshNodeFn.numEdges
             Faces          += meshNodeFn.numPolygons
             UVs            += meshNodeFn.numUVs()
             Tris           += sum(meshNodeFn.getTriangles()[0])
-
-        meshIterator.next()
-
-    return polyCountTuple(Verts, Edges, Faces, Tris, UVs)
-
-
-def getPolyCountByDagPathUsingMayaAPI():
-    meshIterator   = om.MItDag(om.MItDag.kDepthFirst, om.MItDag.kMesh)
-    meshFn         = om.MFnMesh()
-    polyCountTuple = namedtuple('polyCountTuple', ['Verts', 'Edges', 'Faces', 'Tris', 'UVs'])
-    Verts = Edges = Faces = Tris = UVs = 0
-    while not meshIterator.isDone():
-        meshNode = meshIterator.currentItem()
-        meshFn.setObject(meshNode)
-        instanceNumber = meshIterator.getPath().instanceNumber()
-
-        Verts += meshFn.numVertices            * instanceNumber
-        Edges += meshFn.numEdges               * instanceNumber
-        Faces += meshFn.numPolygons            * instanceNumber
-        UVs   += meshFn.numUVs()               * instanceNumber
-        Tris  += int(meshFn.getTriangles()[0]) * instanceNumber
 
         meshIterator.next()
 
