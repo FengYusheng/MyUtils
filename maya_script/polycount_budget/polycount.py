@@ -169,9 +169,90 @@ def getPolyCountUsingMayaAPI():
     return polyCountTuple(Verts, Edges, Faces, Tris, UVs)
 
 
+def getContainerStacksUsingMayaAPI():
+    containerNodeIterator = om.MItDependencyNodes(om.MFn.kContainer)
+    containerNodeFn = om.MFnContainerNode()
+    containerStacks = []
+    while not containerNodeIterator.isDone():
+        stack = deque()
+        containerNodeFn.setObject(containerNodeIterator.thisNode())
+        stack.append(containerNodeIterator.thisNode())
+        parent = containerNodeFn.getParentContainer()
+        while not parent.isNull():
+            containerNodeFn.setObject(parent)
+            stack.append(parent)
+            parent = containerNodeFn.getParentContainer()
+
+        containerStacks.append(stack)
+        containerNodeIterator.next()
+
+    return containerStacks
+
+
+def _buildHierarchyUsingMayaAPI(containerStacks=[]):
+    scenePolyCount = {'Verts':0, 'Edges':0, 'Faces':0, 'UVs':0, 'Tris':0, 'surface area':0, 'hierarchy':{}}
+    containerNodeFn = om.MFnContainerNode()
+    meshNodeFn = om.MFnMesh()
+    if len(containerStacks):
+        for stack in containerStacks:
+            root   = None
+            parent = None
+            for container in reversed(stack):
+                containerNodeFn.setObject(container)
+                Verts = Edges = Faces = Tris = UVs = 0
+                for mesh in (node for node in containerNodeFn.getMembers() if node.hasFn(om.MFn.kMesh)):
+                    meshNodeFn.setObject(mesh)
+                    Verts += meshNodeFn.numVertices
+                    Edges += meshNodeFn.numEdges
+                    Faces += meshNodeFn.numPolygons
+                    UVs   += meshNodeFn.numUVs()
+                    Tris  += sum(meshNodeFn.getTriangles()[0])
+
+                if root is None:
+                    containerNodeFn.name() in scenePolyCount['hierarchy'].keys() or scenePolyCount['hierarchy'].setdefault(containerNodeFn.name(), _createtContainerNode())
+                    root = containerNodeFn.name()
+                    currentContainer = scenePolyCount['hierarchy'][root]
+                else:
+                    containerNodeFn.name() in parent['children'].keys() or parent['children'].setdefault(containerNodeFn.name(), _createtContainerNode())
+                    currentContainer = parent['children'][containerNodeFn.name()]
+
+                currentContainer['Verts']     = Verts
+                currentContainer['Edges']     = Edges
+                currentContainer['Faces']     = Faces
+                currentContainer['Tris']      = Tris
+                currentContainer['UVs']       = UVs
+                currentContainer['container'] = containerNodeFn.name()
+                currentContainer['parent']    = parent['container'] if parent else parent
+
+                parent = currentContainer
+
+    return scenePolyCount
+
+
+def getPolyCountGroupByContainerUsingMayaAPI(scenePolyCount=None, containerStacks=None):
+    """
+    Store the leaf container's polycount in funciton getContainerStacksUsingMayaAPI?
+    e.g stack = [
+    {'container': 'street'}
+    {'container': 'Geometry_CNT'}
+    {'container': 'corner1_CNT', 'polycount':123}
+    ]
+    """
+    if scenePolyCount is not None and containerStacks is not None:
+        for stack in containerStacks:
+            root = None
+            for container in reversed(stack):
+                fn = om.MFnContainerNode(container)
+                if root is None:
+                    parent = scenePolyCount['hierarchy'][fn.name()]
+
+
 
 if __name__ == '__main__':
     # scenePolyCount = getPoyCountGroupByContainerUsingPymel2()
     # printHierarchy(scenePolyCount)
     # savePolyCountGroupByContainer(scenePolyCount)
-    print getPolyCountUsingMayaAPI()
+    containerStacks = getContainerStacksUsingMayaAPI()
+    scenePolyCount = _buildHierarchyUsingMayaAPI(containerStacks)
+    scenePolyCount = getPolyCountGroupByContainerUsingMayaAPI(scenePolyCount, containerStacks)
+    printHierarchy(scenePolyCount)
