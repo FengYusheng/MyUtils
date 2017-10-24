@@ -170,17 +170,34 @@ def getPolyCountUsingMayaAPI():
 
 
 def getContainerStacksUsingMayaAPI():
+    def _getPolyCountInContainer(containerNodeFn):
+        containerData = _createtContainerNode()
+        meshNodeFn = om.MFnMesh()
+        containerData['container'] = containerNodeFn.name()
+        for _ in (node for node in containerNodeFn.getMembers() if node.hasFn(om.MFn.kMesh)):
+            meshNodeFn.setObject(_)
+            if not meshNodeFn.isIntermediateObject:
+                containerData['Verts'] += meshNodeFn.numVertices
+                containerData['Edges'] += meshNodeFn.numEdges
+                containerData['Faces'] += meshNodeFn.numPolygons
+                containerData['UVs']   += meshNodeFn.numUVs()
+                containerData['Tris']  += sum(meshNodeFn.getTriangles()[0])
+
+        return containerData
+
+
     containerNodeIterator = om.MItDependencyNodes(om.MFn.kContainer)
     containerNodeFn = om.MFnContainerNode()
+    meshNodeFn = om.MFnMesh()
     containerStacks = []
     while not containerNodeIterator.isDone():
         stack = deque()
         containerNodeFn.setObject(containerNodeIterator.thisNode())
-        stack.append(containerNodeIterator.thisNode())
+        stack.append(_getPolyCountInContainer(containerNodeFn))
         parent = containerNodeFn.getParentContainer()
         while not parent.isNull():
             containerNodeFn.setObject(parent)
-            stack.append(parent)
+            stack.append(_getPolyCountInContainer(containerNodeFn))
             parent = containerNodeFn.getParentContainer()
 
         containerStacks.append(stack)
@@ -189,40 +206,74 @@ def getContainerStacksUsingMayaAPI():
     return containerStacks
 
 
+def getDagContainerStacksUsingMayaAPI():
+    # TODO: om.MFn.kContainerBase indicates the object either a container or a dagContainer.
+    def _getPolyCountInDagContainer(node):
+        meshFn = om.MFnMesh()
+        containerData = _createtContainerNode()
+        if node.hasFn(om.MFn.kMesh):
+            meshFn.setObject(node)
+            containerData['Verts'] = meshFn.numVertices
+            containerData['Edges'] = meshFn.numEdges
+            containerData['Faces'] = meshFn.numPolygons
+            containerData['UVs']   = meshFn.numUVs()
+            containerData['Tris']  = sum(meshFn.getTriangles()[0])
+            containerData['container'] =  meshFn.name()
+
+        return containerData
+
+
+    meshIterator = om.MItDependencyNodes(om.MFn.kMesh)
+    dagNodeFn = om.MFnDagNode()
+    dagContainerStacks = []
+    while not meshIterator.isDone():
+        stack = deque()
+        dagNodeFn.setObject(meshIterator.thisNode())
+        path = dagNodeFn.getPath()
+        node = path.node()
+        stack.append(_getPolyCountInDagContainer(node))
+        path.pop()
+        while path.length():
+            node = path.node()
+            if node.hasFn(om.MFn.kDagContainer):
+                dagNodeFn.setObject(node)
+                print dagNodeFn.name()
+
+            path.pop()
+
+        meshIterator.next()
+
+
 def _buildHierarchyUsingMayaAPI(containerStacks=[]):
     scenePolyCount = {'Verts':0, 'Edges':0, 'Faces':0, 'UVs':0, 'Tris':0, 'surface area':0, 'hierarchy':{}}
     containerNodeFn = om.MFnContainerNode()
     meshNodeFn = om.MFnMesh()
+    visited = []
     if len(containerStacks):
         for stack in containerStacks:
-            root   = None
-            parent = None
+            root    = None
+            parent  = None
+            #containerStacks[0]: ['street']
+            #containerStacks[1]: ['Geometry_CNT', 'street']
+            #containerStacks[2]: ['road_CNT', 'Geometry_CNT, 'street']
+            #So only stack[0] isn't in the hierarchy in each loop.
+            newCome = stack[0]
             for container in reversed(stack):
-                containerNodeFn.setObject(container)
-                Verts = Edges = Faces = Tris = UVs = 0
-                for mesh in (node for node in containerNodeFn.getMembers() if node.hasFn(om.MFn.kMesh)):
-                    meshNodeFn.setObject(mesh)
-                    Verts += meshNodeFn.numVertices
-                    Edges += meshNodeFn.numEdges
-                    Faces += meshNodeFn.numPolygons
-                    UVs   += meshNodeFn.numUVs()
-                    Tris  += sum(meshNodeFn.getTriangles()[0])
+                containerName = container['container']
 
                 if root is None:
-                    containerNodeFn.name() in scenePolyCount['hierarchy'].keys() or scenePolyCount['hierarchy'].setdefault(containerNodeFn.name(), _createtContainerNode())
-                    root = containerNodeFn.name()
+                    containerName in scenePolyCount['hierarchy'].keys() or scenePolyCount['hierarchy'].setdefault(containerName, _createtContainerNode())
+                    root = containerName
                     currentContainer = scenePolyCount['hierarchy'][root]
                 else:
-                    containerNodeFn.name() in parent['children'].keys() or parent['children'].setdefault(containerNodeFn.name(), _createtContainerNode())
-                    currentContainer = parent['children'][containerNodeFn.name()]
+                    containerName in parent['children'].keys() or parent['children'].setdefault(containerName, _createtContainerNode())
+                    currentContainer = parent['children'][containerName]
 
-                currentContainer['Verts']     = Verts
-                currentContainer['Edges']     = Edges
-                currentContainer['Faces']     = Faces
-                currentContainer['Tris']      = Tris
-                currentContainer['UVs']       = UVs
-                currentContainer['container'] = containerNodeFn.name()
-                currentContainer['parent']    = parent['container'] if parent else parent
+                currentContainer['Verts'] += newCome['Verts']
+                currentContainer['Edges'] += newCome['Edges']
+                currentContainer['Faces'] += newCome['Faces']
+                currentContainer['Tris']  += newCome['Tris']
+                currentContainer['UVs']   += newCome['UVs']
 
                 parent = currentContainer
 
@@ -252,7 +303,7 @@ if __name__ == '__main__':
     # scenePolyCount = getPoyCountGroupByContainerUsingPymel2()
     # printHierarchy(scenePolyCount)
     # savePolyCountGroupByContainer(scenePolyCount)
-    containerStacks = getContainerStacksUsingMayaAPI()
-    scenePolyCount = _buildHierarchyUsingMayaAPI(containerStacks)
-    scenePolyCount = getPolyCountGroupByContainerUsingMayaAPI(scenePolyCount, containerStacks)
-    printHierarchy(scenePolyCount)
+    # containerStacks = getContainerStacksUsingMayaAPI()
+    # ret = _buildHierarchyUsingMayaAPI(containerStacks)
+    # printHierarchy(ret)
+    getDagContainerStacksUsingMayaAPI()
