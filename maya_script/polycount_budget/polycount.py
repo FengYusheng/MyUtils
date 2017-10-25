@@ -140,10 +140,8 @@ def maya_useNewAPI():
 
 
 def getPolyCountUsingMayaAPI():
-    """ Use Maya Python API 2.0 """
     meshIterator = om.MItDag(om.MItDag.kDepthFirst, om.MFn.kMesh)
     meshNodeFn   = om.MFnMesh()
-    # fmt = '{0} : {1}'
     Verts = Edges = Faces = Tris = UVs = 0
     polyCountTuple = namedtuple('polyCountTuple', ['Verts', 'Edges', 'Faces', 'Tris', 'UVs'])
     while not meshIterator.isDone():
@@ -154,7 +152,6 @@ def getPolyCountUsingMayaAPI():
             # om.MFnDagNode.instanceCount() documentation says: If indirect is True then the instancing of ancestor
             # nodes further up the DAG path is included, otherwise only the immediate instancing of this node is counted.
             # Here I choice True because om.MFnDagNode.isInstanced(indirect=True)
-            # print fmt.format(meshNodeFn.name(), meshNodeFn.instanceCount(True))
             instanceNumber  = meshNodeFn.instanceCount(True)
 
             # This kind of iterator doesn't need instance number.
@@ -186,13 +183,26 @@ def getContainerStacksUsingMayaAPI():
         return containerData
 
 
+    def _getDagContainers(containerNodeFn):
+        dagNodeFn = om.MFnDagNode()
+        dagContainers = deque()
+        dagContainers.append(containerNodeFn.name())
+        for _ in (node for node in containerNodeFn.getMembers() if node.hasFn(om.MFn.kDagContainer)):
+            dagNodeFn.setObject(_)
+            dagContainers.append(dagNodeFn.name())
+
+        return dagContainers
+
+
     containerNodeIterator = om.MItDependencyNodes(om.MFn.kContainer)
     containerNodeFn = om.MFnContainerNode()
     meshNodeFn = om.MFnMesh()
     containerStacks = []
+    dagContainersInContainers = []
     while not containerNodeIterator.isDone():
         stack = deque()
         containerNodeFn.setObject(containerNodeIterator.thisNode())
+        dagContainersInContainers.append(_getDagContainers(containerNodeFn))
         stack.append(_getPolyCountInContainer(containerNodeFn))
         parent = containerNodeFn.getParentContainer()
         while not parent.isNull():
@@ -203,52 +213,62 @@ def getContainerStacksUsingMayaAPI():
         containerStacks.append(stack)
         containerNodeIterator.next()
 
-    return containerStacks
+    return containerStacks, dagContainersInContainers
 
 
 def getDagContainerStacksUsingMayaAPI():
     # TODO: om.MFn.kContainerBase indicates the object either a container or a dagContainer.
     def _getPolyCountInDagContainer(node):
         meshFn = om.MFnMesh()
+        dagNodeFn = om.MFnDagNode(node)
         containerData = _createtContainerNode()
+        containerData['container'] = dagNodeFn.name()
         if node.hasFn(om.MFn.kMesh):
             meshFn.setObject(node)
-            containerData['Verts'] = meshFn.numVertices
-            containerData['Edges'] = meshFn.numEdges
-            containerData['Faces'] = meshFn.numPolygons
-            containerData['UVs']   = meshFn.numUVs()
-            containerData['Tris']  = sum(meshFn.getTriangles()[0])
-            containerData['container'] =  meshFn.name()
+            if not meshFn.isIntermediateObject:
+                containerData['Verts'] = meshFn.numVertices
+                containerData['Edges'] = meshFn.numEdges
+                containerData['Faces'] = meshFn.numPolygons
+                containerData['UVs']   = meshFn.numUVs()
+                containerData['Tris']  = sum(meshFn.getTriangles()[0])
 
         return containerData
 
 
-    meshIterator = om.MItDependencyNodes(om.MFn.kMesh)
+    def _addPolyCountIntoDagContainer(meshNodeData, dagContainer):
+        dagContainer['Verts'] += meshNodeData['Verts']
+        dagContainer['Edges'] += meshNodeData['Edges']
+        dagContainer['Faces'] += meshNodeData['Faces']
+        dagContainer['Tris']  += meshNodeData['Tris']
+        dagContainer['UVs']   += meshNodeData['UVs']
+
+    # MItDependencyNodes may miss some mesh nodes in the scene.
+    # meshIterator = om.MItDependencyNodes(om.MFn.kMesh)
+    meshIterator = om.MItDag(om.MItDag.kDepthFirst, om.MFn.kMesh)
     dagNodeFn = om.MFnDagNode()
     dagContainerStacks = []
     while not meshIterator.isDone():
         stack = deque()
-        dagNodeFn.setObject(meshIterator.thisNode())
-        path = dagNodeFn.getPath()
-        node = path.node()
-        stack.append(_getPolyCountInDagContainer(node))
+        path = dagNodeFn.setObject(meshIterator.currentItem()).getPath()
+        meshNodeData = _getPolyCountInDagContainer(path.node())
         path.pop()
         while path.length():
             node = path.node()
-            if node.hasFn(om.MFn.kDagContainer):
-                dagNodeFn.setObject(node)
-                print dagNodeFn.name()
-
+            not node.hasFn(om.MFn.kDagContainer) or stack.append(_getPolyCountInDagContainer(node))
             path.pop()
 
+        if len(stack):
+            _addPolyCountIntoDagContainer(meshNodeData, stack[0])
+            dagContainerStacks.append(stack)
+
         meshIterator.next()
+
+    return dagContainerStacks
 
 
 def _buildHierarchyUsingMayaAPI(containerStacks=[]):
     scenePolyCount = {'Verts':0, 'Edges':0, 'Faces':0, 'UVs':0, 'Tris':0, 'surface area':0, 'hierarchy':{}}
-    containerNodeFn = om.MFnContainerNode()
     meshNodeFn = om.MFnMesh()
-    visited = []
     if len(containerStacks):
         for stack in containerStacks:
             root    = None
@@ -280,30 +300,29 @@ def _buildHierarchyUsingMayaAPI(containerStacks=[]):
     return scenePolyCount
 
 
-def getPolyCountGroupByContainerUsingMayaAPI(scenePolyCount=None, containerStacks=None):
-    """
-    Store the leaf container's polycount in funciton getContainerStacksUsingMayaAPI?
-    e.g stack = [
-    {'container': 'street'}
-    {'container': 'Geometry_CNT'}
-    {'container': 'corner1_CNT', 'polycount':123}
-    ]
-    """
-    if scenePolyCount is not None and containerStacks is not None:
-        for stack in containerStacks:
-            root = None
-            for container in reversed(stack):
-                fn = om.MFnContainerNode(container)
-                if root is None:
-                    parent = scenePolyCount['hierarchy'][fn.name()]
+def getPolyCountGroupByContainerUsingMayaAPI():
+    # Get polycount from container nodes.
+    def _mergeTwoContainerStacks(dagContainersInContainers, dagContainerStacks, containerStacks):
+        for dagContainerStack in dagContainerStacks:
+            for container in dagContainersInContainers:
+                if dagContainerStack[-1]['container'] in container:
+                    containerHead = _createtContainerNode()
+                    containerHead['container'] = container[0]
+                    dagContainerStack.append(containerHead)
+                    break
+
+        return containerStacks + dagContainerStacks
+
+
+    containerStacks, dagContainersInContainers = getContainerStacksUsingMayaAPI()
+    dagContainerStacks = getDagContainerStacksUsingMayaAPI()
+    totalStacks = _mergeTwoContainerStacks(dagContainersInContainers, dagContainerStacks, containerStacks)
+    polyCountInScene = _buildHierarchyUsingMayaAPI(totalStacks)
+
+    return polyCountInScene
 
 
 
 if __name__ == '__main__':
-    # scenePolyCount = getPoyCountGroupByContainerUsingPymel2()
-    # printHierarchy(scenePolyCount)
-    # savePolyCountGroupByContainer(scenePolyCount)
-    # containerStacks = getContainerStacksUsingMayaAPI()
-    # ret = _buildHierarchyUsingMayaAPI(containerStacks)
-    # printHierarchy(ret)
-    getDagContainerStacksUsingMayaAPI()
+    ret = getPolyCountGroupByContainerUsingMayaAPI()
+    printHierarchy(ret)
