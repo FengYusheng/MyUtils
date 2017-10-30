@@ -1,0 +1,1 @@
+Set your poly count budget and LOD.

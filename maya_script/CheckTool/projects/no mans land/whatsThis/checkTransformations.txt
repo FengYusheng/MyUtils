@@ -1,0 +1,1 @@
+Pivot should be at ZERO, and all the transformations should be frozen.
