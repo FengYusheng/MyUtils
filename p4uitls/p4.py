@@ -37,9 +37,12 @@ class P4Utils():
         # Indicate the version of your program.
         p4.version = '0.1'
 
+        
+
 
 
 
 if __name__ == '__main__':
-    args = (P4PORT, P4USER, P4PASSWD)
+    # args = (P4PORT, P4USER, P4PASSWD)
+    args = ('10.86.10.197:1666', 'feng.yusheng', P4PASSWD)
     P4Utils.info(*args)

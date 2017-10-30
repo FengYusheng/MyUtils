@@ -19,3 +19,8 @@ received during execution of the last command.
 ## 5. Display the progress.
 * Implement a subclass of `P4.Progress`.
 * `p4.track_output->list(read-only)`.
+
+## 6 Create your local perforce server
+`P4.init()`, just like `git init`?
+
+What is DVCS?

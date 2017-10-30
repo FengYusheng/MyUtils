@@ -15,6 +15,8 @@ first command is run.
 
 `P4.identify()`: Return the version of P4PYTHON that you are using.
 
+`p4.env(var)`
+
 ## Make a multi-thread version .
 `p4.disable_tmp_cleanup -> string`: call this method prior to connecting to
 server, this method make your connection thead-safe.
@@ -22,3 +24,7 @@ server, this method make your connection thead-safe.
 > https://www.perforce.com/perforce/r15.1/manuals/p4script/python.p4.html
 
 ## Implement a subclass of `P4.OutputHandler`
+
+## Get the information of the <spectype>
+* Get information: `p4.fecth_<spectype>()->P4.Spec`.
+* Display the information: `p4.format_<spectype>(dict)->string`
