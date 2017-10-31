@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PM_View</class>
- <widget class="QMainWindow" name="PM_View">
+ <class>MainWindowForPM</class>
+ <widget class="QMainWindow" name="MainWindowForPM">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -130,7 +130,7 @@
      <x>0</x>
      <y>0</y>
      <width>841</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuEdit">
