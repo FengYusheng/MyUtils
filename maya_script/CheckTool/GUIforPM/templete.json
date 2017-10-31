@@ -1,0 +1,40 @@
+{
+    "details" : {
+        "check overlapping vertices"  : 0,
+        "check n-gons"                : 0,
+        "check lamina faces"          : 0,
+        "check transformations"       : 0,
+        "check shader names"          : [],
+        "check external file path"    : 0,
+        "check intermediate node"     : 0,
+        "check poly count"            : {
+            "Verts"                   : "0",
+            "Edges"                   : "0",
+            "Faces"                   : "0",
+            "Tris"                    : "0",
+            "UVs"                     : "0"
+        }
+    },
+
+    "editable" : {
+        "check transformations"       : "no",
+        "check overlapping vertices"  : "no",
+        "check n-gons"                : "no",
+        "check lamina faces"          : "no",
+        "check intermediate node"     : "no",
+        "check external file path"    : "no",
+        "check shader names"          : "yes",
+        "check poly count"            : "yes"
+    },
+
+    "whatsThis" : {
+        "check transformations"       : "Find the transform nodes whose transformations aren't frozen and their pivots aren't centered.",
+        "check overlapping vertices"  : "Find overlapping vetices.",
+        "check n-gons"                : "Find n-gons(faces with more than 4 sides).",
+        "check lamina faces"          : "Find lamina faces(faces sharing all edges).",
+        "check intermediate node"     : "Find intermediate mesh nodes.",
+        "check shader names"          : "Determine if shaders are named correctly.",
+        "check external file path"    : "Find the file nodes which are outside the current maya work directory.",
+        "check poly count"            : "Check poly count, just like `Disply->Heads Up Display->Poly Count`."
+    }
+}
