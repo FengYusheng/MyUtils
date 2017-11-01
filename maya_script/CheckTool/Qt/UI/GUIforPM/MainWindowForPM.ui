@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PM_View</string>
+   <string>Configure Check Tool for Project:</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -28,7 +28,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QListView" name="testList"/>
+       <widget class="QListView" name="checkItemsListView"/>
       </item>
      </layout>
     </item>
@@ -75,7 +75,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="project_combo">
+         <widget class="QComboBox" name="projectCombo">
           <item>
            <property name="text">
             <string>New project</string>
@@ -86,7 +86,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QListView" name="selectedList"/>
+       <widget class="QListView" name="selectedCheckItemsListView"/>
       </item>
      </layout>
     </item>
@@ -99,13 +99,6 @@
     </item>
     <item row="2" column="0" colspan="3">
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="nextButton">
-        <property name="text">
-         <string>Next</string>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QPushButton" name="deleteButton">
         <property name="text">
@@ -120,6 +113,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="nextButton">
+        <property name="text">
+         <string>Next</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -130,7 +130,7 @@
      <x>0</x>
      <y>0</y>
      <width>841</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuEdit">
