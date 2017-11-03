@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool\Qt\UI\GUIforPM\MainWindowForPM.ui'
 #
-# Created: Wed Nov 01 18:11:53 2017
+# Created: Fri Nov 03 18:38:30 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,12 +33,12 @@ class Ui_MainWindowForPM(object):
         self.addButton = QtWidgets.QPushButton(self.centralwidget)
         self.addButton.setObjectName("addButton")
         self.verticalLayout_3.addWidget(self.addButton)
-        self.resetButton = QtWidgets.QPushButton(self.centralwidget)
-        self.resetButton.setObjectName("resetButton")
-        self.verticalLayout_3.addWidget(self.resetButton)
         self.removeButtion = QtWidgets.QPushButton(self.centralwidget)
         self.removeButtion.setObjectName("removeButtion")
         self.verticalLayout_3.addWidget(self.removeButtion)
+        self.resetButton = QtWidgets.QPushButton(self.centralwidget)
+        self.resetButton.setObjectName("resetButton")
+        self.verticalLayout_3.addWidget(self.resetButton)
         self.gridLayout.addLayout(self.verticalLayout_3, 0, 1, 1, 1)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
@@ -103,8 +103,8 @@ class Ui_MainWindowForPM(object):
         MainWindowForPM.setWindowTitle(QtWidgets.QApplication.translate("MainWindowForPM", "Configure Check Tool for Project:", None, -1))
         self.test_label.setText(QtWidgets.QApplication.translate("MainWindowForPM", "<html><head/><body><p><span style=\" font-weight:600;\">Select your check item:</span></p></body></html>", None, -1))
         self.addButton.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Add", None, -1))
-        self.resetButton.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Reset", None, -1))
         self.removeButtion.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Remove", None, -1))
+        self.resetButton.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Reset", None, -1))
         self.projectLabel.setText(QtWidgets.QApplication.translate("MainWindowForPM", "<html><head/><body><p><span style=\" font-weight:600;\">Project:</span></p></body></html>", None, -1))
         self.projectCombo.setItemText(0, QtWidgets.QApplication.translate("MainWindowForPM", "New project", None, -1))
         self.deleteButton.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Delete", None, -1))

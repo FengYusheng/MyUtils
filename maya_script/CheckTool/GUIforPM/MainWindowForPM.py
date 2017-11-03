@@ -39,7 +39,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setupUi(self)
 
-        self.checkToolDir = os.path.normcase(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
+        self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
         self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.brushForSelected = QBrush(Qt.GlobalColor.darkCyan)
         self.brushForUnselected = QBrush(Qt.NoBrush)
@@ -47,19 +47,29 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.checkItemsListView.setModel(self.modelInCheckItemsListView)
         self.selectionModelInCheckItemsListView = QItemSelectionModel(self.modelInCheckItemsListView, self.checkItemsListView)
         self.checkItemsListView.setSelectionModel(self.selectionModelInCheckItemsListView)
+        self.checkItemsListView.mouseDoubleClickEvent = self._mouseDoubleClickEventInCheckItemsListView
+        self.checkItemsListView.mousePressEvent = self._mousePressEventInCheckItemsListView
         self.modelInSelectedCheckItemsListView = QStandardItemModel(self.selectedCheckItemsListView)
         self.selectedCheckItemsListView.setModel(self.modelInSelectedCheckItemsListView)
         self.selectionModelInSelectedCheckItemsListView = QItemSelectionModel(self.modelInSelectedCheckItemsListView, self.selectedCheckItemsListView)
         self.selectedCheckItemsListView.setSelectionModel(self.selectionModelInSelectedCheckItemsListView)
+        self.selectedCheckItemsListView.mouseDoubleClickEvent = self._mouseDoubleClickEventInSelectedCheckItemsListView
+        self.selectedCheckItemsListView.mousePressEvent = self._mousePressEventInSelectedCheckItemsListView
 
         self.selectedCheckItems = []
+        self.whatsThisMessage = {}
 
         self._initProjectList()
         self._initCheckItemsList()
+        self._initSelectedCheckItemsList()
+        self._initWhatsThisMessage()
+        self._setNextButtonState()
 
         self.addButton.clicked.connect(self.addCheckItems)
         self.removeButtion.clicked.connect(self.removeCheckItems)
         self.cancelButton.clicked.connect(self.quit)
+        self.nextButton.clicked.connect(self.goToDetalWindow)
+        self.selectionModelInCheckItemsListView.selectionChanged.connect(self.displayWhatsThis)
 
 
     def _initProjectList(self):
@@ -79,7 +89,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             with open(path, 'rb') as csvfile:
                 reader = csv.reader(csvfile, dialect=csv.excel)
                 for item, _ in reader:
-                    item = QStandardItem(item)
+                    item = QStandardItem(item.strip())
                     item.setFont(self.font)
                     item.setBackground(self.brushForUnselected)
                     str(item.text()) not in self.selectedCheckItems or item.setBackground(self.brushForSelected)
@@ -97,9 +107,46 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
                 self.modelInSelectedCheckItemsListView.appendRow(item)
 
 
+    def _initWhatsThisMessage(self):
+        whatsThisDir = self.checkToolDir + '/projects/no mans land/whatsThis/'
+        for fileName in (f for t1, t2, files in os.walk(whatsThisDir) for f in files):
+            with open(whatsThisDir+'/'+fileName, 'r') as whatsThisFile:
+                key = fileName.rpartition('.')[0]
+                self.whatsThisMessage.setdefault(key, whatsThisFile.read().strip())
+
+
+    def _setNextButtonState(self):
+        self.nextButton.setEnabled(False)
+        not len(self.selectedCheckItems) or self.nextButton.setEnabled(True)
+
+
     def _updateBothCheckItemsListViews(self):
         self._initSelectedCheckItemsList()
         self._initCheckItemsList()
+
+
+    def _mouseDoubleClickEventInCheckItemsListView(self, event):
+        button = event.button()
+        Qt.LeftButton != button or self.addCheckItems()
+        QListView.mouseDoubleClickEvent(self.checkItemsListView, event)
+
+
+    def _mousePressEventInCheckItemsListView(self, event):
+        button = event.button()
+        Qt.LeftButton != button or self.checkItemsListView.clearSelection()
+        QListView.mousePressEvent(self.checkItemsListView, event)
+
+
+    def _mouseDoubleClickEventInSelectedCheckItemsListView(self, event):
+        button = event.button()
+        Qt.LeftButton != button or self.removeCheckItems()
+        QListView.mouseDoubleClickEvent(self.selectedCheckItemsListView, event)
+
+
+    def _mousePressEventInSelectedCheckItemsListView(self, event):
+        button = event.button()
+        Qt.LeftButton != button or self.selectedCheckItemsListView.clearSelection()
+        QListView.mousePressEvent(self.selectedCheckItemsListView, event)
 
 
     def addCheckItems(self):
@@ -108,6 +155,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             text = self.modelInCheckItemsListView.itemFromIndex(index).text()
             str(text) in self.selectedCheckItems or self.selectedCheckItems.append(str(text))
             self._updateBothCheckItemsListViews()
+            self._setNextButtonState()
 
 
     def removeCheckItems(self):
@@ -116,11 +164,25 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             text = self.modelInSelectedCheckItemsListView.itemFromIndex(index).text()
             self.selectedCheckItems.remove(str(text))
             self._updateBothCheckItemsListViews()
+            self._setNextButtonState()
 
 
     def quit(self):
         self.close()
 
+
+    def displayWhatsThis(self):
+        self.statusbar.clearMessage()
+        if self.selectionModelInCheckItemsListView.hasSelection():
+            index = self.selectionModelInCheckItemsListView.currentIndex()
+            key = str(self.modelInCheckItemsListView.itemFromIndex(index).text())
+            whatsThis = key + ': ' + self.whatsThisMessage.setdefault(key, '')
+            self.statusbar.showMessage(whatsThis)
+
+
+    def goToDetalWindow(self):
+        def _saveState():
+            pass
 
 
 
