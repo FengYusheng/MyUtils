@@ -22,6 +22,8 @@ except ImportError:
 
 import load_ui
 load_ui.loadUIForPM()
+import DetailsWindowForPM
+reload(DetailsWindowForPM)
 import ui_MainWindowForPM
 reload(ui_MainWindowForPM)
 
@@ -34,15 +36,11 @@ def getMayaWindow():
 
 
 class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
-    def __init__(self, parent=None):
+    def __init__(self, data={}, parent=None):
         super(MainWindowForPM, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setupUi(self)
 
-        self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
-        self.font = QFont('OldEnglish', 10, QFont.Bold)
-        self.brushForSelected = QBrush(Qt.GlobalColor.darkCyan)
-        self.brushForUnselected = QBrush(Qt.NoBrush)
         self.modelInCheckItemsListView = QStandardItemModel(self.checkItemsListView)
         self.checkItemsListView.setModel(self.modelInCheckItemsListView)
         self.selectionModelInCheckItemsListView = QItemSelectionModel(self.modelInCheckItemsListView, self.checkItemsListView)
@@ -56,8 +54,13 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.selectedCheckItemsListView.mouseDoubleClickEvent = self._mouseDoubleClickEventInSelectedCheckItemsListView
         self.selectedCheckItemsListView.mousePressEvent = self._mousePressEventInSelectedCheckItemsListView
 
-        self.selectedCheckItems = []
+        self.data = data
+        self.parent = parent
         self.whatsThisMessage = {}
+        self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
+        self.font = QFont('OldEnglish', 10, QFont.Bold)
+        self.brushForSelected = QBrush(Qt.GlobalColor.darkCyan)
+        self.brushForUnselected = QBrush(Qt.NoBrush)
 
         self._initProjectList()
         self._initCheckItemsList()
@@ -68,7 +71,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.addButton.clicked.connect(self.addCheckItems)
         self.removeButtion.clicked.connect(self.removeCheckItems)
         self.cancelButton.clicked.connect(self.quit)
-        self.nextButton.clicked.connect(self.goToDetalWindow)
+        self.nextButton.clicked.connect(self.goToDetailWindow)
         self.selectionModelInCheckItemsListView.selectionChanged.connect(self.displayWhatsThis)
 
 
@@ -92,15 +95,15 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
                     item = QStandardItem(item.strip())
                     item.setFont(self.font)
                     item.setBackground(self.brushForUnselected)
-                    str(item.text()) not in self.selectedCheckItems or item.setBackground(self.brushForSelected)
+                    str(item.text()) not in self.data.setdefault('checkItems', []) or item.setBackground(self.brushForSelected)
                     item.setEditable(False)
                     self.modelInCheckItemsListView.appendRow(item)
 
 
     def _initSelectedCheckItemsList(self):
         self.modelInSelectedCheckItemsListView.clear()
-        if len(self.selectedCheckItems):
-            for i in self.selectedCheckItems:
+        if len(self.data.setdefault('checkItems', [])):
+            for i in self.data['checkItems']:
                 item = QStandardItem(i)
                 item.setEditable(False)
                 item.setFont(self.font)
@@ -117,7 +120,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
 
     def _setNextButtonState(self):
         self.nextButton.setEnabled(False)
-        not len(self.selectedCheckItems) or self.nextButton.setEnabled(True)
+        not len(self.data.setdefault('checkItems', [])) or self.nextButton.setEnabled(True)
 
 
     def _updateBothCheckItemsListViews(self):
@@ -153,7 +156,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         if self.selectionModelInCheckItemsListView.hasSelection():
             index = self.selectionModelInCheckItemsListView.currentIndex()
             text = self.modelInCheckItemsListView.itemFromIndex(index).text()
-            str(text) in self.selectedCheckItems or self.selectedCheckItems.append(str(text))
+            str(text) in self.data.setdefault('checkItems', []) or self.data['checkItems'].append(str(text))
             self._updateBothCheckItemsListViews()
             self._setNextButtonState()
 
@@ -162,7 +165,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         if self.selectionModelInSelectedCheckItemsListView.hasSelection():
             index = self.selectionModelInSelectedCheckItemsListView.currentIndex()
             text = self.modelInSelectedCheckItemsListView.itemFromIndex(index).text()
-            self.selectedCheckItems.remove(str(text))
+            self.data['checkItems'].remove(str(text))
             self._updateBothCheckItemsListViews()
             self._setNextButtonState()
 
@@ -180,12 +183,14 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             self.statusbar.showMessage(whatsThis)
 
 
-    def goToDetalWindow(self):
-        def _saveState():
-            pass
-
-
+    def goToDetailWindow(self):
+        '''
+        https://stackoverflow.com/questions/3868928/passing-variables-between-modules
+        '''
+        self.quit()
+        detailsWindow = DetailsWindowForPM.DetailsWindowForPM(self.data, self.parent)
+        detailsWindow.show()
 
 if __name__ == '__main__':
-    window =  MainWindowForPM(getMayaWindow())
+    window =  MainWindowForPM(parent=getMayaWindow())
     window.show()

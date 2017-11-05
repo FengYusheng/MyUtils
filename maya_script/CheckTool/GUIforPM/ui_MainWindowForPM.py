@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool\Qt\UI\GUIforPM\MainWindowForPM.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\CheckTool\Qt\UI\GUIforPM\MainWindowForPM.ui'
 #
-# Created: Fri Nov 03 18:38:30 2017
+# Created: Sun Nov  5 08:41:06 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
