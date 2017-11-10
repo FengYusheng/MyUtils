@@ -24,6 +24,8 @@ import MainWindowForPM
 reload(MainWindowForPM)
 import ui_DetailsWindowForPM
 reload(ui_DetailsWindowForPM)
+import DetailTabWidgets
+reload(DetailTabWidgets)
 
 
 
@@ -34,6 +36,10 @@ def getMayaWindow():
 
 
 class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindowForPm):
+    TIPTAB = 0
+    DETAILTAB = 1
+    CHECKTAB = 2
+
     def __init__(self, data, parent=None):
         super(DetailsWindowForPM, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -50,10 +56,14 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
 
         self._initCheckItemsList()
-        self._initTipMessage()
+        self._initWhatsThisMessage()
+        self._initTabData()
 
-        self.cancelButton.clicked.connect(self.quit)
+        self.finishButton.clicked.connect(self.quit)
         self.prevButton.clicked.connect(self.gotoPreviousWindow)
+        self.selectionModelInCheckItemsListView.selectionChanged.connect(self.configureCheckItem)
+        self.tipTextBrower.textChanged.connect(self.getTip)
+        self.tipTextBrower.currentCharFormatChanged.connect(self.initTipFormat)
 
 
     def _initCheckItemsList(self):
@@ -64,16 +74,23 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
             self.modelInCheckItemsListView.appendRow(item)
 
 
-    def _initTipMessage(self):
-        self.data['tip'] = {}
+    def _initWhatsThisMessage(self):
+        self.data['whatsthis'] = {}
         tipDir = self.checkToolDir + '/projects/no mans land/tip/'
         whatsThisDir = self.checkToolDir + '/projects/no mans land/whatsThis'
         path = tipDir if os.access(tipDir, os.F_OK) else whatsThisDir
         for fileName in (f for t1, t2, files in os.walk(path) for f in files):
             with open(path+'/'+fileName, 'r') as f:
                 key = fileName.rpartition('.')[0]
-                self.data['tip'][key] = f.read().strip()
+                self.data['whatsthis'][key] = key + ': ' + f.read().strip()
 
+
+    def _initTabData(self):
+        self.itemTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
+        path = self.checkToolDir + '/projects/no mans land'
+        self.data['detail'] = {f.rpartition('.')[0]:[] for f in os.listdir(path) if f.endswith('.csv')}
+
+        self.data.setdefault('tip', {})
 
     def quit(self):
         self.close()
@@ -84,8 +101,41 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         MainWindowForPM.MainWindowForPM(self.data, self.parent).show()
 
 
+    def getTip(self):
+        index = self.selectionModelInCheckItemsListView.currentIndex()
+        item = str(self.modelInCheckItemsListView.itemFromIndex(index).text())
+        self.data['tip'][item] = self.tipTextBrower.toPlainText().strip()
+
+
+    def initTipFormat(self):
+        self.tipTextBrower.setFontPointSize(12.0)
+
+
     def configureCheckItem(self):
-        pass
+        def _configureTipTab(item):
+            self.tipTextBrower.setFontPointSize(12.0)
+            self.tipTextBrower.setPlaceholderText(
+                'You can edit your own tip message about "{0}" '.format(item)\
+                +'to tell your members what this item does.'
+            )
+            self.tipTextBrower.setPlainText(self.data['tip'].setdefault(item, ''))
+
+
+        def _configureDetailTab(item):
+            self.itemTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
+            item not in self.data['detail'].keys() or self.itemTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, True)
+            if 'check shader names' == item:
+                self.scrollAreaInDetailTab.setWidget(DetailTabWidgets.CheckShaderNamesWidget(self))
+            elif 'check poly count' == item:
+                self.scrollAreaInDetailTab.setWidget(DetailTabWidgets.CheckPolyCountWidget(self))
+
+
+        index = self.selectionModelInCheckItemsListView.currentIndex()
+        item = str(self.modelInCheckItemsListView.itemFromIndex(index).text())
+        _configureTipTab(item)
+        _configureDetailTab(item)
+
+        self.statusbar.showMessage(self.data['whatsthis'][item])
 
 
 

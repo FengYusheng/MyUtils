@@ -3,7 +3,6 @@ import os
 import re
 import sys
 import csv
-import json
 
 import maya.OpenMayaUI as apiUI
 import pymel.core as pm
