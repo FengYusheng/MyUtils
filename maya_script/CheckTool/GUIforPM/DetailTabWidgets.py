@@ -19,7 +19,7 @@ class ListViewInDetailTabWidget(QListView):
     prototypeEdited = Signal(str, int)
 
     def __init__(self, parent):
-        super(ListViewInDetailTabeWidget, self).__init__(parent)
+        super(ListViewInDetailTabWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.dataModel = QStandardItemModel(self)
@@ -49,36 +49,97 @@ class ListViewInDetailTabWidget(QListView):
 
 
 
-class TableViewInDetailTabWidget(QTableView):
+class DelegateInLODTableView(QStyledItemDelegate):
     def __init__(self, parent):
-        super(TableViewInDetailTabWidget, self).__init__(parent)
+        super(DelegateInLODTableView, self).__init__(parent)
+
+
+    def createEditor(self, parent, option, index):
+        col = index.column()
+        editor = None
+        if col == 2:
+            editor = QDoubleSpinBox(parent)
+            editor.setMaximum(1000.0)
+            editor.setMinimum(0.0)
+            editor.setDecimals(1.0)
+            editor.setSuffix('K')
+
+        return editor
+
+
+    def setEditorData(self, editor, index):
+        col = index.column()
+        if col == 2:
+            valueInModel = index.model().data(index, Qt.EditRole).partition('K')[0]
+            editor.setValue(float(valueInModel))
+
+
+    def setModelData(self, editor, model, index):
+        col = index.column()
+        if col == 2:
+            editor.interpretText()
+            value = str(editor.value()) + 'K'
+            model.setData(index, value, Qt.EditRole)
+
+
+    def updateEditorGeometry(self, editor, option, index):
+        editor.setGeometry(option.rect)
+
+
+
+class LODTableViewInDetailTabWidget(QTableView):
+    def __init__(self, parent):
+        super(LODTableViewInDetailTabWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.dataModel = QStandardItemModel(self)
         self.setModel(self.dataModel)
         self.selectionModel = QItemSelectionModel(self.dataModel, self)
         self.setSelectionModel(self.selectionModel)
+        self.budgetDelegate = DelegateInLODTableView(self)
+        self.setItemDelegate(self.budgetDelegate)
 
 
     def addLODs(self, lods):
         self.dataModel.clear()
         index = 0
-        for h in ('LOD', 'Budget', 'Tris/Verts'):
+        for h in ('LOD', 'Tris/Verts', 'Budget'):
             item = QStandardItem(h)
             item.setFont(self.font)
             self.dataModel.setHorizontalHeaderItem(index, item)
             index += 1
 
+        row = 0
+        for level, component, budget in lods:
+            item = QStandardItem(level)
+            item.setFont(self.font)
+            self.dataModel.appendRow(item)
+
+            item = QStandardItem(component)
+            item.setFont(self.font)
+            self.dataModel.setItem(row, 1, item)
+
+            item = QStandardItem(budget)
+            item.setFont(self.font)
+            self.dataModel.setItem(row, 2, item)
+
+            row += 1
+
         self.resizeColumnsToContents()
 
 
 
+
 class CheckPolyCountWidget(QWidget):
+    INITIALLOD = [('LOD_1', 'Vertex', '0.0K'),]
+
+
     def __init__(self, parent):
         super(CheckPolyCountWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
 
         self.parent = parent
+        self.tableHeader = ('LOD', 'Verts/Tris', 'Budget')
 
         self.vertLayout = QVBoxLayout(self)
         self.itemLabel = QLabel(self)
@@ -87,14 +148,14 @@ class CheckPolyCountWidget(QWidget):
         self.itemLabel.setText('<b><span style="font-size:10pt">Check Poly Count</span></b>')
         self.vertLayout.addWidget(self.itemLabel)
 
-        self.limitLabel = QLabel(self)
-        self.limitLabel.setText('Budget type')
-        self.limitComboBox = QComboBox(self)
-        self.limitComboBox.addItem('Vertex budget')
-        self.limitComboBox.addItem('Triangle budget')
+        self.typeLabel = QLabel(self)
+        self.typeLabel.setText('Budget type')
+        self.typeComboBox = QComboBox(self)
+        self.typeComboBox.addItem('Vertex')
+        self.typeComboBox.addItem('Triangle')
         horiLayout = QHBoxLayout(self)
-        horiLayout.addWidget(self.limitLabel)
-        horiLayout.addWidget(self.limitComboBox)
+        horiLayout.addWidget(self.typeLabel)
+        horiLayout.addWidget(self.typeComboBox)
         self.vertLayout.addLayout(horiLayout)
 
         self.lodLabel = QLabel(self)
@@ -106,17 +167,28 @@ class CheckPolyCountWidget(QWidget):
         horiLayout.addWidget(self.lodComboBox)
         self.vertLayout.addLayout(horiLayout)
 
-        self.lodTableView = TableViewInDetailTabWidget(self)
+        self.lodTableView = LODTableViewInDetailTabWidget(self)
         self.vertLayout.addWidget(self.lodTableView)
 
-        self.lodTableView.addLODs(self.parent.data['detail'].setdefault('check poly count', []))
+        self._initialize()
 
 
-    def _initBudgetType(self):
+    def _initialize(self):
         if len(self.parent.data['detail'].setdefault('check poly count', [])):
+            self.lodComboBox.setCurrentIndex(len(self.parent.data['detail']['check poly count'])-1)
+            self.typeComboBox.setCurrentIndex(0)
+            self.parent.data['detail']['check poly count'][0] == 'Vertex' or self.typeComboBox.setCurrentIndex(1)
+            self.lodTableView.addLODs(self.parent.data['detail']['check poly count'])
+        else:
             self.lodComboBox.setCurrentIndex(0)
-            # self.parent.data['detail']['check poly count'][0]
+            self.typeComboBox.setCurrentIndex(0)
+            self.lodTableView.addLODs(CheckPolyCountWidget.INITIALLOD)
 
+
+    def setBudgetType(self):
+        budgetType = self.typeComboBox.currentText()
+        for lod in self.parent.data['detail']['check poly count']:
+            lod[1] = budgetType
 
 
 
