@@ -22,18 +22,24 @@ import pymel.core as pm
 MAYA_VERSION = int(pm.mel.eval('getApplicationVersionAsFloat();'))
 
 def loadUIForPM():
-    checkToolDir = os.path.dirname(os.path.realpath(os.path.abspath(__file__)))
+    checkToolDir = os.path.normpath(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))
     checkToolDir = os.path.split(checkToolDir)[0]
 
-    destination = checkToolDir + '\GUIforPM' + '\ui_MainWindowForPM.py'
-    source = checkToolDir + '\Qt\UI\GUIforPM' + '\MainWindowForPM.ui'
+    destination = checkToolDir + '/GUIforPM' + '/ui_MainWindowForPM.py'
+    source = checkToolDir + '/Qt/UI/GUIforPM' + '/MainWindowForPM.ui'
     with open(destination, 'w') as f:
         compileUi(source, f, False, 4, False)
 
-    destination = checkToolDir + '\GUIforPM' + '\ui_DetailsWindowForPM.py'
-    source = checkToolDir + '\Qt\UI\GUIforPM' + '\DetailsWindowForPM.ui'
+    destination = checkToolDir + '/GUIforPM' + '/ui_DetailsWindowForPM.py'
+    source = checkToolDir + '/Qt/UI/GUIforPM' + '/DetailsWindowForPM.ui'
     with open(destination, 'w') as f:
         compileUi(source, f, False, 4, False)
+
+    destination = checkToolDir + '/GUIforPM' + '/ui_LocationDialog.py'
+    source = checkToolDir + '/Qt/UI/GUIforPM' + '/LocationDialog.ui'
+    with open(destination, 'w') as f:
+        compileUi(source, f, False, 4, False)
+
     #
     # destination = create_checker_dir + '\ui_details_dialog.py'
     # source = check_scene_dir + '\Qt\UI\create_checker' + '\details_dialog.ui'

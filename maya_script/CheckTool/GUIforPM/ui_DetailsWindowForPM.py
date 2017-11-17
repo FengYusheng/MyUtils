@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\CheckTool\Qt\UI\GUIforPM\DetailsWindowForPM.ui'
+# Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool/Qt/UI/GUIforPM/DetailsWindowForPM.ui'
 #
-# Created: Sun Nov 12 20:59:56 2017
+# Created: Fri Nov 17 18:24:16 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -24,15 +24,15 @@ class Ui_DetailsMainWindowForPm(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.checkItemsListView = QtWidgets.QListView(self.centralwidget)
+        self.checkerListView = QtWidgets.QListView(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.checkItemsListView.sizePolicy().hasHeightForWidth())
-        self.checkItemsListView.setSizePolicy(sizePolicy)
-        self.checkItemsListView.setResizeMode(QtWidgets.QListView.Adjust)
-        self.checkItemsListView.setObjectName("checkItemsListView")
-        self.horizontalLayout.addWidget(self.checkItemsListView)
+        sizePolicy.setHeightForWidth(self.checkerListView.sizePolicy().hasHeightForWidth())
+        self.checkerListView.setSizePolicy(sizePolicy)
+        self.checkerListView.setResizeMode(QtWidgets.QListView.Adjust)
+        self.checkerListView.setObjectName("checkerListView")
+        self.horizontalLayout.addWidget(self.checkerListView)
         self.itemTabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.itemTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.itemTabWidget.setElideMode(QtCore.Qt.ElideNone)
@@ -56,7 +56,7 @@ class Ui_DetailsMainWindowForPm(object):
         self.scrollAreaInDetailTab.setWidgetResizable(True)
         self.scrollAreaInDetailTab.setObjectName("scrollAreaInDetailTab")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 537, 578))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.scrollAreaInDetailTab.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollAreaInDetailTab, 0, 0, 1, 1)
@@ -69,7 +69,7 @@ class Ui_DetailsMainWindowForPm(object):
         self.scrollAreaInCheckTab.setWidgetResizable(True)
         self.scrollAreaInCheckTab.setObjectName("scrollAreaInCheckTab")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 537, 578))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.scrollAreaInCheckTab.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout_3.addWidget(self.scrollAreaInCheckTab, 0, 0, 1, 1)
@@ -96,6 +96,9 @@ class Ui_DetailsMainWindowForPm(object):
         self.prevButton = QtWidgets.QPushButton(self.centralwidget)
         self.prevButton.setObjectName("prevButton")
         self.horizontalLayout_2.addWidget(self.prevButton)
+        self.applyButton = QtWidgets.QPushButton(self.centralwidget)
+        self.applyButton.setObjectName("applyButton")
+        self.horizontalLayout_2.addWidget(self.applyButton)
         self.finishButton = QtWidgets.QPushButton(self.centralwidget)
         self.finishButton.setObjectName("finishButton")
         self.horizontalLayout_2.addWidget(self.finishButton)
@@ -124,5 +127,6 @@ class Ui_DetailsMainWindowForPm(object):
         self.itemTabWidget.setTabText(self.itemTabWidget.indexOf(self.detailTab), QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Detail", None, -1))
         self.itemTabWidget.setTabText(self.itemTabWidget.indexOf(self.checkTab), QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Check Now", None, -1))
         self.prevButton.setText(QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Previous", None, -1))
+        self.applyButton.setText(QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Apply", None, -1))
         self.finishButton.setText(QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Finish", None, -1))
 

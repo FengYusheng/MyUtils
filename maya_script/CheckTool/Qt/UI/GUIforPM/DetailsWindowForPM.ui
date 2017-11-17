@@ -24,7 +24,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QListView" name="checkItemsListView">
+       <widget class="QListView" name="checkerListView">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -89,8 +89,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>537</width>
-               <height>578</height>
+               <width>98</width>
+               <height>28</height>
               </rect>
              </property>
             </widget>
@@ -113,8 +113,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>537</width>
-               <height>578</height>
+               <width>98</width>
+               <height>28</height>
               </rect>
              </property>
             </widget>
@@ -152,6 +152,13 @@ p, li { white-space: pre-wrap; }
        <widget class="QPushButton" name="prevButton">
         <property name="text">
          <string>Previous</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="applyButton">
+        <property name="text">
+         <string>Apply</string>
         </property>
        </widget>
       </item>

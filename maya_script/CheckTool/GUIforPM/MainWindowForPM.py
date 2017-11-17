@@ -25,6 +25,9 @@ import DetailsWindowForPM
 reload(DetailsWindowForPM)
 import ui_MainWindowForPM
 reload(ui_MainWindowForPM)
+import ui_LocationDialog
+reload(ui_LocationDialog)
+import Global
 
 
 def getMayaWindow():
@@ -34,151 +37,242 @@ def getMayaWindow():
 
 
 
+class LocationDialog(QDialog, ui_LocationDialog.Ui_locationDialog):
+    def __init__(self, parent=None):
+        super(LocationDialog, self).__init__(parent)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.setupUi(self)
+        self.okButton.setDefault(True)
+        self.okButton.setEnabled(False)
+
+        self.parent = parent
+        self.location = None
+
+        self.chooseButton.clicked.connect(self.choose)
+        self.cancelButton.clicked.connect(self.quit)
+        self.okButton.clicked.connect(self.setLocation)
+
+    def choose(self):
+        destination = pm.fileDialog2(cap='Open', ds=2, fm=3, okc='Open')
+        if destination is not None:
+            self.locationLinediet.setText(destination[0])
+            self.location = destination[0]
+            not self.location or self.okButton.setEnabled(True)
+
+
+    def quit(self):
+        self.reject()
+
+
+    def setLocation(self):
+        self.parent.setLocation(self.location)
+        self.accept()
+
+
+
 class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
-    def __init__(self, data={}, parent=None):
+    locationChanged = Signal()
+
+
+    def __init__(self, parent=None, **data):
         super(MainWindowForPM, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setupUi(self)
-
-        self.modelInCheckItemsListView = QStandardItemModel(self.checkItemsListView)
-        self.checkItemsListView.setModel(self.modelInCheckItemsListView)
-        self.selectionModelInCheckItemsListView = QItemSelectionModel(self.modelInCheckItemsListView, self.checkItemsListView)
-        self.checkItemsListView.setSelectionModel(self.selectionModelInCheckItemsListView)
-        self.checkItemsListView.mouseDoubleClickEvent = self._mouseDoubleClickEventInCheckItemsListView
-        self.checkItemsListView.mousePressEvent = self._mousePressEventInCheckItemsListView
-        self.modelInSelectedCheckItemsListView = QStandardItemModel(self.selectedCheckItemsListView)
-        self.selectedCheckItemsListView.setModel(self.modelInSelectedCheckItemsListView)
-        self.selectionModelInSelectedCheckItemsListView = QItemSelectionModel(self.modelInSelectedCheckItemsListView, self.selectedCheckItemsListView)
-        self.selectedCheckItemsListView.setSelectionModel(self.selectionModelInSelectedCheckItemsListView)
-        self.selectedCheckItemsListView.mouseDoubleClickEvent = self._mouseDoubleClickEventInSelectedCheckItemsListView
-        self.selectedCheckItemsListView.mousePressEvent = self._mousePressEventInSelectedCheckItemsListView
+        self.modelInCheckerListView = QStandardItemModel(self.checkerListView)
+        self.checkerListView.setModel(self.modelInCheckerListView)
+        self.selectionModelInCheckerListView = QItemSelectionModel(self.modelInCheckerListView, self.checkerListView)
+        self.checkerListView.setSelectionModel(self.selectionModelInCheckerListView)
+        self.checkerListView.mouseDoubleClickEvent = self._mouseDoubleClickEventInCheckerListView
+        self.checkerListView.mousePressEvent = self._mousePressEventInCheckerListView
+        self.modelInSelectedCheckerListView = QStandardItemModel(self.selectedCheckerListView)
+        self.selectedCheckerListView.setModel(self.modelInSelectedCheckerListView)
+        self.selectionModelInSelectedCheckerListView = QItemSelectionModel(self.modelInSelectedCheckerListView, self.selectedCheckerListView)
+        self.selectedCheckerListView.setSelectionModel(self.selectionModelInSelectedCheckerListView)
+        self.selectedCheckerListView.mouseDoubleClickEvent = self._mouseDoubleClickEventInSelectedCheckerListView
+        self.selectedCheckerListView.mousePressEvent = self._mousePressEventInSelectedCheckerListView
+        self.nextButton.setEnabled(False)
 
         self.data = data
         self.parent = parent
-        self.whatsThisMessage = {}
         self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
         self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.brushForSelected = QBrush(Qt.GlobalColor.darkCyan)
         self.brushForUnselected = QBrush(Qt.NoBrush)
 
-        self._initProjectList()
-        self._initCheckItemsList()
-        self._initSelectedCheckItemsList()
-        self._initWhatsThisMessage()
-        self._setNextButtonState()
+        self.initialize()
 
-        self.addButton.clicked.connect(self.addCheckItems)
-        self.removeButtion.clicked.connect(self.removeCheckItems)
+        self.projectCombo.currentIndexChanged.connect(self.setCurrentProjectIndex)
+        self.addButton.clicked.connect(self.addChecker)
+        self.removeButtion.clicked.connect(self.removeChecker)
         self.cancelButton.clicked.connect(self.quit)
         self.nextButton.clicked.connect(self.goToDetailWindow)
-        self.selectionModelInCheckItemsListView.selectionChanged.connect(self.displayWhatsThis)
+        self.resetButton.clicked.connect(self.reset)
+        self.selectionModelInCheckerListView.selectionChanged.connect(self.showWhatsThis)
+        self.locationChanged.connect(self.initialize)
+
+
+    def _initCheckerList(self):
+        project = self.projectCombo.currentText()
+        self.modelInCheckerListView.clear()
+        for checker in Global.checkers:
+            item = QStandardItem(checker.strip())
+            item.setFont(self.font)
+            item.setEditable(False)
+            item.setBackground(self.brushForUnselected)
+            checker not in self.checkers(project) or item.setBackground(self.brushForSelected)
+            self.modelInCheckerListView.appendRow(item)
 
 
     def _initProjectList(self):
-        dataDir = self.checkToolDir + '/projects'
         self.projectCombo.clear()
-        for top, subdirs, filenames in os.walk(dataDir):
-            self.projects = subdirs
+        for root, subdirs, filenames in os.walk(self.location()):
+            self.setProjects(subdirs)
+            self.projectCombo.addItems(self.projects())
+            for p in subdirs:
+                path = root + p + '/checkers.csv'
+                if os.access(path, os.F_OK):
+                    with open(path, 'wb') as csvfile:
+                        self.setCheckers(p, [i for i in csv.reader(csvfile, dialect=csv.excel)])
+
             break
 
-        self.projectCombo.addItems(self.projects)
+        self.projectCombo.setCurrentIndex(self.currentProjectIndex())
 
 
-    def _initCheckItemsList(self):
-        path = self.checkToolDir + '/projects/no mans land/checkItems.csv'
-        if os.access(path, os.F_OK):
-            self.modelInCheckItemsListView.clear()
-            with open(path, 'rb') as csvfile:
-                reader = csv.reader(csvfile, dialect=csv.excel)
-                for item, _ in reader:
-                    item = QStandardItem(item.strip())
-                    item.setFont(self.font)
-                    item.setBackground(self.brushForUnselected)
-                    str(item.text()) not in self.data.setdefault('checkItems', []) or item.setBackground(self.brushForSelected)
-                    item.setEditable(False)
-                    self.modelInCheckItemsListView.appendRow(item)
-
-
-    def _initSelectedCheckItemsList(self):
-        self.modelInSelectedCheckItemsListView.clear()
-        if len(self.data.setdefault('checkItems', [])):
-            for i in self.data['checkItems']:
-                item = QStandardItem(i)
-                item.setEditable(False)
-                item.setFont(self.font)
-                self.modelInSelectedCheckItemsListView.appendRow(item)
-
-
-    def _initWhatsThisMessage(self):
-        whatsThisDir = self.checkToolDir + '/projects/no mans land/whatsThis/'
-        for fileName in (f for t1, t2, files in os.walk(whatsThisDir) for f in files):
-            with open(whatsThisDir+'/'+fileName, 'r') as whatsThisFile:
-                key = fileName.rpartition('.')[0]
-                self.whatsThisMessage.setdefault(key, whatsThisFile.read().strip())
+    def _initSelectedCheckerList(self):
+        project = self.projectCombo.currentText()
+        self.modelInSelectedCheckerListView.clear()
+        for i in self.checkers(project):
+            item = QStandardItem(i)
+            item.setEditable(False)
+            item.setFont(self.font)
+            self.modelInSelectedCheckerListView.appendRow(item)
 
 
     def _setNextButtonState(self):
+        project = self.projectCombo.currentText()
         self.nextButton.setEnabled(False)
-        not len(self.data.setdefault('checkItems', [])) or self.nextButton.setEnabled(True)
+        not len(self.checkers(project)) or self.nextButton.setEnabled(True)
 
 
-    def _updateBothCheckItemsListViews(self):
-        self._initSelectedCheckItemsList()
-        self._initCheckItemsList()
+    def _updateBothCheckerListViews(self):
+        self._initSelectedCheckerList()
+        self._initCheckerList()
 
 
-    def _mouseDoubleClickEventInCheckItemsListView(self, event):
+    def _mouseDoubleClickEventInCheckerListView(self, event):
         button = event.button()
-        Qt.LeftButton != button or self.addCheckItems()
-        QListView.mouseDoubleClickEvent(self.checkItemsListView, event)
+        Qt.LeftButton != button or self.addChecker()
+        QListView.mouseDoubleClickEvent(self.checkerListView, event)
 
 
-    def _mousePressEventInCheckItemsListView(self, event):
+    def _mousePressEventInCheckerListView(self, event):
         button = event.button()
-        Qt.LeftButton != button or self.checkItemsListView.clearSelection()
-        QListView.mousePressEvent(self.checkItemsListView, event)
+        Qt.LeftButton != button or self.checkerListView.clearSelection()
+        QListView.mousePressEvent(self.checkerListView, event)
 
 
-    def _mouseDoubleClickEventInSelectedCheckItemsListView(self, event):
+    def _mouseDoubleClickEventInSelectedCheckerListView(self, event):
         button = event.button()
-        Qt.LeftButton != button or self.removeCheckItems()
-        QListView.mouseDoubleClickEvent(self.selectedCheckItemsListView, event)
+        Qt.LeftButton != button or self.removeChecker()
+        QListView.mouseDoubleClickEvent(self.selectedCheckerListView, event)
 
 
-    def _mousePressEventInSelectedCheckItemsListView(self, event):
+    def _mousePressEventInSelectedCheckerListView(self, event):
         button = event.button()
-        Qt.LeftButton != button or self.selectedCheckItemsListView.clearSelection()
-        QListView.mousePressEvent(self.selectedCheckItemsListView, event)
+        Qt.LeftButton != button or self.selectedCheckerListView.clearSelection()
+        QListView.mousePressEvent(self.selectedCheckerListView, event)
 
 
-    def addCheckItems(self):
-        if self.selectionModelInCheckItemsListView.hasSelection():
-            index = self.selectionModelInCheckItemsListView.currentIndex()
-            text = self.modelInCheckItemsListView.itemFromIndex(index).text()
-            str(text) in self.data.setdefault('checkItems', []) or self.data['checkItems'].append(str(text))
-            self._updateBothCheckItemsListViews()
+    def setLocation(self, location):
+        self.data.clear()
+        self.data['location'] = location
+        self.locationChanged.emit()
+
+
+    def location(self):
+        return self.data.setdefault('location', '')
+
+
+    def projects(self):
+        return self.data.setdefault('projects', [])
+
+
+    def setProjects(self, projects):
+        self.data['projects'] = projects
+        self.data['projects'].append('New project')
+        self.data['projects'].append('Change location')
+
+
+    def setCurrentProjectIndex(self):
+        project = self.projectCombo.currentText()
+        if 'Change location' == project:
+            QDialog.Accepted == LocationDialog(self).exec_() or self.projectCombo.setCurrentIndex(0)
+        else:
+            index = self.projectCombo.currentIndex()
+            index = index if index > -1 else 0
+            self.data['project'] = index
+
+
+    def currentProjectIndex(self):
+        return self.data.setdefault('project', 0)
+
+
+    def checkers(self, project):
+        self.data.setdefault('checkers', {})
+        return self.data['checkers'].setdefault(project, [])
+
+
+    def setCheckers(self, project, checkers):
+        self.data.setdefault('checkers', {})
+        self.data['checkers'][project] = checkers
+
+
+    def addChecker(self):
+        if self.selectionModelInCheckerListView.hasSelection():
+            project = self.projectCombo.currentText()
+            index = self.selectionModelInCheckerListView.currentIndex()
+            text = self.modelInCheckerListView.itemFromIndex(index).text()
+            text in self.checkers(project) or self.data['checkers'][project].append(text)
+            self._updateBothCheckerListViews()
             self._setNextButtonState()
 
 
-    def removeCheckItems(self):
-        if self.selectionModelInSelectedCheckItemsListView.hasSelection():
-            index = self.selectionModelInSelectedCheckItemsListView.currentIndex()
-            text = self.modelInSelectedCheckItemsListView.itemFromIndex(index).text()
-            self.data['checkItems'].remove(str(text))
-            self._updateBothCheckItemsListViews()
+    def removeChecker(self):
+        if self.selectionModelInSelectedCheckerListView.hasSelection():
+            project = self.projectCombo.currentText()
+            index = self.selectionModelInSelectedCheckerListView.currentIndex()
+            text = self.modelInSelectedCheckerListView.itemFromIndex(index).text()
+            self.checkers(project).remove(text)
+            self._updateBothCheckerListViews()
             self._setNextButtonState()
+
+
+    def initialize(self):
+        self._initProjectList()
+        self._initSelectedCheckerList()
+        self._initCheckerList()
+        self._setNextButtonState()
+
+
+    def reset(self):
+        project = self.projectCombo.currentText()
+        self.setCheckers(project, [])
+        self._initSelectedCheckerList()
+        self._initCheckerList()
+        self._setNextButtonState()
 
 
     def quit(self):
         self.close()
 
 
-    def displayWhatsThis(self):
+    def showWhatsThis(self):
         self.statusbar.clearMessage()
-        if self.selectionModelInCheckItemsListView.hasSelection():
-            index = self.selectionModelInCheckItemsListView.currentIndex()
-            key = str(self.modelInCheckItemsListView.itemFromIndex(index).text())
-            whatsThis = key + ': ' + self.whatsThisMessage.setdefault(key, '')
+        if self.selectionModelInCheckerListView.hasSelection():
+            index = self.selectionModelInCheckerListView.currentIndex()
+            key = str(self.modelInCheckerListView.itemFromIndex(index).text())
+            whatsThis = key + ': ' + Global.whatsThis[key]
             self.statusbar.showMessage(whatsThis)
 
 
@@ -186,10 +280,16 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         '''
         https://stackoverflow.com/questions/3868928/passing-variables-between-modules
         '''
+        data = self.data
+        parent = self.parent
         self.quit()
-        detailsWindow = DetailsWindowForPM.DetailsWindowForPM(self.data, self.parent)
+        detailsWindow = DetailsWindowForPM.DetailsWindowForPM(parent, **data)
         detailsWindow.show()
+
+
 
 if __name__ == '__main__':
     window =  MainWindowForPM(parent=getMayaWindow())
     window.show()
+    if QDialog.Rejected == LocationDialog(window).exec_():
+        window.quit()

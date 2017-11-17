@@ -1,0 +1,7 @@
+check n-gons,no
+check lamina faces,no
+check transformations,no
+check overlapping vertices,no
+check external files,no
+check shader names,no
+check poly count,no

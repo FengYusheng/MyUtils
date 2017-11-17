@@ -28,7 +28,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QListView" name="checkItemsListView"/>
+       <widget class="QListView" name="checkerListView"/>
       </item>
      </layout>
     </item>
@@ -81,12 +81,17 @@
             <string>New project</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Change location</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="QListView" name="selectedCheckItemsListView"/>
+       <widget class="QListView" name="selectedCheckerListView"/>
       </item>
      </layout>
     </item>

@@ -26,6 +26,7 @@ import ui_DetailsWindowForPM
 reload(ui_DetailsWindowForPM)
 import DetailTabWidgets
 reload(DetailTabWidgets)
+import Global
 
 
 
@@ -40,70 +41,65 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
     DETAILTAB = 1
     CHECKTAB = 2
 
-    def __init__(self, data, parent=None):
+    def __init__(self, parent=None, **data):
         super(DetailsWindowForPM, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setupUi(self)
-
         self.font =  QFont('OldEnglish', 10, QFont.Bold)
-        self.modelInCheckItemsListView = QStandardItemModel(self.checkItemsListView)
-        self.selectionModelInCheckItemsListView = QItemSelectionModel(self.modelInCheckItemsListView, self.checkItemsListView)
-        self.checkItemsListView.setModel(self.modelInCheckItemsListView)
-        self.checkItemsListView.setSelectionModel(self.selectionModelInCheckItemsListView)
+        self.modelInCheckerListView = QStandardItemModel(self.checkerListView)
+        self.selectionModelInCheckerListView = QItemSelectionModel(self.modelInCheckerListView, self.checkerListView)
+        self.checkerListView.setModel(self.modelInCheckerListView)
+        self.checkerListView.setSelectionModel(self.selectionModelInCheckerListView)
 
         self.data = data
         self.parent = parent
+        self.project = self.currentProject()
         self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
+        self.itemTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
 
-        self._initCheckItemsList()
-        self._initWhatsThisMessage()
-        self._initTabData()
+        self._initCheckerList()
 
         self.finishButton.clicked.connect(self.quit)
+        self.applyButton.clicked.connect(self.save)
         self.prevButton.clicked.connect(self.gotoPreviousWindow)
-        self.selectionModelInCheckItemsListView.selectionChanged.connect(self.configureCheckItem)
+        self.selectionModelInCheckerListView.selectionChanged.connect(self.configureCheckItem)
         self.tipTextBrower.textChanged.connect(self.getTip)
         self.tipTextBrower.currentCharFormatChanged.connect(self.initTipFormat)
 
 
-    def _initCheckItemsList(self):
-        for i in self.data['checkItems']:
+
+    def _initCheckerList(self):
+        for i in self.checkers():
             item = QStandardItem(i)
             item.setFont(self.font)
             item.setEditable(False)
-            self.modelInCheckItemsListView.appendRow(item)
+            self.modelInCheckerListView.appendRow(item)
 
 
-    def _initWhatsThisMessage(self):
-        self.data['whatsthis'] = {}
-        tipDir = self.checkToolDir + '/projects/no mans land/tip/'
-        whatsThisDir = self.checkToolDir + '/projects/no mans land/whatsThis'
-        path = tipDir if os.access(tipDir, os.F_OK) else whatsThisDir
-        for fileName in (f for t1, t2, files in os.walk(path) for f in files):
-            with open(path+'/'+fileName, 'r') as f:
-                key = fileName.rpartition('.')[0]
-                self.data['whatsthis'][key] = key + ': ' + f.read().strip()
+    def currentProject(self):
+        index = self.data['project']
+        return self.data['projects'][index]
 
 
-    def _initTabData(self):
-        self.itemTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
-        path = self.checkToolDir + '/projects/no mans land'
-        self.data['detail'] = {f.rpartition('.')[0]:[] for f in os.listdir(path) if f.endswith('.csv')}
+    def checkers(self):
+        self.data.setdefault('checkers', {})
+        return self.data['checkers'].setdefault(self.project, [])
 
-        self.data.setdefault('tip', {})
 
     def quit(self):
         self.close()
 
 
     def gotoPreviousWindow(self):
+        parent = self.parent
+        data = self.data
         self.quit()
-        MainWindowForPM.MainWindowForPM(self.data, self.parent).show()
+        MainWindowForPM.MainWindowForPM(parent, **data).show()
 
 
     def getTip(self):
-        index = self.selectionModelInCheckItemsListView.currentIndex()
-        item = str(self.modelInCheckItemsListView.itemFromIndex(index).text())
+        index = self.selectionModelInCheckerListView.currentIndex()
+        item = str(self.modelInCheckerListView.itemFromIndex(index).text())
         self.data['tip'][item] = self.tipTextBrower.toPlainText().strip()
 
 
@@ -130,12 +126,43 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
                 self.scrollAreaInDetailTab.setWidget(DetailTabWidgets.CheckPolyCountWidget(self))
 
 
-        index = self.selectionModelInCheckItemsListView.currentIndex()
-        item = str(self.modelInCheckItemsListView.itemFromIndex(index).text())
+        index = self.selectionModelInCheckerListView.currentIndex()
+        item = str(self.modelInCheckerListView.itemFromIndex(index).text())
         _configureTipTab(item)
         _configureDetailTab(item)
 
         self.statusbar.showMessage(self.data['whatsthis'][item])
+
+
+    def dataInDetailTab(self, item):
+        pass
+
+
+    def setDataInDetailTab(self, item, *args):
+        pass
+
+
+    def save(self):
+        # Save selected items.
+        destination = self.checkToolDir + '/temporary'
+        if len(self.data['checkItems']):
+            with open(destination+'/selected checkers.csv', 'wb') as csvfile:
+                writer = csv.writer(csvfile, dialect=csv.excel)
+                writer.writerows([[i] for i in self.data['checkItems']])
+
+        # Save tips.
+        destination = self.checkToolDir + '/temporary/tip'
+        if len(self.data['tip']):
+            for key, tip in self.data['tip'].items():
+                with open(destination+'/'+key+'.txt', 'w') as tipfile:
+                    tipfile.write(tip.encode('utf-8'))
+
+        # Save detail configuration.
+        destination = self.checkToolDir + '/temporary/detail'
+        for key, detail in self.data['detail'].items():
+            with open(destination+'/'+key+'.csv', 'wb') as csvfile:
+                writer = csv.writer(csvfile, dialect=csv.excel)
+                writer.writerows([[i] for i in detail])
 
 
 

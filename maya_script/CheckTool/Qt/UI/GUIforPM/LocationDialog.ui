@@ -17,12 +17,12 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLineEdit" name="chooseLineEdit">
+      <widget class="QLineEdit" name="locationLinediet">
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Choose a directory to locate your suite files...</string>
+        <string>Choose a directory to store your configuration.</string>
        </property>
       </widget>
      </item>
@@ -38,7 +38,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="okbutton">
+      <widget class="QPushButton" name="okButton">
        <property name="text">
         <string>OK</string>
        </property>

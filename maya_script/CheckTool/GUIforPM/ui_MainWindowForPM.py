@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\CheckTool\Qt\UI\GUIforPM\MainWindowForPM.ui'
+# Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool/Qt/UI/GUIforPM/MainWindowForPM.ui'
 #
-# Created: Sun Nov 12 20:59:56 2017
+# Created: Fri Nov 17 18:24:16 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,9 +23,9 @@ class Ui_MainWindowForPM(object):
         self.test_label = QtWidgets.QLabel(self.centralwidget)
         self.test_label.setObjectName("test_label")
         self.verticalLayout.addWidget(self.test_label)
-        self.checkItemsListView = QtWidgets.QListView(self.centralwidget)
-        self.checkItemsListView.setObjectName("checkItemsListView")
-        self.verticalLayout.addWidget(self.checkItemsListView)
+        self.checkerListView = QtWidgets.QListView(self.centralwidget)
+        self.checkerListView.setObjectName("checkerListView")
+        self.verticalLayout.addWidget(self.checkerListView)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
@@ -51,11 +51,12 @@ class Ui_MainWindowForPM(object):
         self.projectCombo = QtWidgets.QComboBox(self.centralwidget)
         self.projectCombo.setObjectName("projectCombo")
         self.projectCombo.addItem("")
+        self.projectCombo.addItem("")
         self.horizontalLayout_2.addWidget(self.projectCombo)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-        self.selectedCheckItemsListView = QtWidgets.QListView(self.centralwidget)
-        self.selectedCheckItemsListView.setObjectName("selectedCheckItemsListView")
-        self.verticalLayout_2.addWidget(self.selectedCheckItemsListView)
+        self.selectedCheckerListView = QtWidgets.QListView(self.centralwidget)
+        self.selectedCheckerListView.setObjectName("selectedCheckerListView")
+        self.verticalLayout_2.addWidget(self.selectedCheckerListView)
         self.gridLayout.addLayout(self.verticalLayout_2, 0, 2, 1, 1)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -107,6 +108,7 @@ class Ui_MainWindowForPM(object):
         self.resetButton.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Reset", None, -1))
         self.projectLabel.setText(QtWidgets.QApplication.translate("MainWindowForPM", "<html><head/><body><p><span style=\" font-weight:600;\">Project:</span></p></body></html>", None, -1))
         self.projectCombo.setItemText(0, QtWidgets.QApplication.translate("MainWindowForPM", "New project", None, -1))
+        self.projectCombo.setItemText(1, QtWidgets.QApplication.translate("MainWindowForPM", "Change location", None, -1))
         self.deleteButton.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Delete", None, -1))
         self.cancelButton.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Cancel", None, -1))
         self.nextButton.setText(QtWidgets.QApplication.translate("MainWindowForPM", "Next", None, -1))

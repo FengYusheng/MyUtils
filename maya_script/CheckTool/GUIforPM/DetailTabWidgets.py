@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
-import re
-
 try:
     from PySide2.QtGui import *
     from PySide2.QtWidgets import *
@@ -88,6 +85,9 @@ class DelegateInLODTableView(QStyledItemDelegate):
 
 
 class LODTableViewInDetailTabWidget(QTableView):
+    budgetEdited = Signal(QModelIndex, str)
+
+
     def __init__(self, parent):
         super(LODTableViewInDetailTabWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -99,8 +99,10 @@ class LODTableViewInDetailTabWidget(QTableView):
         self.budgetDelegate = DelegateInLODTableView(self)
         self.setItemDelegate(self.budgetDelegate)
 
+        self.dataModel.itemChanged.connect(self.setBudget)
 
-    def addLODs(self, lods):
+
+    def setLODs(self, lods):
         self.dataModel.clear()
         index = 0
         for h in ('LOD', 'Tris/Verts', 'Budget'):
@@ -110,6 +112,7 @@ class LODTableViewInDetailTabWidget(QTableView):
             index += 1
 
         row = 0
+        # lods: [['LOD_1', 'Vertex', '0.0K'],]
         for level, component, budget in lods:
             item = QStandardItem(level)
             item.setFont(self.font)
@@ -128,10 +131,38 @@ class LODTableViewInDetailTabWidget(QTableView):
         self.resizeColumnsToContents()
 
 
+    def setBudget(self, item):
+        index = self.dataModel.indexFromItem(item)
+        budget = item.text()
+        self.budgetEdited.emit(index, budget)
+
 
 
 class CheckPolyCountWidget(QWidget):
-    INITIALLOD = [('LOD_1', 'Vertex', '0.0K'),]
+    INITIALLOD = {
+        'Vertex'   : [
+            ['LOD_1', 'Vertex', '0.0K'],
+            ['LOD_2', 'Vertex', '0.0K'],
+            ['LOD_3', 'Vertex', '0.0K'],
+            ['LOD_4', 'Vertex', '0.0K'],
+            ['LOD_5', 'Vertex', '0.0K'],
+            ['LOD_6', 'Vertex', '0.0K'],
+            ['LOD_7', 'Vertex', '0.0K'],
+            ['LOD_8', 'Vertex', '0.0K'],
+            ['LOD_9', 'Vertex', '0.0K']
+            ],
+        'Triangle' : [
+            ['LOD_1', 'Triangle', '0.0K'],
+            ['LOD_2', 'Triangle', '0.0K'],
+            ['LOD_3', 'Triangle', '0.0K'],
+            ['LOD_4', 'Triangle', '0.0K'],
+            ['LOD_5', 'Triangle', '0.0K'],
+            ['LOD_6', 'Triangle', '0.0K'],
+            ['LOD_7', 'Triangle', '0.0K'],
+            ['LOD_8', 'Triangle', '0.0K'],
+            ['LOD_9', 'Triangle', '0.0K'],
+            ]
+    }
 
 
     def __init__(self, parent):
@@ -172,23 +203,47 @@ class CheckPolyCountWidget(QWidget):
 
         self._initialize()
 
+        self.typeComboBox.currentIndexChanged.connect(self.setBudgetType)
+        self.lodComboBox.currentIndexChanged.connect(self.setLODCount)
+        self.lodTableView.budgetEdited.connect(self.setBudget)
+
 
     def _initialize(self):
         if len(self.parent.data['detail'].setdefault('check poly count', [])):
             self.lodComboBox.setCurrentIndex(len(self.parent.data['detail']['check poly count'])-1)
             self.typeComboBox.setCurrentIndex(0)
-            self.parent.data['detail']['check poly count'][0] == 'Vertex' or self.typeComboBox.setCurrentIndex(1)
-            self.lodTableView.addLODs(self.parent.data['detail']['check poly count'])
+            self.parent.data['detail']['check poly count'][0][1] == 'Vertex' or self.typeComboBox.setCurrentIndex(1)
+            self.lodTableView.setLODs(self.parent.data['detail']['check poly count'])
         else:
             self.lodComboBox.setCurrentIndex(0)
             self.typeComboBox.setCurrentIndex(0)
-            self.lodTableView.addLODs(CheckPolyCountWidget.INITIALLOD)
+            self.parent.data['detail']['check poly count'] = CheckPolyCountWidget.INITIALLOD['Vertex'][:1]
+            self.lodTableView.setLODs(self.parent.data['detail']['check poly count'])
 
 
     def setBudgetType(self):
         budgetType = self.typeComboBox.currentText()
+        count = int(self.lodComboBox.currentText())
         for lod in self.parent.data['detail']['check poly count']:
             lod[1] = budgetType
+        self.lodTableView.setLODs(self.parent.data['detail']['check poly count'][0:count])
+
+
+    def setLODCount(self):
+        count = int(self.lodComboBox.currentText())
+        budgetType = self.typeComboBox.currentText()
+        existing = len(self.parent.data['detail']['check poly count'])
+        if count > existing:
+            self.parent.data['detail']['check poly count'] = self.parent.data['detail']['check poly count'] + CheckPolyCountWidget.INITIALLOD[budgetType][existing:count]
+            self.lodTableView.setLODs(self.parent.data['detail']['check poly count'])
+        else:
+            self.lodTableView.setLODs(self.parent.data['detail']['check poly count'][0:count])
+
+
+    def setBudget(self, index, budget):
+        row = index.row()
+        col = index.column()
+        self.parent.data['detail']['check poly count'][row][col] = budget
 
 
 
@@ -251,17 +306,23 @@ class CheckShaderNamesWidget(QWidget):
         self.prototypeList.addItems(self.parent.data['detail'].setdefault('check shader names', []))
         self.vertLayout.addWidget(self.prototypeList)
 
+        self.regularEditor = QTextEdit(self)
+        self.regularEditor.setPlaceholderText('Enter regular expression.')
+        self.regularEditor.setVisible(False)
+        self.regularEditor.setFontPointSize(10.0)
+        self.vertLayout.addWidget(self.regularEditor)
+
         self.buttonGroup.buttonClicked.connect(self.switchMode)
         self.prefixLineEdit.textEdited.connect(self.previewNamePrototype)
         self.postfixLineEdit.textEdited.connect(self.previewNamePrototype)
         self.resetButton.clicked.connect(self.reset)
         self.addButton.clicked.connect(self.addPrototype)
         self.prototypeList.prototypeEdited.connect(self.editPrototype)
+        self.regularEditor.currentCharFormatChanged.connect(lambda x:self.regularEditor.setFontPointSize(10.0))
+        self.regularEditor.textChanged.connect(self.editPrototypeInRegularMode)
 
 
     def switchMode(self):
-        self.prototypeList.clearItems()
-        self.parent.data['detail']['check shader names'] = []
         if self.reRadioButton.isChecked():
             self.prefixLineEdit.setEnabled(False)
             self.prefixLineEdit.clear()
@@ -270,12 +331,20 @@ class CheckShaderNamesWidget(QWidget):
             self.addButton.setEnabled(False)
             self.resetButton.setEnabled(False)
             self.previewLabel.setText('<b><span style="font-size:10pt">Enter your regular expression:</span></b>')
+            self.prototypeList.setVisible(False)
+            self.regularEditor.setVisible(True)
+            self.regularEditor.clear()
         else:
             self.prefixLineEdit.setEnabled(True)
             self.postfixLineEdit.setEnabled(True)
             self.addButton.setEnabled(True)
             self.resetButton.setEnabled(True)
             self.previewLabel.setText('<b><span style="font-size:10pt">Preview</span></b>')
+            self.prototypeList.setVisible(True)
+            self.regularEditor.setVisible(False)
+            self.prototypeList.clearItems()
+
+        self.parent.data['detail']['check shader names'] = []
 
 
     def previewNamePrototype(self):
@@ -306,3 +375,7 @@ class CheckShaderNamesWidget(QWidget):
             self.parent.data['detail']['check shader names'][row] = text
         else:
             del self.parent.data['detail']['check shader names'][row]
+
+
+    def editPrototypeInRegularMode(self):
+        self.parent.data['detail']['check shader names'] = self.regularEditor.toPlainText().split('\n')
