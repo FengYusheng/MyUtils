@@ -50,22 +50,26 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         self.selectionModelInCheckerListView = QItemSelectionModel(self.modelInCheckerListView, self.checkerListView)
         self.checkerListView.setModel(self.modelInCheckerListView)
         self.checkerListView.setSelectionModel(self.selectionModelInCheckerListView)
+        self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.TIPTAB, False)
+        self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
+        self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.CHECKTAB, False)
+        self.checkerListView.mousePressEvent = self._mousePressEventInCheckerListView
+
 
         self.data = data
         self.parent = parent
         self.project = self.currentProject()
         self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
-        self.itemTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
 
         self._initCheckerList()
+        self._initTabData()
 
         self.finishButton.clicked.connect(self.quit)
         self.applyButton.clicked.connect(self.save)
         self.prevButton.clicked.connect(self.gotoPreviousWindow)
         self.selectionModelInCheckerListView.selectionChanged.connect(self.configureCheckItem)
-        self.tipTextBrower.textChanged.connect(self.getTip)
+        self.tipTextBrower.textChanged.connect(self.setTip)
         self.tipTextBrower.currentCharFormatChanged.connect(self.initTipFormat)
-
 
 
     def _initCheckerList(self):
@@ -76,6 +80,16 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
             self.modelInCheckerListView.appendRow(item)
 
 
+    def _initTabData(self):
+        self.data.setdefault('tip', {})
+        self.data.setdefault('detail', {})
+
+
+    def _mousePressEventInCheckerListView(self, event):
+        self.selectionModelInCheckerListView.clearSelection()
+        QListView.mousePressEvent(self.checkerListView, event)
+
+
     def currentProject(self):
         index = self.data['project']
         return self.data['projects'][index]
@@ -84,6 +98,16 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
     def checkers(self):
         self.data.setdefault('checkers', {})
         return self.data['checkers'].setdefault(self.project, [])
+
+
+    def setTip(self):
+        index = self.selectionModelInCheckerListView.currentIndex()
+        checker = self.modelInCheckerListView.itemFromIndex(index).text()
+        self.data['tip'][checker] = self.tipTextBrower.toPlainText().strip()
+
+
+    def tip(self, checker):
+        return self.data['tip'].setdefault(checker, '')
 
 
     def quit(self):
@@ -97,49 +121,49 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         MainWindowForPM.MainWindowForPM(parent, **data).show()
 
 
-    def getTip(self):
-        index = self.selectionModelInCheckerListView.currentIndex()
-        item = str(self.modelInCheckerListView.itemFromIndex(index).text())
-        self.data['tip'][item] = self.tipTextBrower.toPlainText().strip()
-
-
     def initTipFormat(self):
         self.tipTextBrower.setFontPointSize(12.0)
 
 
     def configureCheckItem(self):
-        def _configureTipTab(item):
+        def _configureTipTab(checker):
+            self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.TIPTAB, True)
             self.tipTextBrower.setFontPointSize(12.0)
             self.tipTextBrower.setPlaceholderText(
-                'You can edit your own tip message about "{0}" '.format(item)\
+                'You can edit your own tip message about "{0}" '.format(checker)\
                 +'to tell your members what this item does.'
             )
-            self.tipTextBrower.setPlainText(self.data['tip'].setdefault(item, ''))
+            self.tipTextBrower.setPlainText(self.tip(checker))
 
 
-        def _configureDetailTab(item):
-            self.itemTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
-            item not in self.data['detail'].keys() or self.itemTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, True)
-            if 'check shader names' == item:
+        def _configureDetailTab(checker):
+            checker not in Global.detail or self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, True)
+            if 'check shader names' == checker:
                 self.scrollAreaInDetailTab.setWidget(DetailTabWidgets.CheckShaderNamesWidget(self))
-            elif 'check poly count' == item:
+            elif 'check poly count' == checker:
                 self.scrollAreaInDetailTab.setWidget(DetailTabWidgets.CheckPolyCountWidget(self))
 
 
-        index = self.selectionModelInCheckerListView.currentIndex()
-        item = str(self.modelInCheckerListView.itemFromIndex(index).text())
-        _configureTipTab(item)
-        _configureDetailTab(item)
+        self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.TIPTAB, False)
+        self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
+        self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.CHECKTAB, False)
+        self.statusbar.clearMessage()
+        if self.selectionModelInCheckerListView.hasSelection():
+            index = self.selectionModelInCheckerListView.currentIndex()
+            checker = str(self.modelInCheckerListView.itemFromIndex(index).text())
+            _configureTipTab(checker)
+            _configureDetailTab(checker)
 
-        self.statusbar.showMessage(self.data['whatsthis'][item])
+            self.statusbar.showMessage(Global.whatsThis[checker])
 
 
-    def dataInDetailTab(self, item):
-        pass
+    def detail(self, checker):
+        return self.data['detail'].setdefault(checker, [])
 
 
-    def setDataInDetailTab(self, item, *args):
-        pass
+    def setDetail(self, checker, args=[]):
+        self.data['detail'].setdefault(checker, [])
+        self.data['detail'][checker] = args
 
 
     def save(self):

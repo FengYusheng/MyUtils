@@ -209,41 +209,47 @@ class CheckPolyCountWidget(QWidget):
 
 
     def _initialize(self):
-        if len(self.parent.data['detail'].setdefault('check poly count', [])):
-            self.lodComboBox.setCurrentIndex(len(self.parent.data['detail']['check poly count'])-1)
+        data = self.parent.detail('check shader names')
+        if len(data):
+            self.lodComboBox.setCurrentIndex(len(data)-1)
             self.typeComboBox.setCurrentIndex(0)
-            self.parent.data['detail']['check poly count'][0][1] == 'Vertex' or self.typeComboBox.setCurrentIndex(1)
-            self.lodTableView.setLODs(self.parent.data['detail']['check poly count'])
+            data[0][1] == 'Vertex' or self.typeComboBox.setCurrentIndex(1)
+            self.lodTableView.setLODs(data)
         else:
             self.lodComboBox.setCurrentIndex(0)
             self.typeComboBox.setCurrentIndex(0)
-            self.parent.data['detail']['check poly count'] = CheckPolyCountWidget.INITIALLOD['Vertex'][:1]
-            self.lodTableView.setLODs(self.parent.data['detail']['check poly count'])
+            data = CheckPolyCountWidget.INITIALLOD['Vertex'][:1]
+            self.parent.setDetail('check poly count', data)
+            self.lodTableView.setLODs(data)
 
 
     def setBudgetType(self):
         budgetType = self.typeComboBox.currentText()
         count = int(self.lodComboBox.currentText())
-        for lod in self.parent.data['detail']['check poly count']:
+        data = self.parent.detail('check poly count')
+        for lod in data:
             lod[1] = budgetType
-        self.lodTableView.setLODs(self.parent.data['detail']['check poly count'][0:count])
+        self.lodTableView.setLODs(data[0:count])
 
 
     def setLODCount(self):
         count = int(self.lodComboBox.currentText())
         budgetType = self.typeComboBox.currentText()
-        existing = len(self.parent.data['detail']['check poly count'])
+        data = self.parent.detail('check poly count')
+        existing = len(data)
         if count > existing:
-            self.parent.data['detail']['check poly count'] = self.parent.data['detail']['check poly count'] + CheckPolyCountWidget.INITIALLOD[budgetType][existing:count]
+            data = data + CheckPolyCountWidget.INITIALLOD[budgetType][existing:count]
             self.lodTableView.setLODs(self.parent.data['detail']['check poly count'])
         else:
-            self.lodTableView.setLODs(self.parent.data['detail']['check poly count'][0:count])
+            self.lodTableView.setLODs(data[0:count])
 
 
     def setBudget(self, index, budget):
         row = index.row()
         col = index.column()
-        self.parent.data['detail']['check poly count'][row][col] = budget
+        data = self.parent.detail('check poly count')
+        data[row][col] = budget
+        self.parent.setDetail('check poly count', data)
 
 
 
@@ -344,7 +350,7 @@ class CheckShaderNamesWidget(QWidget):
             self.regularEditor.setVisible(False)
             self.prototypeList.clearItems()
 
-        self.parent.data['detail']['check shader names'] = []
+        self.parent.setDetail('checker shader names', [])
 
 
     def previewNamePrototype(self):
@@ -357,25 +363,29 @@ class CheckShaderNamesWidget(QWidget):
         self.postfixLineEdit.clear()
         self.previewLabel.setText('<b><span style="font-size:10pt">Preview</span></b>')
         self.prototypeList.clearItems()
-        self.parent.data['detail']['check shader names'] = []
+        self.parent.setDetail('checker shader names', [])
 
 
     def addPrototype(self):
         prototype = self.prefixLineEdit.text() + u'<SHADER>' + self.postfixLineEdit.text()
         if prototype not in self.parent.data['detail']['check shader names']:
             self.prototypeList.addItems([prototype,])
-            self.parent.data['detail']['check shader names'].append(prototype)
+            data = self.parent.detail('checker shader names')
+            data.append(prototype)
+            self.parent.setDetail(checker, data)
             self.prefixLineEdit.clear()
             self.postfixLineEdit.clear()
             self.previewLabel.setText('<b><span style="font-size:10pt">Preview</span></b>')
 
 
     def editPrototype(self, text, row):
+        data = self.parent.detail(checker)
         if len(text):
-            self.parent.data['detail']['check shader names'][row] = text
+            data[row] = text
         else:
-            del self.parent.data['detail']['check shader names'][row]
+            del data[row]
+        self.parent.setDetail(checker, data)
 
 
     def editPrototypeInRegularMode(self):
-        self.parent.data['detail']['check shader names'] = self.regularEditor.toPlainText().split('\n')
+        self.parent.setDetail('check shader names', self.regularEditor.toPlainText().split('\n'))

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool/Qt/UI/GUIforPM/DetailsWindowForPM.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\CheckTool/Qt/UI/GUIforPM/DetailsWindowForPM.ui'
 #
-# Created: Fri Nov 17 18:24:16 2017
+# Created: Sun Nov 19 20:29:49 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,12 +33,12 @@ class Ui_DetailsMainWindowForPm(object):
         self.checkerListView.setResizeMode(QtWidgets.QListView.Adjust)
         self.checkerListView.setObjectName("checkerListView")
         self.horizontalLayout.addWidget(self.checkerListView)
-        self.itemTabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.itemTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
-        self.itemTabWidget.setElideMode(QtCore.Qt.ElideNone)
-        self.itemTabWidget.setMovable(False)
-        self.itemTabWidget.setTabBarAutoHide(True)
-        self.itemTabWidget.setObjectName("itemTabWidget")
+        self.checkerTabWidget = QtWidgets.QTabWidget(self.centralwidget)
+        self.checkerTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
+        self.checkerTabWidget.setElideMode(QtCore.Qt.ElideNone)
+        self.checkerTabWidget.setMovable(False)
+        self.checkerTabWidget.setTabBarAutoHide(True)
+        self.checkerTabWidget.setObjectName("checkerTabWidget")
         self.tipTab = QtWidgets.QWidget()
         self.tipTab.setObjectName("tipTab")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.tipTab)
@@ -47,7 +47,7 @@ class Ui_DetailsMainWindowForPm(object):
         self.tipTextBrower.setReadOnly(False)
         self.tipTextBrower.setObjectName("tipTextBrower")
         self.gridLayout_2.addWidget(self.tipTextBrower, 0, 0, 1, 1)
-        self.itemTabWidget.addTab(self.tipTab, "")
+        self.checkerTabWidget.addTab(self.tipTab, "")
         self.detailTab = QtWidgets.QWidget()
         self.detailTab.setObjectName("detailTab")
         self.gridLayout = QtWidgets.QGridLayout(self.detailTab)
@@ -60,7 +60,7 @@ class Ui_DetailsMainWindowForPm(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.scrollAreaInDetailTab.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollAreaInDetailTab, 0, 0, 1, 1)
-        self.itemTabWidget.addTab(self.detailTab, "")
+        self.checkerTabWidget.addTab(self.detailTab, "")
         self.checkTab = QtWidgets.QWidget()
         self.checkTab.setObjectName("checkTab")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.checkTab)
@@ -73,8 +73,8 @@ class Ui_DetailsMainWindowForPm(object):
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.scrollAreaInCheckTab.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout_3.addWidget(self.scrollAreaInCheckTab, 0, 0, 1, 1)
-        self.itemTabWidget.addTab(self.checkTab, "")
-        self.horizontalLayout.addWidget(self.itemTabWidget)
+        self.checkerTabWidget.addTab(self.checkTab, "")
+        self.horizontalLayout.addWidget(self.checkerTabWidget)
         self.line = QtWidgets.QFrame(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -105,7 +105,7 @@ class Ui_DetailsMainWindowForPm(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         DetailsMainWindowForPm.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(DetailsMainWindowForPm)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 854, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 854, 23))
         self.menubar.setObjectName("menubar")
         DetailsMainWindowForPm.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(DetailsMainWindowForPm)
@@ -113,7 +113,7 @@ class Ui_DetailsMainWindowForPm(object):
         DetailsMainWindowForPm.setStatusBar(self.statusbar)
 
         self.retranslateUi(DetailsMainWindowForPm)
-        self.itemTabWidget.setCurrentIndex(0)
+        self.checkerTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(DetailsMainWindowForPm)
 
     def retranslateUi(self, DetailsMainWindowForPm):
@@ -121,11 +121,11 @@ class Ui_DetailsMainWindowForPm(object):
         self.tipTextBrower.setHtml(QtWidgets.QApplication.translate("DetailsMainWindowForPm", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>", None, -1))
-        self.itemTabWidget.setTabText(self.itemTabWidget.indexOf(self.tipTab), QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Tip", None, -1))
-        self.itemTabWidget.setTabText(self.itemTabWidget.indexOf(self.detailTab), QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Detail", None, -1))
-        self.itemTabWidget.setTabText(self.itemTabWidget.indexOf(self.checkTab), QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Check Now", None, -1))
+"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:12pt;\"><br /></p></body></html>", None, -1))
+        self.checkerTabWidget.setTabText(self.checkerTabWidget.indexOf(self.tipTab), QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Tip", None, -1))
+        self.checkerTabWidget.setTabText(self.checkerTabWidget.indexOf(self.detailTab), QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Detail", None, -1))
+        self.checkerTabWidget.setTabText(self.checkerTabWidget.indexOf(self.checkTab), QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Check Now", None, -1))
         self.prevButton.setText(QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Previous", None, -1))
         self.applyButton.setText(QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Apply", None, -1))
         self.finishButton.setText(QtWidgets.QApplication.translate("DetailsMainWindowForPm", "Finish", None, -1))
