@@ -67,7 +67,7 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         self.finishButton.clicked.connect(self.quit)
         self.applyButton.clicked.connect(self.save)
         self.prevButton.clicked.connect(self.gotoPreviousWindow)
-        self.selectionModelInCheckerListView.selectionChanged.connect(self.configureCheckItem)
+        self.selectionModelInCheckerListView.selectionChanged.connect(self.configureTab)
         self.tipTextBrower.textChanged.connect(self.setTip)
         self.tipTextBrower.currentCharFormatChanged.connect(self.initTipFormat)
 
@@ -125,7 +125,7 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         self.tipTextBrower.setFontPointSize(12.0)
 
 
-    def configureCheckItem(self):
+    def configureTab(self):
         def _configureTipTab(checker):
             self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.TIPTAB, True)
             self.tipTextBrower.setFontPointSize(12.0)

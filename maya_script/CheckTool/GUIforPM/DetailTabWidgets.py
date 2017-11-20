@@ -47,6 +47,8 @@ class ListViewInDetailTabWidget(QListView):
 
 
 class DelegateInLODTableView(QStyledItemDelegate):
+    budgetEdited = Signal(QModelIndex, str)
+
     def __init__(self, parent):
         super(DelegateInLODTableView, self).__init__(parent)
 
@@ -77,6 +79,7 @@ class DelegateInLODTableView(QStyledItemDelegate):
             editor.interpretText()
             value = str(editor.value()) + 'K'
             model.setData(index, value, Qt.EditRole)
+            self.budgetEdited.emit(index, value)
 
 
     def updateEditorGeometry(self, editor, option, index):
@@ -86,7 +89,6 @@ class DelegateInLODTableView(QStyledItemDelegate):
 
 class LODTableViewInDetailTabWidget(QTableView):
     budgetEdited = Signal(QModelIndex, str)
-
 
     def __init__(self, parent):
         super(LODTableViewInDetailTabWidget, self).__init__(parent)
@@ -99,7 +101,7 @@ class LODTableViewInDetailTabWidget(QTableView):
         self.budgetDelegate = DelegateInLODTableView(self)
         self.setItemDelegate(self.budgetDelegate)
 
-        self.dataModel.itemChanged.connect(self.setBudget)
+        self.budgetDelegate.budgetEdited.connect(self.setBudget)
 
 
     def setLODs(self, lods):
@@ -131,9 +133,7 @@ class LODTableViewInDetailTabWidget(QTableView):
         self.resizeColumnsToContents()
 
 
-    def setBudget(self, item):
-        index = self.dataModel.indexFromItem(item)
-        budget = item.text()
+    def setBudget(self, index, budget):
         self.budgetEdited.emit(index, budget)
 
 
@@ -163,6 +163,8 @@ class CheckPolyCountWidget(QWidget):
             ['LOD_9', 'Triangle', '0.0K'],
             ]
     }
+
+    CHECKER = 'check poly count'
 
 
     def __init__(self, parent):
@@ -209,7 +211,7 @@ class CheckPolyCountWidget(QWidget):
 
 
     def _initialize(self):
-        data = self.parent.detail('check shader names')
+        data = self.parent.detail('check poly count')
         if len(data):
             self.lodComboBox.setCurrentIndex(len(data)-1)
             self.typeComboBox.setCurrentIndex(0)
@@ -239,9 +241,12 @@ class CheckPolyCountWidget(QWidget):
         existing = len(data)
         if count > existing:
             data = data + CheckPolyCountWidget.INITIALLOD[budgetType][existing:count]
-            self.lodTableView.setLODs(self.parent.data['detail']['check poly count'])
+            self.lodTableView.setLODs(data)
         else:
             self.lodTableView.setLODs(data[0:count])
+            data = data[0:count]
+
+        self.parent.setDetail('check poly count', data)
 
 
     def setBudget(self, index, budget):
@@ -254,6 +259,8 @@ class CheckPolyCountWidget(QWidget):
 
 
 class CheckShaderNamesWidget(QWidget):
+    CHECKER = 'check shader names'
+
     def __init__(self, parent):
         super(CheckShaderNamesWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -339,7 +346,7 @@ class CheckShaderNamesWidget(QWidget):
             self.previewLabel.setText('<b><span style="font-size:10pt">Enter your regular expression:</span></b>')
             self.prototypeList.setVisible(False)
             self.regularEditor.setVisible(True)
-            self.regularEditor.clear()
+            self.regularEditor.setPlainText('\n'.join(self.parent.detail('check shader names')))
         else:
             self.prefixLineEdit.setEnabled(True)
             self.postfixLineEdit.setEnabled(True)
@@ -349,8 +356,7 @@ class CheckShaderNamesWidget(QWidget):
             self.prototypeList.setVisible(True)
             self.regularEditor.setVisible(False)
             self.prototypeList.clearItems()
-
-        self.parent.setDetail('checker shader names', [])
+            self.prototypeList.addItems(self.parent.detail('check shader names'))
 
 
     def previewNamePrototype(self):
@@ -363,29 +369,31 @@ class CheckShaderNamesWidget(QWidget):
         self.postfixLineEdit.clear()
         self.previewLabel.setText('<b><span style="font-size:10pt">Preview</span></b>')
         self.prototypeList.clearItems()
-        self.parent.setDetail('checker shader names', [])
+        self.parent.setDetail('check shader names', [])
 
 
     def addPrototype(self):
-        prototype = self.prefixLineEdit.text() + u'<SHADER>' + self.postfixLineEdit.text()
-        if prototype not in self.parent.data['detail']['check shader names']:
-            self.prototypeList.addItems([prototype,])
-            data = self.parent.detail('checker shader names')
-            data.append(prototype)
-            self.parent.setDetail(checker, data)
-            self.prefixLineEdit.clear()
-            self.postfixLineEdit.clear()
-            self.previewLabel.setText('<b><span style="font-size:10pt">Preview</span></b>')
+        if len(self.prefixLineEdit.text()) or len(self.postfixLineEdit.text()):
+            prototype = self.prefixLineEdit.text() + u'<SHADER>' + self.postfixLineEdit.text()
+            data = self.parent.detail('check shader names')
+            if prototype not in data:
+                self.prototypeList.addItems([prototype,])
+                data.append(prototype)
+                self.parent.setDetail('check shader names', data)
+                self.prefixLineEdit.clear()
+                self.postfixLineEdit.clear()
+                self.previewLabel.setText('<b><span style="font-size:10pt">Preview</span></b>')
 
 
     def editPrototype(self, text, row):
-        data = self.parent.detail(checker)
+        data = self.parent.detail('check shader names')
         if len(text):
             data[row] = text
         else:
             del data[row]
-        self.parent.setDetail(checker, data)
+
+        self.parent.setDetail('check shader names', data)
 
 
     def editPrototypeInRegularMode(self):
-        self.parent.setDetail('check shader names', self.regularEditor.toPlainText().split('\n'))
+        self.parent.setDetail('check shader names', self.regularEditor.toPlainText().strip().split('\n'))

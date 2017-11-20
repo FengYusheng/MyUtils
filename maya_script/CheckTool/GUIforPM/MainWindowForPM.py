@@ -73,7 +73,6 @@ class LocationDialog(QDialog, ui_LocationDialog.Ui_locationDialog):
 class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
     locationChanged = Signal()
 
-
     def __init__(self, parent=None, **data):
         super(MainWindowForPM, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
