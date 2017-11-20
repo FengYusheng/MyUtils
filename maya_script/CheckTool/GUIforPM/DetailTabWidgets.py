@@ -139,33 +139,7 @@ class LODTableViewInDetailTabWidget(QTableView):
 
 
 class CheckPolyCountWidget(QWidget):
-    INITIALLOD = {
-        'Vertex'   : [
-            ['LOD_1', 'Vertex', '0.0K'],
-            ['LOD_2', 'Vertex', '0.0K'],
-            ['LOD_3', 'Vertex', '0.0K'],
-            ['LOD_4', 'Vertex', '0.0K'],
-            ['LOD_5', 'Vertex', '0.0K'],
-            ['LOD_6', 'Vertex', '0.0K'],
-            ['LOD_7', 'Vertex', '0.0K'],
-            ['LOD_8', 'Vertex', '0.0K'],
-            ['LOD_9', 'Vertex', '0.0K']
-            ],
-        'Triangle' : [
-            ['LOD_1', 'Triangle', '0.0K'],
-            ['LOD_2', 'Triangle', '0.0K'],
-            ['LOD_3', 'Triangle', '0.0K'],
-            ['LOD_4', 'Triangle', '0.0K'],
-            ['LOD_5', 'Triangle', '0.0K'],
-            ['LOD_6', 'Triangle', '0.0K'],
-            ['LOD_7', 'Triangle', '0.0K'],
-            ['LOD_8', 'Triangle', '0.0K'],
-            ['LOD_9', 'Triangle', '0.0K'],
-            ]
-    }
-
     CHECKER = 'check poly count'
-
 
     def __init__(self, parent):
         super(CheckPolyCountWidget, self).__init__(parent)
@@ -220,9 +194,16 @@ class CheckPolyCountWidget(QWidget):
         else:
             self.lodComboBox.setCurrentIndex(0)
             self.typeComboBox.setCurrentIndex(0)
-            data = CheckPolyCountWidget.INITIALLOD['Vertex'][:1]
+            data = self._initializeLODs()['Vertex'][:1]
             self.parent.setDetail('check poly count', data)
             self.lodTableView.setLODs(data)
+
+
+    def _initializeLODs(self):
+        return {
+            'Vertex'   : [['LOD_{0}'.format(i), 'Vertex', '0.0K'] for i in range(1, 10)],
+            'Triangle' : [['LOD_{0}'.format(i), 'Triangle', '0.0K'] for i in range(1, 10)]
+        }
 
 
     def setBudgetType(self):
@@ -240,7 +221,7 @@ class CheckPolyCountWidget(QWidget):
         data = self.parent.detail('check poly count')
         existing = len(data)
         if count > existing:
-            data = data + CheckPolyCountWidget.INITIALLOD[budgetType][existing:count]
+            data = data + self._initializeLODs()[budgetType][existing:count]
             self.lodTableView.setLODs(data)
         else:
             self.lodTableView.setLODs(data[0:count])

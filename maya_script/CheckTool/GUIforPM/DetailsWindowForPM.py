@@ -167,6 +167,10 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
 
 
     def save(self):
+        if 'New project' ==  self.project:
+            pass
+        else:
+            pass
         # Save selected items.
         destination = self.checkToolDir + '/temporary'
         if len(self.data['checkItems']):
