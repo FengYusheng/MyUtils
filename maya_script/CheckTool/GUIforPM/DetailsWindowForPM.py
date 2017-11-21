@@ -26,6 +26,8 @@ import ui_DetailsWindowForPM
 reload(ui_DetailsWindowForPM)
 import DetailTabWidgets
 reload(DetailTabWidgets)
+import ui_CreateProjectDialog
+reload(ui_CreateProjectDialog)
 import Global
 
 
@@ -34,6 +36,45 @@ def getMayaWindow():
     ptr = apiUI.MQtUtil.mainWindow()
     if ptr is not None:
         return wrapInstance(long(ptr), QWidget)
+
+
+
+class CreateProjectDialog(QDialog, ui_CreateProjectDialog.Ui_CreateProjectDialog):
+    def __init__(self, parent):
+        super(CreateProjectDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.okButton.setEnabled(False)
+
+        self.parent = parent
+
+        self._initializeProjectLineEdit()
+        self.setOKButtonState()
+
+        self.cancelButton.clicked.connect(self.quit)
+        self.okButton.clicked.connect(self.project)
+        self.projectNameLineEdit.textChanged.connect(self.setOKButtonState)
+
+
+    def _initializeProjectLineEdit(self):
+        project = self.parent.currentProject()
+        project == 'New project' or self.projectNameLineEdit.setText(project)
+
+
+    def quit(self):
+        self.reject()
+
+
+    def project(self):
+        project = self.projectNameLineEdit.text().strip()
+        self.parent.setProject(project)
+        self.accept()
+
+
+    def setOKButtonState(self):
+        self.okButton.setEnabled(False)
+        not len(self.projectNameLineEdit.text().strip()) or self.okButton.setEnabled(True)
+
 
 
 class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindowForPm):
@@ -54,7 +95,6 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.CHECKTAB, False)
         self.checkerListView.mousePressEvent = self._mousePressEventInCheckerListView
-
 
         self.data = data
         self.parent = parent
@@ -93,6 +133,10 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
     def currentProject(self):
         index = self.data['project']
         return self.data['projects'][index]
+
+
+    def setProject(self, project):
+        self.project = project
 
 
     def checkers(self):
@@ -135,14 +179,12 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
             )
             self.tipTextBrower.setPlainText(self.tip(checker))
 
-
         def _configureDetailTab(checker):
             checker not in Global.detail or self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, True)
             if 'check shader names' == checker:
                 self.scrollAreaInDetailTab.setWidget(DetailTabWidgets.CheckShaderNamesWidget(self))
             elif 'check poly count' == checker:
                 self.scrollAreaInDetailTab.setWidget(DetailTabWidgets.CheckPolyCountWidget(self))
-
 
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.TIPTAB, False)
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
@@ -167,30 +209,42 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
 
 
     def save(self):
-        if 'New project' ==  self.project:
-            pass
-        else:
-            pass
-        # Save selected items.
-        destination = self.checkToolDir + '/temporary'
-        if len(self.data['checkItems']):
-            with open(destination+'/selected checkers.csv', 'wb') as csvfile:
+        def _saveCheckers(destination):
+            checkers = self.checkers()
+            with open(destination+'/checkers.csv', 'wb') as csvfile:
                 writer = csv.writer(csvfile, dialect=csv.excel)
-                writer.writerows([[i] for i in self.data['checkItems']])
+                writer.writerows([[i.encode('utf-8')] for i in checkers])
 
-        # Save tips.
-        destination = self.checkToolDir + '/temporary/tip'
-        if len(self.data['tip']):
-            for key, tip in self.data['tip'].items():
-                with open(destination+'/'+key+'.txt', 'w') as tipfile:
-                    tipfile.write(tip.encode('utf-8'))
+        def _saveTips(destination):
+            checkers = self.checkers()
+            destination = destination + '/tip'
+            os.access(destination, os.F_OK) or os.mkdir(destination)
+            for checker in checkers:
+                tip = self.tip(checker)
+                if len(tip):
+                    with open(destination+'/'+checker+'.txt', 'w') as tipfile:
+                        tipfile.write(tip.encode('utf-8'))
 
-        # Save detail configuration.
-        destination = self.checkToolDir + '/temporary/detail'
-        for key, detail in self.data['detail'].items():
-            with open(destination+'/'+key+'.csv', 'wb') as csvfile:
-                writer = csv.writer(csvfile, dialect=csv.excel)
-                writer.writerows([[i] for i in detail])
+        def _saveDetails(destination):
+            checkers = self.checkers()
+            destination = destination + '/detail'
+            os.access(destination, os.F_OK) or os.mkdir(destination)
+            for checker in checkers:
+                detail = self.detail(checker)
+                if len(detail):
+                    with open(destination+'/'+checker+'.csv', 'wb') as csvfile:
+                        writer = csv.writer(csvfile, dialect=csv.excel)
+                        if 'check poly count' == checker:
+                            writer.writerows([i.encode('utf-8') for i in detail])
+                        else:
+                            writer.writerows([[i.encode('utf-8')] for i in detail])
+
+        CreateProjectDialog(self).exec_()
+        destination = self.data['location'] + '/' + self.project
+        os.access(destination, os.F_OK) or os.mkdir(destination)
+        _saveCheckers(destination)
+        _saveTips(destination)
+        _saveDetails(destination)
 
 
 

@@ -40,6 +40,11 @@ def loadUIForPM():
     with open(destination, 'w') as f:
         compileUi(source, f, False, 4, False)
 
+    destination = checkToolDir + '/GUIforPM' + '/ui_CreateProjectDialog.py'
+    source = checkToolDir + '/Qt/UI/GUIforPM' + '/CreateProjectDialog.ui'
+    with open(destination, 'w') as f:
+        compileUi(source, f, False, 4, False)
+
     #
     # destination = create_checker_dir + '\ui_details_dialog.py'
     # source = check_scene_dir + '\Qt\UI\create_checker' + '\details_dialog.ui'
