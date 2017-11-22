@@ -234,10 +234,10 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
                 if len(detail):
                     with open(destination+'/'+checker+'.csv', 'wb') as csvfile:
                         writer = csv.writer(csvfile, dialect=csv.excel)
-                        if 'check poly count' == checker:
-                            writer.writerows([i.encode('utf-8') for i in detail])
-                        else:
+                        if isinstance(detail[0], unicode) or isinstance(detail[0], str):
                             writer.writerows([[i.encode('utf-8')] for i in detail])
+                        elif isinstance(detail[0], list):
+                            writer.writerows([[i.encode('utf-8') for i in d] for d in detail])
 
         CreateProjectDialog(self).exec_()
         destination = self.data['location'] + '/' + self.project

@@ -98,7 +98,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.brushForSelected = QBrush(Qt.GlobalColor.darkCyan)
         self.brushForUnselected = QBrush(Qt.NoBrush)
 
-        self.initialize()
+        self.initializeData()
 
         self.projectCombo.currentIndexChanged.connect(self.setCurrentProjectIndex)
         self.addButton.clicked.connect(self.addChecker)
@@ -107,10 +107,10 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.nextButton.clicked.connect(self.goToDetailWindow)
         self.resetButton.clicked.connect(self.reset)
         self.selectionModelInCheckerListView.selectionChanged.connect(self.showWhatsThis)
-        self.locationChanged.connect(self.initialize)
+        self.locationChanged.connect(self.initializeData)
 
 
-    def _initCheckerList(self):
+    def _initializeCheckerList(self):
         project = self.projectCombo.currentText()
         self.modelInCheckerListView.clear()
         for checker in Global.checkers:
@@ -122,23 +122,13 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             self.modelInCheckerListView.appendRow(item)
 
 
-    def _initProjectList(self):
+    def _initializeProjectList(self):
         self.projectCombo.clear()
-        for root, subdirs, filenames in os.walk(self.location()):
-            self.setProjects(subdirs)
-            self.projectCombo.addItems(self.projects())
-            for p in subdirs:
-                path = root + p + '/checkers.csv'
-                if os.access(path, os.F_OK):
-                    with open(path, 'wb') as csvfile:
-                        self.setCheckers(p, [i for i in csv.reader(csvfile, dialect=csv.excel)])
-
-            break
-
+        self.projectCombo.addItems(self.projects())
         self.projectCombo.setCurrentIndex(self.currentProjectIndex())
 
 
-    def _initSelectedCheckerList(self):
+    def _initializeSelectedCheckerList(self):
         project = self.projectCombo.currentText()
         self.modelInSelectedCheckerListView.clear()
         for i in self.checkers(project):
@@ -155,8 +145,8 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
 
 
     def _updateBothCheckerListViews(self):
-        self._initSelectedCheckerList()
-        self._initCheckerList()
+        self._initializeSelectedCheckerList()
+        self._initializeCheckerList()
 
 
     def _mouseDoubleClickEventInCheckerListView(self, event):
@@ -194,7 +184,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
 
 
     def projects(self):
-        return self.data.setdefault('projects', [])
+        return self.data.setdefault('projects', ['New project', 'Change location'])
 
 
     def setProjects(self, projects):
@@ -227,12 +217,22 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.data['checkers'][project] = checkers
 
 
+    def setTip(self, checker, tip):
+        self.data.setdefault('tip', {})
+        self.data['tip'][checker] = tip
+
+
+    def setDetail(self, checker, detail):
+        self.data.default('detail', {})
+        self.data['detail'][checker] = detail
+
+
     def addChecker(self):
         if self.selectionModelInCheckerListView.hasSelection():
             project = self.projectCombo.currentText()
             index = self.selectionModelInCheckerListView.currentIndex()
             text = self.modelInCheckerListView.itemFromIndex(index).text()
-            text in self.checkers(project) or self.data['checkers'][project].append(text)
+            text in self.checkers(project) or self.checkers(project).append(text)
             self._updateBothCheckerListViews()
             self._setNextButtonState()
 
@@ -247,18 +247,59 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             self._setNextButtonState()
 
 
-    def initialize(self):
-        self._initProjectList()
-        self._initSelectedCheckerList()
-        self._initCheckerList()
+    def initializeData(self):
+        def _initializeProjects():
+            for root, subdirs, filenames in os.walk(self.location()):
+                self.setProjects(subdirs)
+                break
+
+        def _initializeCheckers():
+            location = self.location()
+            for project in self.projects():
+                source = location + '/' + project + '/checkers.csv'
+                if os.access(source, os.F_OK):
+                    with open(source, 'rb') as csvfile:
+                        reader = csv.reader(csvfile, dialect=csv.excel)
+                        self.setCheckers(project, [i.decode('utf-8') for i in reader])
+
+        def _initializeTips():
+            location = self.location()
+            for project in self.projects():
+                checkers = self.checkers(project)
+                source = location+'/'+project+'/tip'
+                if os.access(source, os.F_OK):
+                    for tip in os.walk(source).next()[2]:
+                        if tip.rpartition('.')[0] in checkers:
+                            with open(source+'/'+tip, 'r') as f:
+                                self.setTip(tip.rpartition['.'][0], f.read().strip())
+
+        def _initializeDetails():
+            location = self.location()
+            for project in self.projects():
+                checkers = self.checkers(project)
+                source = location+'/'+project+'/detail'
+                if os.access(source, os.F_OK):
+                    for detail in os.walk(source).next()[2]:
+                        if detail.rpartition('.')[0] in checkers and detail.rpartition('.') in Global.detail:
+                            with open(source+'/'+detail, 'rb') as csvfile:
+                                reader = csv.reader(csvfile, dialect=csv.excel)
+                                self.setDetail(detail.rparttion['.'][0], [i for i in reader])
+
+        _initializeProjects()
+        _initializeCheckers()
+        _initializeTips()
+        _initializeDetails()
+        self._initializeProjectList()
+        self._initializeCheckerList()
+        self._initializeSelectedCheckerList()
         self._setNextButtonState()
 
 
     def reset(self):
         project = self.projectCombo.currentText()
         self.setCheckers(project, [])
-        self._initSelectedCheckerList()
-        self._initCheckerList()
+        self._initializeSelectedCheckerList()
+        self._initializeCheckerList()
         self._setNextButtonState()
 
 
