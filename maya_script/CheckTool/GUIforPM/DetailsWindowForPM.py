@@ -94,6 +94,7 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.TIPTAB, False)
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.CHECKTAB, False)
+        self.applyButton.setEnabled(False)
         self.checkerListView.mousePressEvent = self._mousePressEventInCheckerListView
 
         self.data = data
@@ -140,18 +141,45 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
 
 
     def checkers(self):
+        project = self.currentProject()
         self.data.setdefault('checkers', {})
-        return self.data['checkers'].setdefault(self.project, [])
+        return self.data['checkers'].setdefault(project, [])
+
+
+    def setCheckers(self, checkers=[]):
+        project = self.currentProject()
+        self.data.setdefault('checkers', {})
+        self.data['checkers'][project] = checkers
 
 
     def setTip(self):
         index = self.selectionModelInCheckerListView.currentIndex()
         checker = self.modelInCheckerListView.itemFromIndex(index).text()
-        self.data['tip'][checker] = self.tipTextBrower.toPlainText().strip()
+        project = self.currentProject()
+        self.data.setdefault('tip', {})
+        self.data['tip'].setdefault(project, {})
+        self.data['tip'][project][checker] = self.tipTextBrower.toPlainText().strip()
 
 
     def tip(self, checker):
-        return self.data['tip'].setdefault(checker, '')
+        project = self.currentProject()
+        self.data.setdefault('tip', {})
+        self.data['tip'].setdefault(project, {})
+        return self.data['tip'][project].setdefault(checker, '')
+
+
+    def detail(self, checker):
+        project = self.currentProject()
+        self.data.setdefault('detail', {})
+        self.data['detail'].setdefault(project, {})
+        return self.data['detail'][project].setdefault(checker, [])
+
+
+    def setDetail(self, checker, args=[]):
+        project = self.currentProject()
+        self.data.setdefault('detail', {})
+        self.data['detail'].setdefault(project, {})
+        self.data['detail'][project][checker] = args
 
 
     def quit(self):
@@ -190,22 +218,15 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.CHECKTAB, False)
         self.statusbar.clearMessage()
+        self.applyButton.setEnabled(False)
         if self.selectionModelInCheckerListView.hasSelection():
+            self.applyButton.setEnabled(True)
             index = self.selectionModelInCheckerListView.currentIndex()
             checker = str(self.modelInCheckerListView.itemFromIndex(index).text())
             _configureTipTab(checker)
             _configureDetailTab(checker)
 
             self.statusbar.showMessage(Global.whatsThis[checker])
-
-
-    def detail(self, checker):
-        return self.data['detail'].setdefault(checker, [])
-
-
-    def setDetail(self, checker, args=[]):
-        self.data['detail'].setdefault(checker, [])
-        self.data['detail'][checker] = args
 
 
     def save(self):
@@ -234,10 +255,11 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
                 if len(detail):
                     with open(destination+'/'+checker+'.csv', 'wb') as csvfile:
                         writer = csv.writer(csvfile, dialect=csv.excel)
-                        if isinstance(detail[0], unicode) or isinstance(detail[0], str):
-                            writer.writerows([[i.encode('utf-8')] for i in detail])
-                        elif isinstance(detail[0], list):
-                            writer.writerows([[i.encode('utf-8') for i in d] for d in detail])
+                        # if isinstance(detail[0], unicode) or isinstance(detail[0], str):
+                        #     writer.writerows([[i.encode('utf-8')] for i in detail])
+                        # elif isinstance(detail[0], list):
+                        #     writer.writerows([[i.encode('utf-8') for i in d] for d in detail])
+                        writer.writerows([[i.encode('utf-8') for i in d] for d in detail])
 
         CreateProjectDialog(self).exec_()
         destination = self.data['location'] + '/' + self.project

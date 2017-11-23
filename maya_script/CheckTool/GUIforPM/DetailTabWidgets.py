@@ -297,7 +297,7 @@ class CheckShaderNamesWidget(QWidget):
         self.vertLayout.addWidget(self.previewLabel)
 
         self.prototypeList = ListViewInDetailTabWidget(self)
-        self.prototypeList.addItems(self.parent.data['detail'].setdefault('check shader names', []))
+        self.prototypeList.addItems([i[0] for i in self.parent.detail('check shader names') if len(i)])
         self.vertLayout.addWidget(self.prototypeList)
 
         self.regularEditor = QTextEdit(self)
@@ -327,7 +327,7 @@ class CheckShaderNamesWidget(QWidget):
             self.previewLabel.setText('<b><span style="font-size:10pt">Enter your regular expression:</span></b>')
             self.prototypeList.setVisible(False)
             self.regularEditor.setVisible(True)
-            self.regularEditor.setPlainText('\n'.join(self.parent.detail('check shader names')))
+            self.regularEditor.setPlainText('\n'.join([i[0] for i in self.parent.detail('check shader names') if len(i)]))
         else:
             self.prefixLineEdit.setEnabled(True)
             self.postfixLineEdit.setEnabled(True)
@@ -337,7 +337,7 @@ class CheckShaderNamesWidget(QWidget):
             self.prototypeList.setVisible(True)
             self.regularEditor.setVisible(False)
             self.prototypeList.clearItems()
-            self.prototypeList.addItems(self.parent.detail('check shader names'))
+            self.prototypeList.addItems([i[0] for i in self.parent.detail('check shader names') if len(i)])
 
 
     def previewNamePrototype(self):
@@ -359,7 +359,7 @@ class CheckShaderNamesWidget(QWidget):
             data = self.parent.detail('check shader names')
             if prototype not in data:
                 self.prototypeList.addItems([prototype,])
-                data.append(prototype)
+                data.append([prototype,])
                 self.parent.setDetail('check shader names', data)
                 self.prefixLineEdit.clear()
                 self.postfixLineEdit.clear()
@@ -377,4 +377,4 @@ class CheckShaderNamesWidget(QWidget):
 
 
     def editPrototypeInRegularMode(self):
-        self.parent.setDetail('check shader names', self.regularEditor.toPlainText().strip().split('\n'))
+        self.parent.setDetail('check shader names', [[i] for i in self.regularEditor.toPlainText().strip().split('\n')])

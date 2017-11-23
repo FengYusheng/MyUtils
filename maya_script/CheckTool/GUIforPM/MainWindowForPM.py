@@ -217,14 +217,16 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.data['checkers'][project] = checkers
 
 
-    def setTip(self, checker, tip):
+    def setTip(self, project, checker, tip):
         self.data.setdefault('tip', {})
-        self.data['tip'][checker] = tip
+        self.data['tip'].setdefault(project, {})
+        self.data['tip'][project][checker] = tip
 
 
-    def setDetail(self, checker, detail):
-        self.data.default('detail', {})
-        self.data['detail'][checker] = detail
+    def setDetail(self, project, checker, detail):
+        self.data.setdefault('detail', {})
+        self.data['detail'].setdefault(project, {})
+        self.data['detail'][project][checker] = detail
 
 
     def addChecker(self):
@@ -260,7 +262,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
                 if os.access(source, os.F_OK):
                     with open(source, 'rb') as csvfile:
                         reader = csv.reader(csvfile, dialect=csv.excel)
-                        self.setCheckers(project, [i.decode('utf-8') for i in reader])
+                        self.setCheckers(project, [i[0].decode('utf-8') for i in reader])
 
         def _initializeTips():
             location = self.location()
@@ -271,7 +273,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
                     for tip in os.walk(source).next()[2]:
                         if tip.rpartition('.')[0] in checkers:
                             with open(source+'/'+tip, 'r') as f:
-                                self.setTip(tip.rpartition['.'][0], f.read().strip())
+                                self.setTip(project, tip.rpartition('.')[0], f.read().strip())
 
         def _initializeDetails():
             location = self.location()
@@ -280,15 +282,17 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
                 source = location+'/'+project+'/detail'
                 if os.access(source, os.F_OK):
                     for detail in os.walk(source).next()[2]:
-                        if detail.rpartition('.')[0] in checkers and detail.rpartition('.') in Global.detail:
+                        if detail.rpartition('.')[0] in checkers and detail.rpartition('.')[0] in Global.detail:
                             with open(source+'/'+detail, 'rb') as csvfile:
                                 reader = csv.reader(csvfile, dialect=csv.excel)
-                                self.setDetail(detail.rparttion['.'][0], [i for i in reader])
+                                self.setDetail(project, detail.rpartition('.')[0], [i for i in reader])
 
-        _initializeProjects()
-        _initializeCheckers()
-        _initializeTips()
-        _initializeDetails()
+        if len(self.data):
+            _initializeProjects()
+            _initializeCheckers()
+            _initializeTips()
+            _initializeDetails()
+
         self._initializeProjectList()
         self._initializeCheckerList()
         self._initializeSelectedCheckerList()

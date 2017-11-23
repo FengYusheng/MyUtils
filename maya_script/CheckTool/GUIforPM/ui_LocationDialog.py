@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool/Qt/UI/GUIforPM/LocationDialog.ui'
 #
-# Created: Wed Nov 22 18:32:31 2017
+# Created: Thu Nov 23 18:15:28 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
