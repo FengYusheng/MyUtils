@@ -93,6 +93,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
 
         self.data = data
         self.parent = parent
+        self.temporay = {}
         self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
         self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.brushForSelected = QBrush(Qt.GlobalColor.darkCyan)
@@ -202,6 +203,10 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             index = index if index > -1 else 0
             self.data['project'] = index
 
+        self._initializeCheckerList()
+        self._initializeSelectedCheckerList()
+        self._setNextButtonState()
+
 
     def currentProjectIndex(self):
         return self.data.setdefault('project', 0)
@@ -287,7 +292,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
                                 reader = csv.reader(csvfile, dialect=csv.excel)
                                 self.setDetail(project, detail.rpartition('.')[0], [i for i in reader])
 
-        if len(self.data):
+        if not len(self.data.setdefault('projects', [])):
             _initializeProjects()
             _initializeCheckers()
             _initializeTips()

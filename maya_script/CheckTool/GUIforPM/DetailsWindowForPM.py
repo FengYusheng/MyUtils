@@ -99,7 +99,6 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
 
         self.data = data
         self.parent = parent
-        self.project = self.currentProject()
         self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
 
         self._initCheckerList()
@@ -131,13 +130,41 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         QListView.mousePressEvent(self.checkerListView, event)
 
 
+    def location(self):
+        return self.data.setdefault('location', '')
+
+
     def currentProject(self):
         index = self.data['project']
         return self.data['projects'][index]
 
 
     def setProject(self, project):
-        self.project = project
+        def _setTip( checker, tip=[]):
+            project = self.currentProject()
+            self.data.setdefault('tip', {})
+            self.data['tip'].setdefault(project, {})
+            self.data['tip'][project][checker] = tip
+
+        old = self.currentProject()
+        checkers = self.checkers()
+        tips = {i:self.tip(i) for i in checkers}
+        details = {i:self.detail(i) for i in checkers}
+
+        if 'New project' == old:
+            self.setCheckers()
+            for i in checkers:
+                _setTip(i)
+                self.setDetail(i)
+
+        if project not in self.data['projects']:
+            self.data['projects'].insert(0, project)
+            self.data['project'] = 0
+
+        for i in checkers:
+            self.setCheckers(checkers)
+            _setTip(i, tips[i])
+            self.setDetail(i, details[i])
 
 
     def checkers(self):
@@ -255,14 +282,10 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
                 if len(detail):
                     with open(destination+'/'+checker+'.csv', 'wb') as csvfile:
                         writer = csv.writer(csvfile, dialect=csv.excel)
-                        # if isinstance(detail[0], unicode) or isinstance(detail[0], str):
-                        #     writer.writerows([[i.encode('utf-8')] for i in detail])
-                        # elif isinstance(detail[0], list):
-                        #     writer.writerows([[i.encode('utf-8') for i in d] for d in detail])
                         writer.writerows([[i.encode('utf-8') for i in d] for d in detail])
 
         CreateProjectDialog(self).exec_()
-        destination = self.data['location'] + '/' + self.project
+        destination = self.location() + '/' + self.currentProject()
         os.access(destination, os.F_OK) or os.mkdir(destination)
         _saveCheckers(destination)
         _saveTips(destination)

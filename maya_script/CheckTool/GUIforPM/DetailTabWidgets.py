@@ -146,7 +146,6 @@ class CheckPolyCountWidget(QWidget):
         self.setAttribute(Qt.WA_DeleteOnClose, True)
 
         self.parent = parent
-        self.tableHeader = ('LOD', 'Verts/Tris', 'Budget')
 
         self.vertLayout = QVBoxLayout(self)
         self.itemLabel = QLabel(self)
@@ -369,7 +368,7 @@ class CheckShaderNamesWidget(QWidget):
     def editPrototype(self, text, row):
         data = self.parent.detail('check shader names')
         if len(text):
-            data[row] = text
+            data[row][0] = text
         else:
             del data[row]
 
