@@ -4,6 +4,7 @@ import re
 import sys
 import csv
 import json
+import copy
 
 import maya.OpenMayaUI as apiUI
 import pymel.core as pm
@@ -154,8 +155,17 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         if 'New project' == old:
             self.setCheckers()
             for i in checkers:
-                _setTip(i)
-                self.setDetail(i)
+                _setTip(i, [])
+                self.setDetail(i, [])
+
+        if 'New project' != old and project not in self.data['projects']:
+            temporary = self.data.setdefault('temporary', None)
+            if temporary is not None:
+                self.setCheckers(temporary['checkers'])
+                for i in temporary['checkers']:
+                    _setTip(i, temporary['tip'][i])
+                    self.setDetail(i, temporary['detail'][i])
+                self.data['temporary'] = None
 
         if project not in self.data['projects']:
             self.data['projects'].insert(0, project)
@@ -170,7 +180,7 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
     def checkers(self):
         project = self.currentProject()
         self.data.setdefault('checkers', {})
-        return self.data['checkers'].setdefault(project, [])
+        return copy.deepcopy(self.data['checkers'].setdefault(project, []))
 
 
     def setCheckers(self, checkers=[]):
@@ -192,14 +202,14 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
         project = self.currentProject()
         self.data.setdefault('tip', {})
         self.data['tip'].setdefault(project, {})
-        return self.data['tip'][project].setdefault(checker, '')
+        return copy.deepcopy(self.data['tip'][project].setdefault(checker, ''))
 
 
     def detail(self, checker):
         project = self.currentProject()
         self.data.setdefault('detail', {})
         self.data['detail'].setdefault(project, {})
-        return self.data['detail'][project].setdefault(checker, [])
+        return copy.deepcopy(self.data['detail'][project].setdefault(checker, []))
 
 
     def setDetail(self, checker, args=[]):

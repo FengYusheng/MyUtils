@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import csv
+import copy
 
 import maya.OpenMayaUI as apiUI
 import pymel.core as pm
@@ -27,6 +28,8 @@ import ui_MainWindowForPM
 reload(ui_MainWindowForPM)
 import ui_LocationDialog
 reload(ui_LocationDialog)
+import ui_DeletePorjectDialog
+reload(ui_DeletePorjectDialog)
 import Global
 
 
@@ -38,7 +41,7 @@ def getMayaWindow():
 
 
 class LocationDialog(QDialog, ui_LocationDialog.Ui_locationDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super(LocationDialog, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setupUi(self)
@@ -70,6 +73,41 @@ class LocationDialog(QDialog, ui_LocationDialog.Ui_locationDialog):
 
 
 
+class DeleteProjectDialog(QDialog, ui_DeletePorjectDialog.Ui_deleteProjectDialog):
+    def __init__(self, parent):
+        super(DeleteProjectDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
+
+        self.parent = parent
+
+        self._initializeProjectName()
+
+        self.cancelButton.clicked.connect(self.quit)
+
+
+    def _initializeProjectName(self):
+        index = self.parent.currentProjectIndex()
+        project = self.parent.projects()[index]
+        self.projectLabel.setText('<b><span style="font-size:10pt">Delete project: "{0}"</span></b>'.format(project))
+
+
+    def quit(self):
+        self.reject()
+
+
+    def deleteProject(self):
+        location = self.parent.location()
+        index = self.parent.currentProjectIndex()
+        project = self.parent.projects()[index]
+        path = location + '/' + project
+        if os.access(path, os.F_OK):
+            for root, subdirs, filenames in os.walk(path):
+                break
+
+        self.accept()
+
+
 class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
     locationChanged = Signal()
 
@@ -90,10 +128,10 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.selectedCheckerListView.mouseDoubleClickEvent = self._mouseDoubleClickEventInSelectedCheckerListView
         self.selectedCheckerListView.mousePressEvent = self._mousePressEventInSelectedCheckerListView
         self.nextButton.setEnabled(False)
+        self.deleteButton.setEnabled(False)
 
         self.data = data
         self.parent = parent
-        self.temporay = {}
         self.checkToolDir = os.path.normpath(os.path.split(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))[0])
         self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.brushForSelected = QBrush(Qt.GlobalColor.darkCyan)
@@ -107,6 +145,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         self.cancelButton.clicked.connect(self.quit)
         self.nextButton.clicked.connect(self.goToDetailWindow)
         self.resetButton.clicked.connect(self.reset)
+        self.deleteButton.clicked.connect(self.deleteProject)
         self.selectionModelInCheckerListView.selectionChanged.connect(self.showWhatsThis)
         self.locationChanged.connect(self.initializeData)
 
@@ -174,6 +213,22 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
         QListView.mousePressEvent(self.selectedCheckerListView, event)
 
 
+    def _configurationChanged(self):
+        temporary = {}
+        self.data['temporary'] = None
+        project = self.projectCombo.currentText()
+        if project != 'New project' and temporary.setdefault('project', None) != project:
+            checkers = self.checkers(project)
+            temporary['project'] = project
+            temporary['checkers'] = checkers
+            temporary['tip'] = {}
+            temporary['detail'] = {}
+            for i in checkers:
+                temporary['tip'][i] = self.tip(project, i)
+                temporary['detail'][i] = self.detail(project, i)
+            self.data['temporary'] = temporary
+
+
     def setLocation(self, location):
         self.data.clear()
         self.data['location'] = location
@@ -195,13 +250,15 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
 
 
     def setCurrentProjectIndex(self):
+        self._configurationChanged()
+        self.deleteButton.setEnabled(False)
         project = self.projectCombo.currentText()
+        ('New project' == project or 'Change location' == project) or self.deleteButton.setEnabled(True)
         if 'Change location' == project:
             QDialog.Accepted == LocationDialog(self).exec_() or self.projectCombo.setCurrentIndex(0)
         else:
             index = self.projectCombo.currentIndex()
-            index = index if index > -1 else 0
-            self.data['project'] = index
+            self.data['project'] = index if index > -1 else 0
 
         self._initializeCheckerList()
         self._initializeSelectedCheckerList()
@@ -213,19 +270,35 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
 
 
     def checkers(self, project):
+        '''
+        https://stackoverflow.com/questions/3975376/understanding-dict-copy-shallow-or-deep
+        '''
         self.data.setdefault('checkers', {})
-        return self.data['checkers'].setdefault(project, [])
+        return copy.deepcopy(self.data['checkers'].setdefault(project, []))
 
 
     def setCheckers(self, project, checkers):
+        self._configurationChanged()
         self.data.setdefault('checkers', {})
         self.data['checkers'][project] = checkers
+
+
+    def tip(self, project, checker):
+        self.data.setdefault('tip', {})
+        self.data['tip'].setdefault(project, {})
+        return copy.deepcopy(self.data['tip'][project].setdefault(checker, ''))
 
 
     def setTip(self, project, checker, tip):
         self.data.setdefault('tip', {})
         self.data['tip'].setdefault(project, {})
         self.data['tip'][project][checker] = tip
+
+
+    def detail(self, project, checker):
+        self.data.setdefault('detail', {})
+        self.data['detail'].setdefault(project, {})
+        return copy.deepcopy(self.data['detail'][project].setdefault(checker, []))
 
 
     def setDetail(self, project, checker, detail):
@@ -239,7 +312,9 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             project = self.projectCombo.currentText()
             index = self.selectionModelInCheckerListView.currentIndex()
             text = self.modelInCheckerListView.itemFromIndex(index).text()
-            text in self.checkers(project) or self.checkers(project).append(text)
+            checkers = self.checkers(project)
+            text in checkers or checkers.append(text)
+            self.setCheckers(project, checkers)
             self._updateBothCheckerListViews()
             self._setNextButtonState()
 
@@ -249,7 +324,9 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             project = self.projectCombo.currentText()
             index = self.selectionModelInSelectedCheckerListView.currentIndex()
             text = self.modelInSelectedCheckerListView.itemFromIndex(index).text()
-            self.checkers(project).remove(text)
+            checkers = self.checkers(project)
+            checkers.remove(text)
+            self.setCheckers(project, checkers)
             self._updateBothCheckerListViews()
             self._setNextButtonState()
 
@@ -298,6 +375,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
             _initializeTips()
             _initializeDetails()
 
+        self._configurationChanged()
         self._initializeProjectList()
         self._initializeCheckerList()
         self._initializeSelectedCheckerList()
@@ -305,15 +383,17 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
 
 
     def reset(self):
-        project = self.projectCombo.currentText()
-        self.setCheckers(project, [])
-        self._initializeSelectedCheckerList()
-        self._initializeCheckerList()
-        self._setNextButtonState()
+        location = self.location()
+        self.data.clear()
+        self.setLocation(location)
 
 
     def quit(self):
         self.close()
+
+
+    def deleteProject(self):
+        'New project' == self.projectCombo.currentText() or DeleteProjectDialog(self).exec_()
 
 
     def showWhatsThis(self):
