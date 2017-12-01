@@ -251,6 +251,10 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
             elif 'check poly count' == checker:
                 self.scrollAreaInDetailTab.setWidget(DetailTabWidgets.CheckPolyCountWidget(self))
 
+        def _configureCheckTab(checker):
+            self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.CHECKTAB, True)
+            self.scrollAreaInCheckTab.setWidget(DetailTabWidgets.CheckWidget(self))
+
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.TIPTAB, False)
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.DETAILTAB, False)
         self.checkerTabWidget.setTabEnabled(DetailsWindowForPM.CHECKTAB, False)
@@ -262,6 +266,7 @@ class DetailsWindowForPM(QMainWindow, ui_DetailsWindowForPM.Ui_DetailsMainWindow
             checker = str(self.modelInCheckerListView.itemFromIndex(index).text())
             _configureTipTab(checker)
             _configureDetailTab(checker)
+            _configureCheckTab(checker)
 
             self.statusbar.showMessage(Global.whatsThis[checker])
 

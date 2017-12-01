@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pymel.core as pm
 try:
     from PySide2.QtGui import *
     from PySide2.QtWidgets import *
@@ -11,6 +12,9 @@ except ImportError:
     from PySide import __version__
     from shiboken import wrapInstance
 
+import Global
+import checkers.CheckAsset as CheckAsset
+reload(CheckAsset)
 
 class ListViewInDetailTabWidget(QListView):
     prototypeEdited = Signal(str, int)
@@ -377,3 +381,171 @@ class CheckShaderNamesWidget(QWidget):
 
     def editPrototypeInRegularMode(self):
         self.parent.setDetail('check shader names', [[i] for i in self.regularEditor.toPlainText().strip().split('\n')])
+
+
+
+class CheckWidget(QWidget):
+    checkFinished = Signal()
+
+    def __init__(self, parent):
+        super(CheckWidget, self).__init__(parent)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.result = None
+        self.parent = parent
+        self.font = QFont('OldEnglish', 10, QFont.Bold)
+        self.initialBrush = QBrush(Qt.GlobalColor.darkGray)
+
+        self.vertLayout = QVBoxLayout(self)
+        self.checkButton = QPushButton(self)
+        self.checkButton.setText('Check Your Asset')
+        self.vertLayout.addWidget(self.checkButton)
+
+        self.checkersTableView = QTableView(self)
+        self.dataModelInCheckersTableView = QStandardItemModel(self)
+        self.checkersTableView.setModel(self.dataModelInCheckersTableView)
+        self.selectionModelInCheckersTableView = QItemSelectionModel(self.dataModelInCheckersTableView, self)
+        self.checkersTableView.setSelectionModel(self.selectionModelInCheckersTableView)
+
+        self.resultsTreeView = QTreeView(self)
+        self.dataModelInResutsTreeView = QStandardItemModel(self)
+        self.resultsTreeView.setModel(self.dataModelInResutsTreeView)
+        self.selectionModelInResutlsTreeView = QItemSelectionModel(self.dataModelInResutsTreeView, self)
+        self.resultsTreeView.setSelectionModel(self.selectionModelInResutlsTreeView)
+
+        self.splitter = QSplitter(self)
+        self.splitter.setOrientation(Qt.Vertical)
+        self.splitter.addWidget(self.checkersTableView)
+        self.splitter.addWidget(self.resultsTreeView)
+        self.vertLayout.addWidget(self.splitter)
+
+        self._initializeCheckerTableView()
+
+        self.checkButton.clicked.connect(self.checkAsset)
+        self.checkFinished.connect(self.displayResult)
+
+
+    def _initializeCheckerTableView(self):
+        checkers = self.parent.checkers()
+        index = 0
+        for header in ('Checker', 'State'):
+            item = QStandardItem(header)
+            item.setFont(self.font)
+            self.dataModelInCheckersTableView.setHorizontalHeaderItem(index, item)
+            index += 1
+
+        for i in checkers:
+            item = QStandardItem(i)
+            item.setFont(self.font)
+            item.setEditable(False)
+            item.setCheckable(True)
+            item.setBackground(self.initialBrush)
+            self.dataModelInCheckersTableView.appendRow(item)
+
+        self.checkersTableView.resizeColumnsToContents()
+
+
+    def _mousePressEventInTableView(self, event):
+        QTableView.mousePressEvent(self.checkersTableView, event)
+
+
+    def _displayPolyCountResult(self):
+        def _lod(lods, polycount):
+            level = 'Overspend'
+            _lods = lods[:]
+            _lods.insert(0, ('LOD_1', lods[0][1], lods[0][2]))
+            for lod in _lods:
+                if polycount <= lod[2]:
+                    level = lod[0]
+
+            return level
+
+        def _displayPolyCountGroupByAsset(lods, hierarchy, parent=None):
+            if parent is not None:
+                polygon = 'Verts' if lods[0][1] == 'Vertex' else 'Tris'
+                for root in hierarchy.keys():
+                    item = QStandardItem(root)
+                    item.setFont(self.font)
+                    item.setEditable(False)
+                    parent.appendRow(item)
+                    row = self.dataModelInResutsTreeView.indexFromItem(item).row()
+                    parent2 = item
+
+                    item = QStandardItem(polygon)
+                    item.setFont(self.font)
+                    item.setEditable(False)
+                    parent.setChild(row, 1, item)
+
+                    polycount = hierarchy[root][polygon]
+                    item = QStandardItem(str(polycount))
+                    item.setFont(self.font)
+                    item.setEditable(False)
+                    parent.setChild(row, 2, item)
+
+                    level = _lod(lods, polycount)
+                    item = QStandardItem(level)
+                    item.setFont(self.font)
+                    item.setEditable(False)
+                    parent.setChild(row, 3, item)
+
+                    _displayPolyCountGroupByAsset(lods, hierarchy[root]['children'], parent2)
+
+        index = 0
+        parent = None
+        lods = [(lod[0], lod[1], float(lod[2].rpartition('K')[0])*1000.0) for lod in self.parent.detail('check poly count')]
+
+        self.dataModelInResutsTreeView.clear()
+        for header in ('Asset', 'Tris/Verts', 'Poly Count', 'LOD'):
+            item = QStandardItem(header)
+            item.setFont(self.font)
+            self.dataModelInResutsTreeView.setHorizontalHeaderItem(index, item)
+            index += 1
+
+        scene = pm.system.sceneName().rpartition('/')[2].partition('.')[0]
+        item = QStandardItem(scene)
+        item.setFont(self.font)
+        item.setEditable(False)
+        self.dataModelInResutsTreeView.appendRow(item)
+        parent = item
+
+        polygon = 'Verts' if lods[0][1] == 'Vertex' else 'Tris'
+        item = QStandardItem(polygon)
+        item.setFont(self.font)
+        item.setEditable(False)
+        self.dataModelInResutsTreeView.setItem(0, 1, item)
+
+        polycount = self.result['check poly count'][polygon]
+        item = QStandardItem(str(polycount))
+        item.setFont(self.font)
+        item.setEditable(False)
+        self.dataModelInResutsTreeView.setItem(0, 2, item)
+
+        level = _lod(lods, polycount)
+        item = QStandardItem(level)
+        item.setFont(self.font)
+        item.setEditable(False)
+        self.dataModelInResutsTreeView.setItem(0, 3, item)
+
+        _displayPolyCountGroupByAsset(lods, self.result['check poly count']['hierarchy'], parent)
+
+        for i in range(index):
+            self.resultsTreeView.resizeColumnToContents(i)
+
+
+    def displayResult(self):
+        for checker in self.result.keys():
+            if 'check poly count' == checker:
+                self._displayPolyCountResult()
+            elif 'check shader names' == checker:
+                break
+
+
+    def checkAsset(self):
+        activeCheckers = []
+        for row in range(self.dataModelInCheckersTableView.rowCount()):
+            index = self.dataModelInCheckersTableView.index(row, 0)
+            item = self.dataModelInCheckersTableView.itemFromIndex(index)
+            item.checkState() == Qt.Unchecked or activeCheckers.append(item.text())
+
+        details = {checker:self.parent.detail(checker) for checker in self.parent.checkers() if checker in Global.detail}
+        self.result = CheckAsset.checkAsset(activeCheckers, **details)
+        self.checkFinished.emit()

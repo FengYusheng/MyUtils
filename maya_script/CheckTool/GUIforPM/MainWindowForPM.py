@@ -55,6 +55,7 @@ class LocationDialog(QDialog, ui_LocationDialog.Ui_locationDialog):
         self.cancelButton.clicked.connect(self.quit)
         self.okButton.clicked.connect(self.setLocation)
 
+
     def choose(self):
         destination = pm.fileDialog2(cap='Open', ds=2, fm=3, okc='Open')
         if destination is not None:
@@ -84,6 +85,7 @@ class DeleteProjectDialog(QDialog, ui_DeletePorjectDialog.Ui_deleteProjectDialog
         self._initializeProjectName()
 
         self.cancelButton.clicked.connect(self.quit)
+        self.applyButton.clicked.connect(self.deleteProject)
 
 
     def _initializeProjectName(self):
@@ -100,10 +102,18 @@ class DeleteProjectDialog(QDialog, ui_DeletePorjectDialog.Ui_deleteProjectDialog
         location = self.parent.location()
         index = self.parent.currentProjectIndex()
         project = self.parent.projects()[index]
-        path = location + '/' + project
-        if os.access(path, os.F_OK):
-            for root, subdirs, filenames in os.walk(path):
-                break
+        projectPath = location + '/' + project
+        if os.access(projectPath, os.F_OK):
+            for root, subdirs, filenames in os.walk(projectPath, topdown=False):
+                for name in filenames:
+                    path = os.path.normpath(os.path.join(root, name))
+                    not os.access(path, os.F_OK) or os.remove(path)
+
+                for name in subdirs:
+                    path = os.path.normpath(os.path.join(root, name))
+                    not os.access(path, os.F_OK) or os.rmdir(path)
+
+            os.rmdir(projectPath)
 
         self.accept()
 
@@ -394,6 +404,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
 
     def deleteProject(self):
         'New project' == self.projectCombo.currentText() or DeleteProjectDialog(self).exec_()
+        self.reset()
 
 
     def showWhatsThis(self):

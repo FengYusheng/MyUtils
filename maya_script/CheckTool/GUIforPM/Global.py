@@ -24,3 +24,7 @@ whatsThis = {
     'check shader names' : 'Check whether or not the shader names meet the requirement.',
     'check poly count' : 'Set your poly count budget and LOD.'
 }
+
+stateTip = {
+    
+}
