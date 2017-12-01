@@ -1,1 +1,0 @@
-Check whether or not the shader names meet the requirement.

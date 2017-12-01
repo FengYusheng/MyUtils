@@ -1,1 +1,0 @@
-All the files your Maya asset reference should be under the correct path.
