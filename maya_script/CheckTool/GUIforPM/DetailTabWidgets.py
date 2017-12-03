@@ -405,6 +405,9 @@ class CheckWidget(QWidget):
         self.checkersTableView.setModel(self.dataModelInCheckersTableView)
         self.selectionModelInCheckersTableView = QItemSelectionModel(self.dataModelInCheckersTableView, self)
         self.checkersTableView.setSelectionModel(self.selectionModelInCheckersTableView)
+        self.checkersTableView.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.checkersTableView.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.checkersTableView.mousePressEvent = self._mousePressEventInTableView
 
         self.resultsTreeView = QTreeView(self)
         self.dataModelInResutsTreeView = QStandardItemModel(self)
@@ -421,7 +424,7 @@ class CheckWidget(QWidget):
         self._initializeCheckerTableView()
 
         self.checkButton.clicked.connect(self.checkAsset)
-        self.checkFinished.connect(self.displayResult)
+        self.selectionModelInCheckersTableView.selectionChanged.connect(self.displayCheckResult)
 
 
     def _initializeCheckerTableView(self):
@@ -445,6 +448,7 @@ class CheckWidget(QWidget):
 
 
     def _mousePressEventInTableView(self, event):
+        self.selectionModelInCheckersTableView.clearSelection()
         QTableView.mousePressEvent(self.checkersTableView, event)
 
 
@@ -531,12 +535,38 @@ class CheckWidget(QWidget):
             self.resultsTreeView.resizeColumnToContents(i)
 
 
-    def displayResult(self):
-        for checker in self.result.keys():
-            if 'check poly count' == checker:
-                self._displayPolyCountResult()
-            elif 'check shader names' == checker:
-                break
+    def _displayNGonsResult(self, checker):
+        self.dataModelInResutsTreeView.clear()
+        header = QStandardItem(checker)
+        header.setFont(self.font)
+        self.dataModelInResutsTreeView.setHorizontalHeaderItem(0, header)
+        for k, v in self.result[checker].items():
+            item = QStandardItem(k)
+            item.setEditable(False)
+            item.setFont(self.font)
+            self.dataModelInResutsTreeView.appendRow(item)
+            parent = item
+            row = 0
+            for _ in v:
+                item = QStandardItem(_)
+                item.setEditable(False)
+                item.setFont(self.font)
+                parent.setChild(row, item)
+                row += 1
+        self.resultsTreeView.resizeColumnToContents(0)
+
+
+    def _displayCheckCommonResult(self, checker):
+        self.dataModelInResutsTreeView.clear()
+        header = QStandardItem(checker)
+        header.setFont(self.font)
+        self.dataModelInResutsTreeView.setHorizontalHeaderItem(0, header)
+        for i in self.result[checker]:
+            item = QStandardItem(i)
+            item.setEditable(False)
+            item.setFont(self.font)
+            self.dataModelInResutsTreeView.appendRow(item)
+        self.resultsTreeView.resizeColumnToContents(0)
 
 
     def checkAsset(self):
@@ -546,6 +576,21 @@ class CheckWidget(QWidget):
             item = self.dataModelInCheckersTableView.itemFromIndex(index)
             item.checkState() == Qt.Unchecked or activeCheckers.append(item.text())
 
-        details = {checker:self.parent.detail(checker) for checker in self.parent.checkers() if checker in Global.detail}
-        self.result = CheckAsset.checkAsset(activeCheckers, **details)
-        self.checkFinished.emit()
+        if len(activeCheckers):
+            details = {checker:self.parent.detail(checker) for checker in self.parent.checkers() if checker in Global.detail}
+            self.result = CheckAsset.checkAsset(activeCheckers, **details)
+            # self.checkFinished.emit()
+
+
+    def displayCheckResult(self):
+        if self.selectionModelInCheckersTableView.hasSelection() and self.result is not None:
+            index = self.selectionModelInCheckersTableView.selectedRows()[0]
+            checker = self.dataModelInCheckersTableView.itemFromIndex(index).text()
+            if 'check poly count' == checker:
+                self._displayPolyCountResult()
+            elif 'check n-gons' == checker            \
+            or 'check lamina faces' == checker        \
+            or 'check overlapping vertices' == checker:
+                self._displayNGonsResult(checker)
+            else:
+                self._displayCheckCommonResult(checker)

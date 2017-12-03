@@ -5,6 +5,8 @@ import pymel.core as pm
 
 import polycount
 import checkShader
+import checkMesh
+reload(checkMesh)
 
 
 
@@ -22,19 +24,19 @@ def saveCheckReuslt(result={}):
 def checkAsset(checkers=[], **kwargs):
     result = {}
     if 'check transformations' in checkers:
-        pass
+        result['check transformations'] = checkMesh.checkTransformations()
 
     if 'check n-gons' in checkers:
-        pass
+        result['check n-gons'] = checkMesh.checkNGons()
 
     if 'check lamina faces' in checkers:
-        pass
+        result['check lamina faces'] = checkMesh.checkLaminaFaces()
 
     if 'check overlapping vertices' in checkers:
-        pass
+        result['check overlapping vertices'] = checkMesh.checkOverlappingVertices()
 
     if 'check external files' in checkers:
-        pass
+        result['check external files'] = checkMesh.checkExternalfilePath()
 
     if 'check shader names' in checkers:
         result['check shader names'] = checkShader.checkShaderNames(kwargs['check shader names'])
