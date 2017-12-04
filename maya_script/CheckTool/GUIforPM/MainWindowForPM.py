@@ -20,8 +20,8 @@ except ImportError:
     from PySide import __version__
     from shiboken import wrapInstance
 
-import load_ui
-load_ui.loadUIForPM()
+import loadPMUI
+loadPMUI.loadUIForPM()
 import DetailsWindowForPM
 reload(DetailsWindowForPM)
 import ui_MainWindowForPM
@@ -365,7 +365,7 @@ class MainWindowForPM(QMainWindow, ui_MainWindowForPM.Ui_MainWindowForPM):
                     for tip in os.walk(source).next()[2]:
                         if tip.rpartition('.')[0] in checkers:
                             with open(source+'/'+tip, 'r') as f:
-                                self.setTip(project, tip.rpartition('.')[0], f.read().strip())
+                                self.setTip(project, tip.rpartition('.')[0], f.read().decode('utf-8').strip())
 
         def _initializeDetails():
             location = self.location()

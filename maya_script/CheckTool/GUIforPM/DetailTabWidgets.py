@@ -120,6 +120,9 @@ class LODTableViewInDetailTabWidget(QTableView):
         row = 0
         # lods: [['LOD_1', 'Vertex', '0.0K'],]
         for level, component, budget in lods:
+            level = level.decode('utf-8')
+            component = component.decode('utf-8')
+            budget = budget.decode('utf-8')
             item = QStandardItem(level)
             item.setFont(self.font)
             self.dataModel.appendRow(item)
@@ -300,7 +303,7 @@ class CheckShaderNamesWidget(QWidget):
         self.vertLayout.addWidget(self.previewLabel)
 
         self.prototypeList = ListViewInDetailTabWidget(self)
-        self.prototypeList.addItems([i[0] for i in self.parent.detail('check shader names') if len(i)])
+        self.prototypeList.addItems([i[0].decode('utf-8') for i in self.parent.detail('check shader names') if len(i)])
         self.vertLayout.addWidget(self.prototypeList)
 
         self.regularEditor = QTextEdit(self)
@@ -330,7 +333,7 @@ class CheckShaderNamesWidget(QWidget):
             self.previewLabel.setText('<b><span style="font-size:10pt">Enter your regular expression:</span></b>')
             self.prototypeList.setVisible(False)
             self.regularEditor.setVisible(True)
-            self.regularEditor.setPlainText('\n'.join([i[0] for i in self.parent.detail('check shader names') if len(i)]))
+            self.regularEditor.setPlainText('\n'.join([i[0].decode('utf-8') for i in self.parent.detail('check shader names') if len(i)]))
         else:
             self.prefixLineEdit.setEnabled(True)
             self.postfixLineEdit.setEnabled(True)
@@ -340,7 +343,7 @@ class CheckShaderNamesWidget(QWidget):
             self.prototypeList.setVisible(True)
             self.regularEditor.setVisible(False)
             self.prototypeList.clearItems()
-            self.prototypeList.addItems([i[0] for i in self.parent.detail('check shader names') if len(i)])
+            self.prototypeList.addItems([i[0].decode('utf-8') for i in self.parent.detail('check shader names') if len(i)])
 
 
     def previewNamePrototype(self):

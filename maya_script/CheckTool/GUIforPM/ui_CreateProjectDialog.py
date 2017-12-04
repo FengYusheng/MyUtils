@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\CheckTool/Qt/UI/GUIforPM/CreateProjectDialog.ui'
+# Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool/Qt/UI/GUIforPM/CreateProjectDialog.ui'
 #
-# Created: Sun Dec  3 21:36:06 2017
+# Created: Mon Dec 04 16:44:42 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!

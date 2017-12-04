@@ -16,23 +16,36 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QPushButton" name="checkButton">
-      <property name="text">
-       <string>Check Asset</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QComboBox" name="projectComboBox">
+        <item>
+         <property name="text">
+          <string>Change location</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="checkButton">
+        <property name="text">
+         <string>Check Asset</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QListView" name="checkersListView"/>
+       <widget class="QListView" name="checkerListView"/>
       </item>
       <item>
        <widget class="QTabWidget" name="messageTabWidget">
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="tipTab">
          <attribute name="title">
           <string>Tip</string>
          </attribute>
@@ -42,7 +55,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
+        <widget class="QWidget" name="detailTab">
          <attribute name="title">
           <string>Detail</string>
          </attribute>
@@ -61,7 +74,7 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab_3">
+      <widget class="QWidget" name="resultTab">
        <attribute name="title">
         <string>Result</string>
        </attribute>
@@ -71,7 +84,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_4">
+      <widget class="QWidget" name="displayTab">
        <attribute name="title">
         <string>Display</string>
        </attribute>
@@ -91,7 +104,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
