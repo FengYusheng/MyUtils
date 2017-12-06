@@ -459,7 +459,7 @@ class CheckWidget(QWidget):
         def _lod(lods, polycount):
             level = 'Overspend'
             _lods = lods[:]
-            _lods.insert(0, ('LOD_1', lods[0][1], lods[0][2]))
+            _lods.insert(0, ('LOD_1', lods[0][1], lods[0][2]*1.2))
             for lod in _lods:
                 if polycount <= lod[2]:
                     level = lod[0]
@@ -498,78 +498,80 @@ class CheckWidget(QWidget):
 
         index = 0
         parent = None
-        lods = [(lod[0], lod[1], float(lod[2].rpartition('K')[0])*1000.0) for lod in self.parent.detail('check poly count')]
+        lods = [(lod[0].decode('utf-8'), lod[1].decode('utf-8'), float(lod[2].decode('utf-8').rpartition('K')[0])*1000.0) for lod in self.parent.detail('check poly count')]
 
         self.dataModelInResutsTreeView.clear()
-        for header in ('Asset', 'Tris/Verts', 'Poly Count', 'LOD'):
-            item = QStandardItem(header)
+        if 'check poly count' in self.result:
+            for header in ('Asset', 'Tris/Verts', 'Poly Count', 'LOD'):
+                item = QStandardItem(header)
+                item.setFont(self.font)
+                self.dataModelInResutsTreeView.setHorizontalHeaderItem(index, item)
+                index += 1
+
+            scene = pm.system.sceneName()
+            scene = scene.rpartition('/')[2].rpartition('.')[0] if scene else 'Untitled'
+            item = QStandardItem(scene)
             item.setFont(self.font)
-            self.dataModelInResutsTreeView.setHorizontalHeaderItem(index, item)
-            index += 1
+            item.setEditable(False)
+            self.dataModelInResutsTreeView.appendRow(item)
+            parent = item
 
-        scene = pm.system.sceneName().rpartition('/')[2].partition('.')[0]
-        item = QStandardItem(scene)
-        item.setFont(self.font)
-        item.setEditable(False)
-        self.dataModelInResutsTreeView.appendRow(item)
-        parent = item
+            polygon = 'Verts' if lods[0][1] == 'Vertex' else 'Tris'
+            item = QStandardItem(polygon)
+            item.setFont(self.font)
+            item.setEditable(False)
+            self.dataModelInResutsTreeView.setItem(0, 1, item)
 
-        polygon = 'Verts' if lods[0][1] == 'Vertex' else 'Tris'
-        item = QStandardItem(polygon)
-        item.setFont(self.font)
-        item.setEditable(False)
-        self.dataModelInResutsTreeView.setItem(0, 1, item)
+            polycount = self.result['check poly count'][polygon]
+            item = QStandardItem(str(polycount))
+            item.setFont(self.font)
+            item.setEditable(False)
+            self.dataModelInResutsTreeView.setItem(0, 2, item)
 
-        polycount = self.result['check poly count'][polygon]
-        item = QStandardItem(str(polycount))
-        item.setFont(self.font)
-        item.setEditable(False)
-        self.dataModelInResutsTreeView.setItem(0, 2, item)
+            level = _lod(lods, polycount)
+            item = QStandardItem(level)
+            item.setFont(self.font)
+            item.setEditable(False)
+            self.dataModelInResutsTreeView.setItem(0, 3, item)
 
-        level = _lod(lods, polycount)
-        item = QStandardItem(level)
-        item.setFont(self.font)
-        item.setEditable(False)
-        self.dataModelInResutsTreeView.setItem(0, 3, item)
-
-        _displayPolyCountGroupByAsset(lods, self.result['check poly count']['hierarchy'], parent)
-
-        for i in range(index):
-            self.resultsTreeView.resizeColumnToContents(i)
+            _displayPolyCountGroupByAsset(lods, self.result['check poly count']['hierarchy'], parent)
+            map(lambda i : self.resultsTreeView.resizeColumnToContents(i), range(index))
 
 
     def _displayNGonsResult(self, checker):
         self.dataModelInResutsTreeView.clear()
-        header = QStandardItem(checker)
-        header.setFont(self.font)
-        self.dataModelInResutsTreeView.setHorizontalHeaderItem(0, header)
-        for k, v in self.result[checker].items():
-            item = QStandardItem(k)
-            item.setEditable(False)
-            item.setFont(self.font)
-            self.dataModelInResutsTreeView.appendRow(item)
-            parent = item
-            row = 0
-            for _ in v:
-                item = QStandardItem(_)
+        if checker in self.result:
+            header = QStandardItem(checker)
+            header.setFont(self.font)
+            self.dataModelInResutsTreeView.setHorizontalHeaderItem(0, header)
+            for k, v in self.result[checker].items():
+                item = QStandardItem(k)
                 item.setEditable(False)
                 item.setFont(self.font)
-                parent.setChild(row, item)
-                row += 1
-        self.resultsTreeView.resizeColumnToContents(0)
+                self.dataModelInResutsTreeView.appendRow(item)
+                parent = item
+                row = 0
+                for _ in v:
+                    item = QStandardItem(_)
+                    item.setEditable(False)
+                    item.setFont(self.font)
+                    parent.setChild(row, item)
+                    row += 1
+            self.resultsTreeView.resizeColumnToContents(0)
 
 
     def _displayCheckCommonResult(self, checker):
         self.dataModelInResutsTreeView.clear()
-        header = QStandardItem(checker)
-        header.setFont(self.font)
-        self.dataModelInResutsTreeView.setHorizontalHeaderItem(0, header)
-        for i in self.result[checker]:
-            item = QStandardItem(i)
-            item.setEditable(False)
-            item.setFont(self.font)
-            self.dataModelInResutsTreeView.appendRow(item)
-        self.resultsTreeView.resizeColumnToContents(0)
+        if checker in self.result:
+            header = QStandardItem(checker)
+            header.setFont(self.font)
+            self.dataModelInResutsTreeView.setHorizontalHeaderItem(0, header)
+            for i in self.result[checker]:
+                item = QStandardItem(i)
+                item.setEditable(False)
+                item.setFont(self.font)
+                self.dataModelInResutsTreeView.appendRow(item)
+            self.resultsTreeView.resizeColumnToContents(0)
 
 
     def checkAsset(self):
@@ -586,6 +588,7 @@ class CheckWidget(QWidget):
 
 
     def displayCheckResult(self):
+        self.dataModelInResutsTreeView.clear()
         if self.selectionModelInCheckersTableView.hasSelection() and self.result is not None:
             index = self.selectionModelInCheckersTableView.selectedRows()[0]
             checker = self.dataModelInCheckersTableView.itemFromIndex(index).text()

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool/Qt/UI/GUIforArtist/ChooseLocationDialog.ui'
 #
-# Created: Mon Dec 04 18:37:47 2017
+# Created: Wed Dec 06 18:04:13 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!

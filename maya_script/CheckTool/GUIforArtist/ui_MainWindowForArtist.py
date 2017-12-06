@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool/Qt/UI/GUIforArtist/MainWindowForArtist.ui'
 #
-# Created: Mon Dec 04 18:37:47 2017
+# Created: Wed Dec 06 18:04:13 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,18 +29,18 @@ class Ui_MainWindowForArtist(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.checkerListView = QtWidgets.QListView(self.centralwidget)
-        self.checkerListView.setObjectName("checkerListView")
-        self.horizontalLayout.addWidget(self.checkerListView)
+        self.checkerTableView = QtWidgets.QTableView(self.centralwidget)
+        self.checkerTableView.setObjectName("checkerTableView")
+        self.horizontalLayout.addWidget(self.checkerTableView)
         self.messageTabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.messageTabWidget.setObjectName("messageTabWidget")
         self.tipTab = QtWidgets.QWidget()
         self.tipTab.setObjectName("tipTab")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.tipTab)
-        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.tipTab)
+        self.gridLayout_3.setObjectName("gridLayout_3")
         self.tipTextBrower = QtWidgets.QTextBrowser(self.tipTab)
         self.tipTextBrower.setObjectName("tipTextBrower")
-        self.gridLayout_2.addWidget(self.tipTextBrower, 0, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.tipTextBrower, 0, 0, 1, 1)
         self.messageTabWidget.addTab(self.tipTab, "")
         self.detailTab = QtWidgets.QWidget()
         self.detailTab.setObjectName("detailTab")
@@ -56,11 +56,11 @@ class Ui_MainWindowForArtist(object):
         self.displayTabWidget.setObjectName("displayTabWidget")
         self.resultTab = QtWidgets.QWidget()
         self.resultTab.setObjectName("resultTab")
-        self.gridLayout_3 = QtWidgets.QGridLayout(self.resultTab)
-        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.resultTab)
+        self.gridLayout_2.setObjectName("gridLayout_2")
         self.resultTreeView = QtWidgets.QTreeView(self.resultTab)
         self.resultTreeView.setObjectName("resultTreeView")
-        self.gridLayout_3.addWidget(self.resultTreeView, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.resultTreeView, 0, 0, 1, 1)
         self.displayTabWidget.addTab(self.resultTab, "")
         self.displayTab = QtWidgets.QWidget()
         self.displayTab.setObjectName("displayTab")
