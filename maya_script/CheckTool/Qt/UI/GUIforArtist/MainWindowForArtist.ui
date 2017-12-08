@@ -18,19 +18,19 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
+       <widget class="QPushButton" name="checkButton">
+        <property name="text">
+         <string>Check Asset</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QComboBox" name="projectComboBox">
         <item>
          <property name="text">
           <string>Change location</string>
          </property>
         </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="checkButton">
-        <property name="text">
-         <string>Check Asset</string>
-        </property>
        </widget>
       </item>
      </layout>

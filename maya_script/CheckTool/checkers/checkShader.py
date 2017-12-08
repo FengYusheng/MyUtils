@@ -3,7 +3,7 @@ import re
 
 import pymel.core as pm
 
-def checkShaderNames(prototypes=[]):
+def checkShaderNames(prototypes=[], progressCallback=None):
     shaders = pm.ls(materials=True)
     shaders.remove('particleCloud1')
     shaders.remove('lambert1')

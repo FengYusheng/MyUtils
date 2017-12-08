@@ -92,7 +92,7 @@ def getContainerStackUsingPymel(container=None):
     return container_stack
 
 
-def getPoyCountGroupByContainerUsingPymel2():
+def getPoyCountGroupByContainerUsingPymel2(progressCallback=None):
     scenePolyCount = {'Verts':0, 'Edges':0, 'Faces':0, 'UVs':0, 'Tris':0, 'surface area':0, 'hierarchy':{}}
     Verts = Edges = Faces = UVs = Tris = 0
     if pm.system.sceneName():

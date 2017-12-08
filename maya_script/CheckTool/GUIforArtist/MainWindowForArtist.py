@@ -38,6 +38,33 @@ def getMayaWindow():
 
 
 
+class ProgressBarDelegate(QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super(ProgressBarDelegate, self).__init__(parent)
+        self.progress = 0
+        self.min = 0
+        self.max = 0
+
+
+    def setProgress(self, progress):
+        self.progress = progress
+
+
+    def paint(self, painter, option, index):
+        if 1 == index.column():
+            progressBarOption = QStyleOptionProgressBar()
+            progressBarOption.rect = option.rect
+            progressBarOption.minimum = 0
+            progressBarOption.maximum = 100
+            progressBarOption.progress = self.progress
+            progressBarOption.text = '{0}%'.format(self.progress)
+            progressBarOption.textVisible = True
+            QApplication.style().drawControl(QStyle.CE_ProgressBar, progressBarOption, painter)
+        else:
+            QStyledItemDelegate.paint(self, painter, option, index)
+
+
+
 class ChooseLocationDialog(QDialog, ui_ChooseLocationDialog.Ui_ChooseLocationDialog):
     def __init__(self, parent=None):
         super(ChooseLocationDialog, self).__init__(parent)
@@ -87,6 +114,8 @@ class MainWindowForArtist(QMainWindow, ui_MainWindowForArtist.Ui_MainWindowForAr
         self.checkerTableView.setSelectionMode(QAbstractItemView.SingleSelection)
         self.checkerTableView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.checkerTableView.mousePressEvent = self._mousePressEventInCheckerTableView
+        self.progressBarDelegateInCheckerTableView = ProgressBarDelegate(self)
+        self.checkerTableView.setItemDelegate(self.progressBarDelegateInCheckerTableView)
         self.dataModelInDetailTableView = QStandardItemModel(self.detailTableView)
         self.detailTableView.setModel(self.dataModelInDetailTableView)
         self.selectionModelInDetailTableView = QItemSelectionModel(self.dataModelInDetailTableView, self.detailTableView)
@@ -139,6 +168,12 @@ class MainWindowForArtist(QMainWindow, ui_MainWindowForArtist.Ui_MainWindowForAr
             item.setFont(self.font)
             item.setBackground(self.brush)
             self.dataModelInCheckerTableView.appendRow(item)
+            row = self.dataModelInCheckerTableView.indexFromItem(item).row()
+
+            item = QStandardItem('not start')
+            item.setEditable(False)
+            item.setFont(self.font)
+            self.dataModelInCheckerTableView.setItem(row, 1, item)
 
         self.checkerTableView.resizeColumnsToContents()
 

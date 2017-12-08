@@ -3,7 +3,7 @@ import pymel.core as pm
 
 
 
-def checkTransformations():
+def checkTransformations(progressCallback=None):
     result = set()
     cameras = pm.listCameras()
     cameras = cameras if cameras else []
@@ -38,7 +38,7 @@ def checkTransformations():
     return list(result)
 
 
-def checkNGons():
+def checkNGons(progressCallback=None):
     result = {}
     shapes = pm.ls(type='mesh')
     pm.select(shapes, r=True)
@@ -53,7 +53,7 @@ def checkNGons():
     return result
 
 
-def checkLaminaFaces():
+def checkLaminaFaces(progressCallback=None):
     result = {}
     shapes = pm.ls(type='mesh')
     pm.select(shapes, r=True)
@@ -68,7 +68,7 @@ def checkLaminaFaces():
     return result
 
 
-def checkOverlappingVertices():
+def checkOverlappingVertices(progressCallback=None):
     result = {}
     shapes = pm.ls(type='mesh')
     for shape in shapes:
@@ -87,7 +87,7 @@ def checkOverlappingVertices():
     return result
 
 
-def checkExternalfilePath():
+def checkExternalfilePath(progressCallback=None):
     files = pm.ls(type='file')
     files = files if files else []
     scenePath = pm.system.sceneName()

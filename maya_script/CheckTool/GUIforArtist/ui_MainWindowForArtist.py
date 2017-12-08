@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\project\MindwalkToolsDevWorkspace\MindwalkTools\MayaTools\MWCheckTool/Qt/UI/GUIforArtist/MainWindowForArtist.ui'
 #
-# Created: Wed Dec 06 18:04:13 2017
+# Created: Thu Dec 07 18:14:48 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,13 +19,13 @@ class Ui_MainWindowForArtist(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.checkButton = QtWidgets.QPushButton(self.centralwidget)
+        self.checkButton.setObjectName("checkButton")
+        self.horizontalLayout_2.addWidget(self.checkButton)
         self.projectComboBox = QtWidgets.QComboBox(self.centralwidget)
         self.projectComboBox.setObjectName("projectComboBox")
         self.projectComboBox.addItem("")
         self.horizontalLayout_2.addWidget(self.projectComboBox)
-        self.checkButton = QtWidgets.QPushButton(self.centralwidget)
-        self.checkButton.setObjectName("checkButton")
-        self.horizontalLayout_2.addWidget(self.checkButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -87,8 +87,8 @@ class Ui_MainWindowForArtist(object):
 
     def retranslateUi(self, MainWindowForArtist):
         MainWindowForArtist.setWindowTitle(QtWidgets.QApplication.translate("MainWindowForArtist", "Check Your Asset: ", None, -1))
-        self.projectComboBox.setItemText(0, QtWidgets.QApplication.translate("MainWindowForArtist", "Change location", None, -1))
         self.checkButton.setText(QtWidgets.QApplication.translate("MainWindowForArtist", "Check Asset", None, -1))
+        self.projectComboBox.setItemText(0, QtWidgets.QApplication.translate("MainWindowForArtist", "Change location", None, -1))
         self.messageTabWidget.setTabText(self.messageTabWidget.indexOf(self.tipTab), QtWidgets.QApplication.translate("MainWindowForArtist", "Tip", None, -1))
         self.messageTabWidget.setTabText(self.messageTabWidget.indexOf(self.detailTab), QtWidgets.QApplication.translate("MainWindowForArtist", "Detail", None, -1))
         self.displayTabWidget.setTabText(self.displayTabWidget.indexOf(self.resultTab), QtWidgets.QApplication.translate("MainWindowForArtist", "Result", None, -1))
