@@ -38,24 +38,39 @@ def getMayaWindow():
 
 
 
+class WorkerThread(QThread):
+    def __init__(self, parent):
+        super(WorkerThread, self).__init__(parent)
+
+
+
 class ProgressBarDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
         super(ProgressBarDelegate, self).__init__(parent)
         self.progress = 0
-        self.min = 0
-        self.max = 0
+        self.minimum = 0
+        self.maximum = 0
+        self.checker = None
+        self.parent = parent
 
 
-    def setProgress(self, progress):
+    def setProgress(self, progress, checker):
         self.progress = progress
+        self.checker = checker
+        self.parent.update()
+
+
+    def setMaximum(self, maximum):
+        self.maximum = maximum
 
 
     def paint(self, painter, option, index):
         if 1 == index.column():
+            print self.maximum, self.progress
             progressBarOption = QStyleOptionProgressBar()
             progressBarOption.rect = option.rect
             progressBarOption.minimum = 0
-            progressBarOption.maximum = 100
+            progressBarOption.maximum = self.maximum
             progressBarOption.progress = self.progress
             progressBarOption.text = '{0}%'.format(self.progress)
             progressBarOption.textVisible = True
@@ -510,6 +525,7 @@ class MainWindowForArtist(QMainWindow, ui_MainWindowForArtist.Ui_MainWindowForAr
         if len(activeCheckers):
             project = self.projectComboBox.currentText()
             details = {checker : self.detail(project, checker) for checker in activeCheckers if checker in GlobalInArtist.detail}
+            details['progress delegate'] = self.progressBarDelegateInCheckerTableView
             self.result = CheckAsset.checkAsset(activeCheckers, **details)
 
 

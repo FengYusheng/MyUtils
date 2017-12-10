@@ -3,7 +3,7 @@ import pymel.core as pm
 
 
 
-def checkTransformations(progressCallback=None):
+def checkTransformations(*args, **kwargs):
     result = set()
     cameras = pm.listCameras()
     cameras = cameras if cameras else []
@@ -38,7 +38,7 @@ def checkTransformations(progressCallback=None):
     return list(result)
 
 
-def checkNGons(progressCallback=None):
+def checkNGons(*args, **kwargs):
     result = {}
     shapes = pm.ls(type='mesh')
     pm.select(shapes, r=True)
@@ -53,7 +53,7 @@ def checkNGons(progressCallback=None):
     return result
 
 
-def checkLaminaFaces(progressCallback=None):
+def checkLaminaFaces(*args, **kwargs):
     result = {}
     shapes = pm.ls(type='mesh')
     pm.select(shapes, r=True)
@@ -68,11 +68,18 @@ def checkLaminaFaces(progressCallback=None):
     return result
 
 
-def checkOverlappingVertices(progressCallback=None):
+def checkOverlappingVertices(*args, **kwargs):
     result = {}
+    print kwargs
+    progressDelegate = kwargs.setdefault('progress delegate', None)
     shapes = pm.ls(type='mesh')
+    print progressDelegate
+    progressDelegate is None or progressDelegate.setMaximum(len(shapes))
+    progress = 0
     for shape in shapes:
         verts = set(shape.vtx)
+        progress += 1
+        progressDelegate is None or progressDelegate.setProgress(progress, 'check overlapping vertices')
         while verts:
             vert = verts.pop()
             position = vert.getPosition()
@@ -87,7 +94,7 @@ def checkOverlappingVertices(progressCallback=None):
     return result
 
 
-def checkExternalfilePath(progressCallback=None):
+def checkExternalfilePath(*args, **kwargs):
     files = pm.ls(type='file')
     files = files if files else []
     scenePath = pm.system.sceneName()

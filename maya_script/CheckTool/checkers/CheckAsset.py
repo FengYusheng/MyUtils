@@ -21,28 +21,28 @@ def saveCheckReuslt(result={}):
             json.dump(result, destination, indent=4, encoding='utf-8')
 
 
-def checkAsset(checkers=[], progressCallback=None, **kwargs):
+def checkAsset(checkers=[], *args, **kwargs):
     result = {}
     if 'check transformations' in checkers:
-        result['check transformations'] = checkMesh.checkTransformations(progressCallback)
+        result['check transformations'] = checkMesh.checkTransformations(**kwargs)
 
     if 'check n-gons' in checkers:
-        result['check n-gons'] = checkMesh.checkNGons(progressCallback)
+        result['check n-gons'] = checkMesh.checkNGons(**kwargs)
 
     if 'check lamina faces' in checkers:
-        result['check lamina faces'] = checkMesh.checkLaminaFaces(progressCallback)
+        result['check lamina faces'] = checkMesh.checkLaminaFaces(**kwargs)
 
     if 'check overlapping vertices' in checkers:
-        result['check overlapping vertices'] = checkMesh.checkOverlappingVertices(progressCallback)
+        result['check overlapping vertices'] = checkMesh.checkOverlappingVertices(**kwargs)
 
     if 'check external files' in checkers:
-        result['check external files'] = checkMesh.checkExternalfilePath(progressCallback)
+        result['check external files'] = checkMesh.checkExternalfilePath(**kwargs)
 
     if 'check shader names' in checkers:
-        result['check shader names'] = checkShader.checkShaderNames(kwargs['check shader names'], progressCallback)
+        result['check shader names'] = checkShader.checkShaderNames(kwargs['check shader names'], **kwargs)
 
     if 'check poly count' in checkers:
-        result['check poly count'] = polycount.getPoyCountGroupByContainerUsingPymel2(progressCallback)
+        result['check poly count'] = polycount.getPoyCountGroupByContainerUsingPymel2(**kwargs)
 
     saveCheckReuslt(result)
     printCheckResult(result)
