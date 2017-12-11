@@ -33,23 +33,46 @@
      <x>0</x>
      <y>0</y>
      <width>654</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edit</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menuSelectConstraint">
-    <property name="title">
-     <string>SelectConstraint</string>
-    </property>
+    <addaction name="simpleOptionsAction"/>
+    <addaction name="fullOptionsAction"/>
    </widget>
    <addaction name="menuEdit"/>
-   <addaction name="menuSelectConstraint"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="simpleOptionsAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Simple options</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WidgetWithChildrenShortcut</enum>
+   </property>
+  </action>
+  <action name="fullOptionsAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full options</string>
+   </property>
+  </action>
+  <action name="hardEdgesAction">
+   <property name="text">
+    <string>Hard edges</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
