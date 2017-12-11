@@ -21,8 +21,7 @@ def bevelOnHardEdges(*args, **kwargs):
         # -miteringAngle 180 -angleTolerance 180 -ch 1 pCube3;
         # http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-A1C5EC72-AD48-4A7D-8577-1823B3832E14
         #  C:\Program Files\Autodesk\Maya2018\scripts\others\performBevelOrChamfer.mel
-
-        not hardEdges or map(lambda _ : pm.polyBevel3(
+        resultPolyBevels = map(lambda _ : pm.polyBevel3(
             _,
             fraction=kwargs['fraction'],
             offsetAsFraction=kwargs['offsetAsFraction'],
@@ -41,9 +40,10 @@ def bevelOnHardEdges(*args, **kwargs):
             angleTolerance=kwargs['angleTolerance'],
             forceParallel=kwargs['forceParallel'],
             ch=kwargs['ch']
-        ), dups)
+        ), dups) if len(hardEdges) else []
 
         pm.select(dups, r=True)
+        return resultPolyBevels
 
 
 

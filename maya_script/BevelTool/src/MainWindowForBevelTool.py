@@ -98,6 +98,7 @@ class MainWindowForBevelTool(QMainWindow, ui_MainWindowForBevelTool.Ui_MainWindo
 
         self.font = QFont('OldEnglish', 10, QFont.Bold)
         self.bevelOptions = copy.copy(options.bevelOptions)
+        self.resultPolyBevels = []
 
         self.displayBevelOptions()
 
@@ -136,7 +137,75 @@ class MainWindowForBevelTool(QMainWindow, ui_MainWindowForBevelTool.Ui_MainWindo
 
 
     def bevel(self):
-        bevelTool.bevelOnHardEdges(**self.bevelOptions)
+        self.resultPolyBevels = bevelTool.bevelOnHardEdges(**self.bevelOptions)
+
+
+    def _editAttribute(self, option, value):
+        print self.resultPolyBevels
+        for bevelNode in self.resultPolyBevels:
+            if 'fraction' == option:
+                print 'fraction'
+                # bevelNode[0].setFraction(value)
+                bevelNode[0].fraction.set(value)
+            elif 'offsetAsFraction' == option:
+                print 'offsetAsFraction'
+                # bevelNode[0].setOffsetAsFraction(value)
+                bevelNode[0].offsetAsFraction(value)
+            elif 'autoFit' == option:
+                print 'autoFit'
+                # bevelNode[0].setAutoFit(value)
+                bevelNode[0].autoFit.set(value)
+            elif 'depth' == option:
+                print 'depth'
+                # bevelNode[0].setDepth(value)
+                bevelNode[0].depth.set(value)
+            elif 'mitering' == option:
+                print 'mitering'
+                # bevelNode[0].setMitering(value)
+                bevelNode[0].mitering.set(value)
+            elif 'miterAlong' == option:
+                print 'miterAlong'
+                # bevelNode[0].setMiterAlong(value)
+                bevelNode[0].miterAlong.set(value)
+            elif 'chamfer' == option:
+                print 'chamfer'
+                # bevelNode[0].setChamfer(value)
+                bevelNode[0].chamfer.set(value)
+            elif 'segments' == option:
+                print 'segments'
+                # bevelNode[0].setSegments(value)
+                bevelNode[0].segments.set(value)
+            elif 'worldSpace' == option:
+                print 'worldSpace'
+                # bevelNode[0].setWorldSpace(value)
+                bevelNode[0].worldSpace.set(value)
+            elif 'smoothingAngle' == option:
+                print 'smoothingAngle'
+                # bevelNode[0].setSmoothingAngle(value)
+                bevelNode[0].smoothingAngle.set(value)
+            elif 'subdivideNgons' == option:
+                print 'subdivideNgons'
+                # bevelNode[0].setSubdivideNgons(value)
+                bevelNode[0].subdivideNgons.set(value)
+            elif 'mergeVertices' == option:
+                print 'mergeVertices'
+                # bevelNode[0].setMergeVertices(value)
+            elif 'mergeVertexTolerance' == option:
+                print 'mergeVertexTolerance'
+                # bevelNode[0].setMergeVertexTolerance(value)
+                bevelNode[0].mergeVertexTolerance.set(value)
+            elif 'miteringAngle' == option:
+                print 'miteringAngle'
+                # bevelNode[0].setMiteringAngle(value)
+                bevelNode[0].miteringAngle.set(value)
+            elif 'angleTolerance' == option:
+                print 'angleTolerance'
+                # bevelNode[0].setAngleTolerance(value)
+                bevelNode[0].angleTolerance.set(value)
+            elif 'forceParallel' == option:
+                print 'forceParallel'
+                # bevelNode[0].seForceParallel(value)
+                bevelNode[0].forceParallel.set(value)
 
 
     def editOption(self, editor, hint):
@@ -149,6 +218,7 @@ class MainWindowForBevelTool(QMainWindow, ui_MainWindowForBevelTool.Ui_MainWindo
             value = editor.value()
 
         self.bevelOptions[option] = value
+        not len(self.resultPolyBevels) or self._editAttribute(option, value)
 
 
 
