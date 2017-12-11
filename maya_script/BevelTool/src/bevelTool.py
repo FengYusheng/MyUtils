@@ -14,7 +14,6 @@ def bevelOnHardEdges(*args, **kwargs):
         pm.polySelectConstraint(disable=True, m=3, t=0x8000, sm=1)
         hardEdges = pm.ls(sl=True)
         pm.polySelectConstraint(disable=True)
-
         # polyBevel3 -fraction 0.5 -offsetAsFraction 1 -autoFit 1 -depth 1 \
         # -mitering 0 -miterAlong 0 -chamfer 1 -segments 1 -worldSpace 1 \
         # -smoothingAngle 30 -subdivideNgons 1 -mergeVertices 1 -mergeVertexTolerance 0.0001 \
@@ -40,7 +39,7 @@ def bevelOnHardEdges(*args, **kwargs):
             angleTolerance=kwargs['angleTolerance'],
             forceParallel=kwargs['forceParallel'],
             ch=kwargs['ch']
-        ), dups) if len(hardEdges) else []
+        ), dups)
 
         pm.select(dups, r=True)
         return resultPolyBevels
