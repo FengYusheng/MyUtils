@@ -46,30 +46,42 @@ class OptionDelegate(QStyledItemDelegate):
             editor = QComboBox(parent)
             editor.addItems(('True', 'False'))
             editor.setFont(self.font)
+        elif 'mitering' == opt:
+            editor = QComboBox(parent)
+            editor.addItems(('Auto, 0', 'Uniform, 1', 'Patch, 2', 'Radial, 3', 'None, 4'))
+            editor.setFont(self.font)
+        elif 'miterAlong' == opt:
+            editor = QComboBox(parent)
+            editor.addItems(('Auto, 0', 'Center, 1', 'Edge, 2', 'Hard Edge, 3'))
+            editor.setFont(self.font)
         else:
-            editor = QDoubleSpinBox(parent)
-            editor.setMaximum(1000.0)
-            editor.setMinimum(0.0)
-            editor.setDecimals(1.0)
+            editor = QLineEdit(parent)
 
         return editor
 
 
     def setEditorData(self, editor, index):
+        row = index.row()
+        opt = index.model().item(row, 0).text()
         data = index.model().data(index, Qt.EditRole)
-        if isinstance(editor, QComboBox):
+        if opt in options.BOOLOPTIONS:
             data == 'True' or editor.setCurrentIndex(1)
             data == 'False' or editor.setCurrentIndex(0)
+        elif 'mitering' == opt or 'miterAlong' == opt:
+            editor.setCurrentIndex(int(data))
         else:
-            editor.setValue(float(data))
+            editor.setText(data)
 
 
     def setModelData(self, editor, model, index):
-        if isinstance(editor, QComboBox):
+        row = index.row()
+        opt = index.model().item(row, 0).text()
+        if opt in options.BOOLOPTIONS:
             data = editor.currentText()
+        elif 'mitering' == opt or 'miterAlong' == opt:
+            data = editor.currentIndex()
         else:
-            editor.interpretText()
-            data = str(editor.value())
+            data = editor.text()
 
         model.setData(index, str(data), Qt.EditRole)
 
@@ -141,87 +153,60 @@ class MainWindowForBevelTool(QMainWindow, ui_MainWindowForBevelTool.Ui_MainWindo
 
 
     def _editAttribute(self, option, value):
-        print self.resultPolyBevels
         for bevelNode in self.resultPolyBevels:
             if 'fraction' == option:
-                print 'fraction'
-                # bevelNode[0].setFraction(value)
                 bevelNode[0].fraction.set(value)
             elif 'offsetAsFraction' == option:
-                print 'offsetAsFraction'
-                # bevelNode[0].setOffsetAsFraction(value)
                 bevelNode[0].offsetAsFraction(value)
             elif 'autoFit' == option:
-                print 'autoFit'
-                # bevelNode[0].setAutoFit(value)
                 bevelNode[0].autoFit.set(value)
             elif 'depth' == option:
-                print 'depth'
-                # bevelNode[0].setDepth(value)
                 bevelNode[0].depth.set(value)
             elif 'mitering' == option:
-                print 'mitering'
-                # bevelNode[0].setMitering(value)
                 bevelNode[0].mitering.set(value)
             elif 'miterAlong' == option:
-                print 'miterAlong'
-                # bevelNode[0].setMiterAlong(value)
                 bevelNode[0].miterAlong.set(value)
             elif 'chamfer' == option:
-                print 'chamfer'
-                # bevelNode[0].setChamfer(value)
                 bevelNode[0].chamfer.set(value)
             elif 'segments' == option:
-                print 'segments'
-                # bevelNode[0].setSegments(value)
                 bevelNode[0].segments.set(value)
             elif 'worldSpace' == option:
-                print 'worldSpace'
-                # bevelNode[0].setWorldSpace(value)
                 bevelNode[0].worldSpace.set(value)
             elif 'smoothingAngle' == option:
-                print 'smoothingAngle'
-                # bevelNode[0].setSmoothingAngle(value)
                 bevelNode[0].smoothingAngle.set(value)
             elif 'subdivideNgons' == option:
-                print 'subdivideNgons'
-                # bevelNode[0].setSubdivideNgons(value)
                 bevelNode[0].subdivideNgons.set(value)
             elif 'mergeVertices' == option:
-                print 'mergeVertices'
-                # bevelNode[0].setMergeVertices(value)
+                bevelNode[0].mergeVertices.set(value)
             elif 'mergeVertexTolerance' == option:
-                print 'mergeVertexTolerance'
-                # bevelNode[0].setMergeVertexTolerance(value)
                 bevelNode[0].mergeVertexTolerance.set(value)
             elif 'miteringAngle' == option:
-                print 'miteringAngle'
-                # bevelNode[0].setMiteringAngle(value)
                 bevelNode[0].miteringAngle.set(value)
             elif 'angleTolerance' == option:
-                print 'angleTolerance'
-                # bevelNode[0].setAngleTolerance(value)
                 bevelNode[0].angleTolerance.set(value)
             elif 'forceParallel' == option:
-                print 'forceParallel'
-                # bevelNode[0].seForceParallel(value)
                 bevelNode[0].forceParallel.set(value)
 
 
     def editOption(self, editor, hint):
         row = self.selectionModelInOptionTableView.currentIndex().row()
         option = self.dataModelInOptionTableView.item(row, 0).text()
-        if isinstance(editor, QComboBox):
+        if option in options.BOOLOPTIONS:
             value = True if 'True' == editor.currentText() else False
+        elif 'mitering' == option or 'miterAlong' == option:
+            value = editor.currentIndex()
         else:
-            editor.interpretText()
-            value = editor.value()
+            value = float(editor.text())
 
         self.bevelOptions[option] = value
         not len(self.resultPolyBevels) or self._editAttribute(option, value)
 
 
 
-if __name__ == '__main__':
+def run():
     window = MainWindowForBevelTool(getMayaWindow())
     window.show()
+
+
+if __name__ == '__main__':
+    run()

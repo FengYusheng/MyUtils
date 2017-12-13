@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+"""
+polyBevel3 -fraction 0.5 -offsetAsFraction 1 -autoFit 1 -depth 1 -mitering 0
+            -miterAlong 0 -chamfer 0 -segments 1 -worldSpace 1 -smoothingAngle 30
+            -subdivideNgons 1 -mergeVertices 1 -mergeVertexTolerance 0.0001
+            3-miteringAngle 180 -angleTolerance 180 -ch 1 pCylinder2.e[0:39];
+"""
+
+
 bevelOptions = {
     'fraction'             : 0.5,
     'offsetAsFraction'     : True,
@@ -28,11 +36,8 @@ BOOLOPTIONS = ('offsetAsFraction', 'autoFit', 'chamfer', 'worldSpace', 'subdivid
 SIMPLEOPTIONS = (
     'fraction',
     'segments',
-    'depth',
     'mitering' ,
-    'miterAlong',
-    'chamfer',
-    'forceParallel'
+    'miterAlong'
 )
 
 

@@ -2,6 +2,7 @@
 import sys
 import os
 
+
 def inilialize():
     toolDir = os.path.normpath(os.path.dirname(os.path.realpath(os.path.abspath(__file__))))
     toolDir = os.path.split(toolDir)[0]

@@ -2,48 +2,54 @@
 
 import pymel.core as pm
 
-import options
-reload(options)
+import utils
+
 
 def bevelOnHardEdges(*args, **kwargs):
-    objects = [i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
-    if objects:
-        dups = pm.duplicate(objects, st=True, rr=True) if not kwargs['instance'] else pm.instance(objects, st=True)
-        pm.move(25.0, 0.0, 0.0, dups, r=True)
-        # Select all the hard edges.
-        pm.polySelectConstraint(disable=True, m=3, t=0x8000, sm=1)
+    duplications = []
+    resultPolyBevelNodes = []
+    polygons = [i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
+    for polygon in polygons:
+        dup = pm.duplicate(polygon, st=True, rr=True)[0]
+        duplications.append(dup)
+        pm.move(25.0, 0.0, 0.0, dup, r=True)
+        if pm.mel.eval('exists doMenuComponentSelection'):
+            try:
+                pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(dup.name()))
+            except pm.MelError:
+                pass
+        else:
+            utils.switchSelectionModeToEdge(dup)
+
+        pm.select(dup.e, r=True)
+        pm.polySelectConstraint(disable=True, m=2, t=0x8000, sm=1)
         hardEdges = pm.ls(sl=True)
-        pm.polySelectConstraint(disable=True)
-        # polyBevel3 -fraction 0.5 -offsetAsFraction 1 -autoFit 1 -depth 1 \
-        # -mitering 0 -miterAlong 0 -chamfer 1 -segments 1 -worldSpace 1 \
-        # -smoothingAngle 30 -subdivideNgons 1 -mergeVertices 1 -mergeVertexTolerance 0.0001 \
-        # -miteringAngle 180 -angleTolerance 180 -ch 1 pCube3;
-        # http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-A1C5EC72-AD48-4A7D-8577-1823B3832E14
-        #  C:\Program Files\Autodesk\Maya2018\scripts\others\performBevelOrChamfer.mel
-        resultPolyBevels = map(lambda _ : pm.polyBevel3(
-            _,
-            fraction=kwargs['fraction'],
-            offsetAsFraction=kwargs['offsetAsFraction'],
-            autoFit=kwargs['autoFit'],
-            depth=kwargs['depth'],
-            mitering=kwargs['mitering'],
-            miterAlong=kwargs['miterAlong'],
-            chamfer=kwargs['chamfer'],
-            segments=kwargs['segments'],
-            worldSpace=kwargs['worldSpace'],
-            smoothingAngle=kwargs['smoothingAngle'],
-            subdivideNgons=kwargs['subdivideNgons'],
-            mergeVertices=kwargs['mergeVertices'],
-            mergeVertexTolerance=kwargs['mergeVertexTolerance'],
-            miteringAngle=kwargs['miteringAngle'],
-            angleTolerance=kwargs['angleTolerance'],
-            forceParallel=kwargs['forceParallel'],
-            ch=kwargs['ch']
-        ), dups)
+        not len(hardEdges) or resultPolyBevelNodes.append(
+            pm.polyBevel3(
+                hardEdges,
+                fraction=kwargs['fraction'],
+                offsetAsFraction=kwargs['offsetAsFraction'],
+                autoFit=kwargs['autoFit'],
+                depth=kwargs['depth'],
+                mitering=kwargs['mitering'],
+                miterAlong=kwargs['miterAlong'],
+                chamfer=kwargs['chamfer'],
+                segments=kwargs['segments'],
+                worldSpace=kwargs['worldSpace'],
+                smoothingAngle=kwargs['smoothingAngle'],
+                subdivideNgons=kwargs['subdivideNgons'],
+                mergeVertices=kwargs['mergeVertices'],
+                mergeVertexTolerance=kwargs['mergeVertexTolerance'],
+                miteringAngle=kwargs['miteringAngle'],
+                angleTolerance=kwargs['angleTolerance'],
+                forceParallel=kwargs['forceParallel'],
+                ch=kwargs['ch']
+            )
+        )
 
-        pm.select(dups, r=True)
-        return resultPolyBevels
-
+    pm.polySelectConstraint(disable=True)
+    pm.select(duplications, r=True)
+    return resultPolyBevelNodes
 
 
 if __name__ == '__main__':
