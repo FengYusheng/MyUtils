@@ -25,6 +25,16 @@ def loadBevelToolUI():
     with open(destination, 'w') as f:
         compileUi(source, f, False, 4, False)
 
+    destination = bevelToolDir + '/src/ui_OptionTableViewWidget.py'
+    source = bevelToolDir + '/src/Qt/UI/OptionTableViewWidget.ui'
+    with open(destination, 'w') as f:
+        compileUi(source, f, False, 4, False)
+
+    destination = bevelToolDir + '/src/ui_SimpleOptionsWidget.py'
+    source = bevelToolDir + '/src/Qt/UI/SimpleOptionsWidget.ui'
+    with open(destination, 'w') as f:
+        compileUi(source, f, False, 4, False)
+
 
 
 if __name__ == '__main__':

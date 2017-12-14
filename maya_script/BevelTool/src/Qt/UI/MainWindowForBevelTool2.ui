@@ -13,7 +13,20 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="bevelButton">
+      <property name="text">
+       <string>Bevel</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QTableView" name="optionTableView"/>
+    </item>
+   </layout>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -27,13 +40,13 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="simpleBevelOptionsAction"/>
-    <addaction name="fullBevelOptionsAction"/>
+    <addaction name="simpleOptionsAction"/>
+    <addaction name="fullOptionsAction"/>
    </widget>
    <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="simpleBevelOptionsAction">
+  <action name="simpleOptionsAction">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -41,18 +54,18 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Simple bevel options</string>
+    <string>Simple options</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::WidgetWithChildrenShortcut</enum>
    </property>
   </action>
-  <action name="fullBevelOptionsAction">
+  <action name="fullOptionsAction">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Full bevel options</string>
+    <string>Full options</string>
    </property>
   </action>
   <action name="hardEdgesAction">
