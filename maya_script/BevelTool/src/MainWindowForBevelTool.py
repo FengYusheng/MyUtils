@@ -36,7 +36,7 @@ def getMayaWindow():
 class MainWindowForBevelTool(QMainWindow, ui_MainWindowForBevelTool.Ui_MainWindowForBevelTool):
     def __init__(self, parent=None):
         super(MainWindowForBevelTool, self).__init__(parent)
-        self._bevelNodes = None
+        self._bevelNodes = []
         self._bevelOptions = copy.copy(options.bevelOptions)
 
         self.setAttribute(Qt.WA_DeleteOnClose, True)

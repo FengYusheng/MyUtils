@@ -156,12 +156,65 @@ class SimpleOptionsWidget(QWidget, ui_SimpleOptionsWidget.Ui_simpleOptionsWidget
     def __init__(self, parent):
         super(SimpleOptionsWidget, self).__init__(parent)
         self.parent = parent
+        self.bevelOptions = self.parent.bevelOptions()
 
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setupUi(self)
         self.splitter = QSplitter(self)
         self.splitter.setOrientation(Qt.Horizontal)
         self.splitter.addWidget(self.optionGroupBox)
-        self.splitter.addWidget(self.helpGroupBox)
-        self.horizontalLayout.addWidget(self.splitter)
-        self.helpGroupBox.setVisible(False)
+        self.splitter.addWidget(self.helpTabWidget)
+        self.gridLayout_3.addWidget(self.splitter)
+        self.helpTabWidget.setVisible(False)
+
+        self.fractionDoubleSpinBox.valueChanged.connect(self.editFractionBySpinBox)
+        self.fractionSlider.valueChanged.connect(self.editFractionBySlider)
+        self.segmentsSpinBox.valueChanged.connect(self.editSegmentsBySpinBox)
+        self.segmentsSlider.valueChanged.connect(self.editSegmentsBySlider)
+        self.miteringComboBox.currentIndexChanged.connect(self.editMitering)
+        self.miterAlongComboBox.currentIndexChanged.connect(self.editMiteringAlong)
+        self.bevelButton.clicked.connect(self.bevel)
+
+
+    def editFractionBySpinBox(self, value):
+        if self.fractionSlider.value() != (int(value*1000)):
+            self.fractionSlider.setValue(int(value*1000))
+            self.bevelOptions['fraction'] = value
+            self.parent.editBevelOption('fraction', value)
+
+
+    def editFractionBySlider(self, value):
+        if self.fractionDoubleSpinBox.value() != (value/1000.0):
+            self.fractionDoubleSpinBox.setValue(value/1000.0)
+            self.bevelOptions['fraction'] = value
+            self.parent.editBevelOption('fraction', value/1000.0)
+
+
+    def editSegmentsBySpinBox(self, value):
+        if self.segmentsSlider.value() != value:
+            self.segmentsSlider.setValue(value)
+            self.bevelOptions['segments'] = value
+            self.parent.editBevelOption('segments', value)
+
+
+    def editSegmentsBySlider(self, value):
+        if self.segmentsSpinBox.value() != value:
+            self.segmentsSpinBox.setValue(value)
+            self.bevelOptions['segments'] = value
+            self.parent.editBevelOption('segments', value)
+
+
+    def editMitering(self, index):
+        self.bevelOptions['mitering'] = index
+        self.parent.editBevelOption('mitering', index)
+
+
+    def editMiteringAlong(self, index):
+        self.bevelOptions['miterAlong'] = index
+        self.parent.editBevelOption('miterAlong', index)
+
+
+
+    def bevel(self):
+        bevelNodes = bevelTool.bevelOnHardEdges(**self.bevelOptions)
+        self.parent.setBevelNodes(bevelNodes)
