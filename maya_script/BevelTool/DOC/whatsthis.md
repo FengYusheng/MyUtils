@@ -14,9 +14,24 @@ stops and another begins.
 ## Selecting
 
 ### Selection Mode
-http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-E3DBC099-2E93-47F3-B7FA-A219DB72B4A7
+>http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-E3DBC099-2E93-47F3-B7FA-A219DB72B4A7
 
 
 ## mel2py
 
 ## How do I import mel procedure?
+
+## Crease
+>http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-DEB060F9-A4B1-4F73-8B4D-B18A13D0E54B
+
+The higher the crease value, the sharper the crease.
+
+Maya offers two methods to crease edges and vertices on a polygon mesh:
+1. The Crease Tool.
+
+    `polyCrease`
+
+2. The Crease Set Editor.
+
+*You must select one method to use throughout your workflow, as the methods can't
+be used interchangeably on the same components.*
