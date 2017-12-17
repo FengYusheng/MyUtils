@@ -20,6 +20,9 @@ class MainWindow(QMainWindow, ui_MainWindow.Ui_MainWindow):
         self.dashboard = Dashboard.Dashboard(self)
         self.setCentralWidget(self.dashboard)
 
+        self.timer = QTimer(self)
+        self.interval = 2000
+
 
     def startMarquee(self):
         pass
