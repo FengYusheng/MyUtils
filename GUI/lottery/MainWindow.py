@@ -11,6 +11,8 @@ import Dashboard
 
 
 class MainWindow(QMainWindow, ui_MainWindow.Ui_MainWindow):
+    NAMEPATH = './names.txt'
+
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
@@ -18,6 +20,9 @@ class MainWindow(QMainWindow, ui_MainWindow.Ui_MainWindow):
         self.dashboard = Dashboard.Dashboard(self)
         self.setCentralWidget(self.dashboard)
 
+
+    def startMarquee(self):
+        pass
 
 
 if __name__ == '__main__':
