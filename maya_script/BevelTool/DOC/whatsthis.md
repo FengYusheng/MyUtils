@@ -31,7 +31,25 @@ Maya offers two methods to crease edges and vertices on a polygon mesh:
 
     `polyCrease`
 
+    The crease values range between 0 and 7. 7 indicates the component is
+    fully creased.
+
 2. The Crease Set Editor.
 
 *You must select one method to use throughout your workflow, as the methods can't
 be used interchangeably on the same components.*
+
+### What's the meaning of a crease value?
+A crease value of 2 means that the base level and first level edges are
+fully creased, but finer level edges are not creased at all.
+
+The crease values are used by the smoothing algorithm.
+> polyCrease command reference
+
+A creaseSet is a special kind of set that contains the edges and vertices
+that share the same subdivision surface creasing value. A crease level is
+used with subdivision surfaces. The value is the maximum subd level that  
+the edge or vertex is creased before it starts smoothing.
+> creaseSet node reference
+
+### Subdivision Surface.
