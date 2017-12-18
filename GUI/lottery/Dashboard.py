@@ -9,11 +9,31 @@ class Dashboard(QWidget):
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setAutoFillBackground(True)
 
+        self.parent = parent
         self.pen = QPen(QBrush(Qt.darkGray), 3, Qt.SolidLine, Qt.RoundCap, Qt.BevelJoin)
         self.font = QFont()
         # https://stackoverflow.com/questions/17819698/how-to-change-fontsize-on-drawtext#17819878
         self.font.setPointSize(20)
         self.text = '你的名字！'
+        self.timer = QTimer(self)
+        self.interval = 2000
+
+        self.timer.timeout.connect(self.players)
+
+
+    def players(self):
+        while True:
+            with open(self.parent.NAMEPATH, 'r', encoding='utf-8') as f:
+                for _ in f:
+                    print(_)
+
+
+    def startTimer(self):
+        self.timer.start()
+
+
+    def stopTimer(self):
+        self.timer.stop()
 
 
     def setText(self, text):
