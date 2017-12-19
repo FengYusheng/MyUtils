@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+import Utils
+
 class Dashboard(QWidget):
     def __init__(self, parent):
         super(Dashboard, self).__init__(parent)
@@ -15,29 +17,12 @@ class Dashboard(QWidget):
         # https://stackoverflow.com/questions/17819698/how-to-change-fontsize-on-drawtext#17819878
         self.font.setPointSize(20)
         self.text = '你的名字！'
-        self.timer = QTimer(self)
-        self.interval = 2000
-
-        self.timer.timeout.connect(self.players)
+        self.playerGenerator = Utils.playerGenerator()
 
 
-    def players(self):
-        while True:
-            with open(self.parent.NAMEPATH, 'r', encoding='utf-8') as f:
-                for _ in f:
-                    print(_)
-
-
-    def startTimer(self):
-        self.timer.start()
-
-
-    def stopTimer(self):
-        self.timer.stop()
-
-
-    def setText(self, text):
-        self.text = text
+    def setText(self):
+        # https://stackoverflow.com/questions/1756096/understanding-generators-in-python
+        self.text = next(self.playerGenerator).strip()
         self.update()
 
 
@@ -54,3 +39,7 @@ class Dashboard(QWidget):
 
         painter.drawText(0, 0, self.text)
         painter.restore()
+
+
+    def paintMatrixCodeRain(self):
+        pass
