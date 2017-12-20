@@ -36,8 +36,8 @@ Maya offers two methods to crease edges and vertices on a polygon mesh:
 
 2. The Crease Set Editor.
 
-*You must select one method to use throughout your workflow, as the methods can't
-be used interchangeably on the same components.*
+*You must select one method to use throughout your workflow, as the methods
+can't be used interchangeably on the same components.*
 
 ### What's the meaning of a crease value?
 A crease value of 2 means that the base level and first level edges are
@@ -53,3 +53,23 @@ the edge or vertex is creased before it starts smoothing.
 > creaseSet node reference
 
 ### Subdivision Surface.
+
+*Subdivision surfaces* have the slowest performance of the three smoothing
+methods. Subdivision surfaces are largely unsupported in pipelines outside
+of Maya, so you need to convert them to polygons or NURBS before exporting
+to these pipelines.
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-4D290125-7A5C-47D9-A698-00449056F089
+
+## Commands support undo
+
+`MayaUndoChunk` in "C:\\Program Files\\Autodesk\\Maya2017\\Python\\Lib\\site-packages\\maya\\app\\general\\creaseSetEditor.py"
+
+
+## What is a partition node?
+This node defines a collection of objectSet nodes which are exclusive of each
+other with respect to membership. That is, no member of an objectSet which is
+in a partition will also be a member of another objectSet if that objectSet is
+also in the same partition.
+
+> partition node reference
