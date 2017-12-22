@@ -8,6 +8,12 @@ import utils
 def bevelOnHardEdges(*args, **kwargs):
     duplications = []
     resultPolyBevelNodes = []
+    # TODO: call filterExpand to get mesh dag nodes. Or
+    # All selected mesh meshShapes
+    # maya.cmds.ls(dag=True, sl=True, noIntermediate=True, type='mesh')
+    # maya.cmds.ls(items, dag=True, noIntermediate=True, type='mesh')
+    # Reference: getSelectedMeshComponents() in C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py
+    # maya.cmds.objectType(mesh, isAType='transform') in C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py:463
     polygons = [i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
     for polygon in polygons:
         dup = pm.duplicate(polygon, st=True, rr=True)[0]

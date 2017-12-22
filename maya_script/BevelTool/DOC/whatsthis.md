@@ -72,4 +72,42 @@ other with respect to membership. That is, no member of an objectSet which is
 in a partition will also be a member of another objectSet if that objectSet is
 also in the same partition.
 
+The renderPartition defines the collection of shading groups which define which
+objects should be rendered. If an object or part of an object is not in a shading
+group, it will not be rendered.
+
 > partition node reference
+
+### What is a objectSet?
+This node defines a logical collection of objects, object components, and node
+attributes. Sets are used to which parts of an object to deform. Sets are used
+to define which objects should have the same shading properties and are called
+shading groups or renderable sets. Anything that can be selected using `select`
+command can be added to an ojectSet. An objetSet is created and edited using the
+`sets` command.
+
+Objects may be connected to a partition. Mutual exclusivity is maintained by the
+`sets` and `partition` commands. The shading groups are connected to the renderPartition.
+
+> objectSet node reference
+
+A set is a logical  grouping of an arbitrary collection of objects, attributes,
+or components of objects. Sets are dependency nodes. Connections from objects
+to a set define membership in the set.
+
+**Sets are used throughout Maya in a multitude of ways. They are used to define
+an association of material properties to objects, to define an association of lights
+to objects, to define a bookmark or named collection of objects, to define a character,
+and to define the components to be deformed by some deformation operation.**
+
+Sets can be connected to **any number of partitions.** A partition is a node which
+enforces mutual exclusivity among the sets in the partition.
+
+Sets can be associated color which is only of use when creating vertex sets. The
+color can be one of the eight user defined colors defined in the color preferences.
+This color can be used, for example to distinguish which vertices are being deformed
+by a particular deformation.
+
+
+
+> `set` command reference
