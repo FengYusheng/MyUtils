@@ -108,6 +108,11 @@ color can be one of the eight user defined colors defined in the color preferenc
 This color can be used, for example to distinguish which vertices are being deformed
 by a particular deformation.
 
-
-
 > `set` command reference
+
+## What're the meaning of "subdivide the mesh" and subdivision level?
+`polySmooth`, this command works on polygon objects or faces.
+
+### What is an edge hardness?
+
+### What is preview division level(smoothLevel attribute in a mesh node)?
