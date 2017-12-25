@@ -31,6 +31,8 @@ Smooth Mesh Preview use the OpenSubdiv Catmull-clark subdivision method.
 
 > http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-4863E5AE-0EA0-4596-B1AE-10C19603838E
 
+`displaySmoothness` in "C:/Program Files/Autodesk/Maya2017/scripts/others/setDisplaySmoothness.mel"
+
 ### Preview a smoothed mesh
 Press Page Up or Page Down to change the level of smoothing/subdivision that occurs
 on the smoothed preview.
@@ -81,6 +83,12 @@ By default, subdiv proxy uses the OpenSubdiv Catmull-Clark subdivision method.
 *When you render the model, both the proxy and smoothed mesh will appear.*
 
 > http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-196DCBDA-4A3D-4D48-904F-D38D8267E07E
+
+Command:
+
+    SmoothProxy;
+    performSmoothProxy 0;
+    duplicate -rc  pCube1 ;
 
 ### Create a subdiv proxy
 Unlike `Mesh->Smooth`, you can't use subdiv proxy on specific faces.
@@ -134,6 +142,18 @@ object, prior to smoothing.
 Increase polygon count
 
 ## Smooth by averaging distance between vertices
+The Average Vertices(`Edit Mesh->Average Vertices`) command smooths your mesh while
+*maintaining its polygon count*. It averages the  values of existing vertices to produce
+a smoother surface without modifying the current topology.
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-7DA6670A-625B-4734-864F-16821910D062
+
+`polyAverageVertex -i 10 -ch 1 pCube1;`
+
+Move the selected vertices of a polygonal object to round its shape. Translate
+, move, rotate or scale vertices.
+
+> `polyAverageVertex` command reference
 
 **When to use**
 1. When under a strict poly count restriction.
@@ -143,5 +163,115 @@ Increase polygon count
 Less versatility since only existing vertices can be used.
 
 ## Subdivision Surface
+A subdivision surface lets subdivide *specific regions of a mesh*, giving you the
+ability to finely *tune or smooth certain areas without changing the entire mesh*.
+
+Subdivision surfaces only insert control points where you need them instead of uniformly
+across the entire mesh.
+
+Subdivision surfaces are largely unsupported in pipelines outside of Maya, so you
+need to convert them to polygons or NURBS , `Modify->Convert Subdiv to Polygons`
+or `Modify->Convert Subdiv to NURBS`.
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-4D290125-7A5C-47D9-A698-00449056F089
+
+**When to use**
+1. When modeling objects are not going to be rigged.
+2. When modeling with the intention of converting to NURBS.
+
+**Limitation**
+1. Slowest performance.
+2. No external pipeline support.
+
+# OpenSubdiv
+As a professional standard in the animation industry, OpenSubdiv is implemented
+in a variety of software packages, improving interoperability by producing the
+same results when models are transferred between applications.
+
+In Maya, OpenSubdiv is the default subdivision method when you preview a smoothed
+mesh, smooth a mesh using `Mesh->Smooth`, or create a subdiv proxy.
+
+OpenSubdiv is an improved alternative to the legacy May Catmull-Clark subdivision
+method.
+
+Two OpenSubdiv subdivision methods:
+1. OpenSubdiv Catmull-Clark Uniform: Applies a uniform refinement scheme to the faces
+of a mesh. *The entire mesh receives the same leve of subdivision*.
+
+2. OpenSubdiv Catmull-Clark Adaptive: Applies a progressive refinement scheme to
+irregular parts of your mesh. Adaptive subdivision only refines the mesh topology
+where additional detail is needed. Adaptive subdivision lets increase the smoothness
+of your mesh without increasing its subdivision level.
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-909B2D5F-D031-4372-B2D7-7D8BCCBE3183
+
+## Preview a smoothed mesh with OpenSubdiv
+*Edit global preferences in `Preference Editor`.* In the Attribute Editor, select
+the polyShape tab, open the Smooth Mesh panel, and then disable the Use global
+subdivision method option. you can set the Subdivision Method on a per-object overriding
+the global preference.
+
+> OpenSubdiv Controls: http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-FF35F773-1FC0-4EBA-A64C-6199375F489A#GUID-FF35F773-1FC0-4EBA-A64C-6199375F489A__SECTION_AEC2592F09DA47ACBB9901F1310E01E9
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-909B2D5F-D031-4372-B2D7-7D8BCCBE3183
+
+## OpenSubdiv limitations
+### OpenSubdiv General limitations
+OpenSubdiv doesn't support.
+
+### OpenSubdiv Catmull-Clark Adaptive limitations
+* Depth of field.
+* Use Default Material.
+* Depth peeling.
+* Plug-in shader implemented with MPxShaderOverrride.
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-FD9DCF96-6914-4BB4-A665-A817A4DE2521
 
 # polySmooth Node
+These attributes can be found under the Smooth Mesh section on the polyShape node for the mesh.
+
+## Subdivision Algorithm
+1. Maya Catmull-Clark
+2. OpenSubdiv Catmull-Clark
+3. OpenSubdiv Catmull-Clark Adaptive
+
+## Subdivision Levels
+### Preview Division Levels
+Control the number of times the original version of the mesh is subdivided. The
+slider range is between 0 and 4, but you can input values higher than 4 in the text
+field.
+
+> *Smooth Mesh Render*: http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-86E8A2A3-2685-4230-9097-D6F2EE880910
+
+## OpenSubdiv Controls
+### Vertex Boundary
+Control how boundary edges and corner vertices are interpolated.
+1. Sharp edges and corners.
+2. Sharp edges.
+
+### UV Boundary Smoothing
+Control how smoothing is applied to boundary UVs.
+
+1. None, UVs aren't smoothed.
+2. Preserve edges and corners, edges and corners remain sharp after smoothing.
+3. Preserve edges, only edges remain sharp after smoothing.
+4. Maya Catmull-Clark, smooth face-varying data(UVs and colors sets) near vertices
+that aren't on a discontinuous boundary.
+
+### Crease Method
+Control how creases are smoothed during subdivision.
+
+`polySmooth` opiton, osdCreaseMethod
+
+> polySmooth command reference
+
+1. Normal, no smoothing is applied to creases.
+2. Chaikin, this method improves the appearance of *multi-edge creases with different
+edge weights.*
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-FF35F773-1FC0-4EBA-A64C-6199375F489A#GUID-FF35F773-1FC0-4EBA-A64C-6199375F489A__SECTION_AEC2592F09DA47ACBB9901F1310E01E9
+
+# Options
+## Smooth Options
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-4D094DC4-9027-4422-9083-6C9D2FE4036E
