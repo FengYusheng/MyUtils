@@ -19,7 +19,7 @@ Smooth out: make something smooth by the removal of lines and creases.
 Add divisions to the mesh, increasing the polyon count.
 
 ## Smooth Mesh Preview
-Smooth Mesh Preview lets you quickly and easyly see how your mesh will appear when
+Smooth Mesh Preview lets you quickly and easily see how your mesh will appear when
 smoothed.
 
 If you render a mesh while Smooth Mesh Preview is enabled, it will apprear in its
@@ -271,7 +271,69 @@ edge weights.*
 
 > http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-FF35F773-1FC0-4EBA-A64C-6199375F489A#GUID-FF35F773-1FC0-4EBA-A64C-6199375F489A__SECTION_AEC2592F09DA47ACBB9901F1310E01E9
 
+# PolySmoothFace Node
+
 # Options
 ## Smooth Options
+### Add divisions
+`Exponential` and `Linear` smoothing options both smooth *equally*. `Exponential`
+has an option to maintain soft and hard edges, while `Linear` has options to better
+*control the number of resulting faces.*
+
+#### Exponential Controls
+1. Division levels, it controls the number of times Maya performs the smoothing
+operation.
+
+2. Crease Method, it controls how boundary edges and vertices are interpolated.
+`Normal`, no crease sharpness smoothing is applied. `Chaikin` produces semi-sharp
+creases. This method improves *the appearance of multi-edge creases with different
+edge weights.*
+
+##### Maya Catmull-Clark
+1. Boundary rules, it controls how creasing is applied to boundary edges and vertices
+as you smooth the mesh. `Legacy` applies no creasing to boundary edges and vertices.
+`Crease all` applies full creasing to all boundary edges and all vertices that
+have only two incident edges before being converted to a smooth mesh. `Crease edges`
+applies full creasing to edges only.
+
+> What is an incident edge: https://math.stackexchange.com/questions/190709/graph-theory-adjacency-vs-incident
+
+2. Continuity, it determines the degree of smoothness.
+
+3. Smooth UVs, it applies the same smoothing operation to the UVs as to the vertices.
+
+4. Map borders, it controls how borders are smoothed when Smooth UVs is on.
+`Smooth all`, all UV borders are smoothed. `Smooth internal`, internal borders are
+smoothed. `Do not smooth`, borders aren't smoothed.
+
+5. Preserve, it specifies what components will remain unaffected during the Smooth.
+    * Geometry borders
+    * Selection borders
+    * Hard edges, preserves the properties of any existing manually hardened or
+    softened edges.
+    * Tessellation
+
+#### Linear Controls
+Do not use the Linear method on a surface with faces that have more than 4 edges.
+
+1. Division levels, the higher the value, the smoother the object and the more faces
+are generated.
+
+2. Divisions per face, it increases the number of faces in smaller increments than
+Division levels. The value you set is the number of splits Maya performs. When Divisions
+per face is set to 1 each edge is split once, a value of 2 will split each edge twice, and so on.
+
+3. Push strength, it controls the overall volume of the resulting smoothed mesh.
+Higher values scale the mesh outward while lower values scale it back.
+
+4. Roundness, higher values scale these vertices outward and lower values scale
+them back. For Roundness to have an effect, Push Strength must be greater than 0.
 
 > http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-4D094DC4-9027-4422-9083-6C9D2FE4036E
+
+> polySmoothFace node reference
+
+## Subdiv Proxy Options
+### Inherit Smooth Mesh Preview
+
+> http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-071B78B2-ACAF-473D-9B5E-4256C4857B96

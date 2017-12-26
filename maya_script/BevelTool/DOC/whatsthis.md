@@ -114,5 +114,7 @@ by a particular deformation.
 `polySmooth`, this command works on polygon objects or faces.
 
 ### What is an edge hardness?
+I guess it is helpful:
+> polySoftEdge node reference
 
 ### What is preview division level(smoothLevel attribute in a mesh node)?
