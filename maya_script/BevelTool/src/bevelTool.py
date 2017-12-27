@@ -14,9 +14,9 @@ def bevelOnHardEdges(*args, **kwargs):
     # maya.cmds.ls(items, dag=True, noIntermediate=True, type='mesh')
     # Reference: getSelectedMeshComponents() in C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py
     # maya.cmds.objectType(mesh, isAType='transform') in C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py:463
-    polygons = [i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
-    for polygon in polygons:
-        dup = pm.duplicate(polygon, st=True, rr=True)[0]
+    meshTransformNodes = [i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
+    for meshTransform in meshTransformNodes:
+        dup = pm.duplicate(meshTransform, st=True, rr=True)[0]
         duplications.append(dup)
         pm.move(25.0, 0.0, 0.0, dup, r=True)
         if pm.mel.eval('exists doMenuComponentSelection'):
