@@ -2,6 +2,16 @@
 import pymel.core as pm
 
 
+class MayaUndoChuck():
+    """
+    Reference:
+        `MayaUndoChunk` in "C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py"
+    """
+    def __init__(self):
+        pass
+
+
+
 def switchSelectionModeToEdge(item):
     '''
     Reference:
