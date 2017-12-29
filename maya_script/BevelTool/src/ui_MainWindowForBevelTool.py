@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\project\MayaTools\BevelTool/src/Qt/UI/MainWindowForBevelTool.ui'
 #
-# Created: Fri Dec 15 15:32:54 2017
+# Created: Fri Dec 29 18:40:28 2017
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,8 +35,12 @@ class Ui_MainWindowForBevelTool(object):
         self.fullBevelOptionsAction.setObjectName("fullBevelOptionsAction")
         self.hardEdgesAction = QtWidgets.QAction(MainWindowForBevelTool)
         self.hardEdgesAction.setObjectName("hardEdgesAction")
+        self.bevelSetEditorAction = QtWidgets.QAction(MainWindowForBevelTool)
+        self.bevelSetEditorAction.setCheckable(True)
+        self.bevelSetEditorAction.setObjectName("bevelSetEditorAction")
         self.menuEdit.addAction(self.simpleBevelOptionsAction)
         self.menuEdit.addAction(self.fullBevelOptionsAction)
+        self.menuEdit.addAction(self.bevelSetEditorAction)
         self.menubar.addAction(self.menuEdit.menuAction())
 
         self.retranslateUi(MainWindowForBevelTool)
@@ -48,4 +52,5 @@ class Ui_MainWindowForBevelTool(object):
         self.simpleBevelOptionsAction.setText(QtWidgets.QApplication.translate("MainWindowForBevelTool", "Simple bevel options", None, -1))
         self.fullBevelOptionsAction.setText(QtWidgets.QApplication.translate("MainWindowForBevelTool", "Full bevel options", None, -1))
         self.hardEdgesAction.setText(QtWidgets.QApplication.translate("MainWindowForBevelTool", "Hard edges", None, -1))
+        self.bevelSetEditorAction.setText(QtWidgets.QApplication.translate("MainWindowForBevelTool", "Bevel set editor", None, -1))
 

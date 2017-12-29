@@ -19,6 +19,8 @@ import ui_OptionTableViewWidget
 reload(ui_OptionTableViewWidget)
 import ui_SimpleOptionsWidget
 reload(ui_SimpleOptionsWidget)
+import ui_BevelSetEditorWidget
+reload(ui_BevelSetEditorWidget)
 import options
 reload(options)
 import bevelTool
@@ -214,7 +216,22 @@ class SimpleOptionsWidget(QWidget, ui_SimpleOptionsWidget.Ui_simpleOptionsWidget
         self.parent.editBevelOption('miterAlong', index)
 
 
-
     def bevel(self):
         bevelNodes = bevelTool.bevelOnHardEdges(**self.bevelOptions)
         self.parent.setBevelNodes(bevelNodes)
+
+
+
+
+class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWidget):
+    def __init__(self, parent):
+        super(BevelSetEditorWidget, self).__init__(parent)
+        self.parent = parent
+        self.optionWidget = SimpleOptionsWidget(self.parent)
+
+        self.setupUi(self)
+        self.gridLayoutInOptionGroupBox = QGridLayout(self.optionGroupBox)
+        self.gridLayoutInOptionGroupBox.addWidget(self.optionWidget)
+        self.optionGroupBox.setLayout(self.gridLayoutInOptionGroupBox)
+        self.optionGroupBox.setEnabled(True)
+        self.optionWidget.bevelButton.setVisible(False)

@@ -29,6 +29,7 @@
     </property>
     <addaction name="simpleBevelOptionsAction"/>
     <addaction name="fullBevelOptionsAction"/>
+    <addaction name="bevelSetEditorAction"/>
    </widget>
    <addaction name="menuEdit"/>
   </widget>
@@ -58,6 +59,14 @@
   <action name="hardEdgesAction">
    <property name="text">
     <string>Hard edges</string>
+   </property>
+  </action>
+  <action name="bevelSetEditorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Bevel set editor</string>
    </property>
   </action>
  </widget>

@@ -45,6 +45,7 @@ class MainWindowForBevelTool(QMainWindow, ui_MainWindowForBevelTool.Ui_MainWindo
         self.bevelActionGroup = QActionGroup(self)
         self.bevelActionGroup.addAction(self.simpleBevelOptionsAction)
         self.bevelActionGroup.addAction(self.fullBevelOptionsAction)
+        self.bevelActionGroup.addAction(self.bevelSetEditorAction)
         self.simpleBevelOptionsAction.setChecked(True)
 
         self.bevelActionGroup.triggered.connect(self.alterPanel)
@@ -104,6 +105,8 @@ class MainWindowForBevelTool(QMainWindow, ui_MainWindowForBevelTool.Ui_MainWindo
             self.setCentralWidget(Panel.SimpleOptionsWidget(self))
         elif self.fullBevelOptionsAction.isChecked():
             self.setCentralWidget(Panel.OptionTableViewWidget(self))
+        elif self.bevelSetEditorAction.isChecked():
+            self.setCentralWidget(Panel.BevelSetEditorWidget(self))
 
 
 

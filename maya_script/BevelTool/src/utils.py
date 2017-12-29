@@ -7,8 +7,16 @@ class MayaUndoChuck():
     Reference:
         `MayaUndoChunk` in "C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py"
     """
-    def __init__(self):
-        pass
+    def __init__(self, name):
+        self.name = name
+
+
+    def __enter__(self):
+        pm.system.undoInfo(openChunk=True, chunkName=self.name)
+
+
+    def __exit__(self, type, value, trackback):
+        pm.system.undoInfo(closeChunk=True)
 
 
 
@@ -42,6 +50,8 @@ def selectedMeshTransformNodes():
 
     Reference:
         http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=__Nodes_index_html
+
+        Reference: getSelectedMeshComponents() in C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py
     '''
     # meshTransformNodes = []
     # for mesh in pm.ls(dag=True, sl=True, noIntermediate=True, type='mesh'):
@@ -59,4 +69,4 @@ def createSet(name='BevelSet#'):
 if __name__ == '__main__':
     # item = pm.ls(sl=True)[0]
     # switchSelectionModeToEdge(item)
-    # selectedMeshTransformNodes()
+    selectedMeshTransformNodes()

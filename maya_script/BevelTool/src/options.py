@@ -13,8 +13,8 @@ bevelOptions = {
     'offsetAsFraction'     : True,
     'autoFit'              : True,
     'depth'                : 1,
-    'mitering'             : 0, #
-    'miterAlong'           : 0, #
+    'mitering'             : 0,
+    'miterAlong'           : 0,
     'chamfer'              : False,
     'segments'             : 1,
     'worldSpace'           : True,
