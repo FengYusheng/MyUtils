@@ -25,6 +25,7 @@ import options
 reload(options)
 import bevelTool
 reload(bevelTool)
+import utils
 
 
 
@@ -233,5 +234,16 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
         self.gridLayoutInOptionGroupBox = QGridLayout(self.optionGroupBox)
         self.gridLayoutInOptionGroupBox.addWidget(self.optionWidget)
         self.optionGroupBox.setLayout(self.gridLayoutInOptionGroupBox)
-        self.optionGroupBox.setEnabled(True)
+        self.optionGroupBox.setEnabled(False)
         self.optionWidget.bevelButton.setVisible(False)
+        self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
+        self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
+        self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
+        self.bevelSetTreeView.setSelectionModel(self.selectionModelInBevelSetTreeView)
+        self.bevelSetTreeView.setSelectionMode(QAbstractItemView.SingleSelection)
+
+        self.newSetButton.clicked.connect(self.createBevelSet)
+
+
+    def createBevelSet(self):
+        utils.createBevelSet()

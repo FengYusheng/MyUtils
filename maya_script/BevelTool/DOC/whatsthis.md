@@ -118,3 +118,5 @@ I guess it is helpful:
 > polySoftEdge node reference
 
 ### What is preview division level(smoothLevel attribute in a mesh node)?
+
+## Skill
