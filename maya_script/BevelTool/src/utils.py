@@ -79,7 +79,7 @@ def selectedMeshTransformNodes():
 
 
 
-def createPartition(name='MWBevelPartition'):
+def createPartition(objectSetNode, name='MWBevelPartition'):
     '''
     :Refernce:
         `CreatePartition;`
@@ -91,14 +91,16 @@ def createPartition(name='MWBevelPartition'):
     MWBevelPartition = pm.ls(name, type='partition')
     if MWBevelPartition:
         MWBevelPartition = MWBevelPartition[0]
+        MWBevelPartition.addMember(objectSetNode)
+        # pm.partition(objectSetNode, add=MWBevelPartition)
     else:
-        MWBevelPartition = pm.partition(name=name)
+        MWBevelPartition = pm.partition(objectSetNode, name=name)
 
     return MWBevelPartition
 
 
 
-def getBevelSetsContainingEdgesUsingAPI2(edges=None):
+def getObjectSetsContainingEdgesUsingAPI2(edges=None):
     '''
     :Reference:
         getCreaseSetsContainingItems in  C:\Program Files\Autodesk\Maya2018\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py
@@ -106,7 +108,7 @@ def getBevelSetsContainingEdgesUsingAPI2(edges=None):
         http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=__files_GUID_0B85C721_C3C6_47D7_9D85_4F27B787ABB6_htm
     '''
     setsContainingEdges = set()
-    processedTransformNodeHandles = set()
+    processedMeshNodeHandles = set()
     meshFn = om.MFnMesh()
     setFn = om.MFnSet()
 
@@ -126,9 +128,9 @@ def getBevelSetsContainingEdgesUsingAPI2(edges=None):
                 # print(component.apiTypeStr) # kMeshEdgeComponent
 
                 # Filter to not re-iterate over both the transform and the shape if both are in the selection list
-                dagPathTransformNodeHandle = HashableMobjectHandle(dagPath.transform())
-                if (not component.isNull()) or (dagPathTransformNodeHandle not in processedTransformNodeHandles):
-                    processedTransformNodeHandles.add(dagPathTransformNodeHandle)
+                dagPathMeshNodeHandle = HashableMobjectHandle(dagPath.extendToShape().node())
+                if (not component.isNull()) or (dagPathMeshNodeHandle not in processedMeshNodeHandles):
+                    processedMeshNodeHandles.add(dagPathMeshNodeHandle)
 
                     # Process mesh and mesh components.
                     meshFn.setObject(dagPath)
@@ -137,7 +139,7 @@ def getBevelSetsContainingEdgesUsingAPI2(edges=None):
                         setFn.setObject(connectedSets[iConnectedSets])
                         if setFn.name().startswith('MWBevelSet'):
                             memberList = om.MSelectionList()
-                            connectedSetMembers.isNull() or memberList.add(dagPath, connectedSetMembers[iConnectedSets])
+                            not len(connectedSetMembers) or memberList.add((dagPath, connectedSetMembers[iConnectedSets]))
 
                             # NOTE: om.MSelectionList.intersect()
                             if (not component.isNull()) and (component.apiTypeStr == 'kMeshEdgeComponent'):
@@ -160,18 +162,29 @@ def createBevelSet(name='MWBevelSet#', edges=None):
         `performCreateSet false;`
         performCreateSet in C:/Program Files/Autodesk/Maya2018/scripts/others/performCreateSet.mel
     '''
-    MWBevelPartition = createPartition()
-    newMWBevelSet = pm.sets(name=name)
-    # newBevelSet = pm.sets(name=name, edges=True)
-    pm.partition(newMWBevelSet, add=MWBevelPartition)
+    if edges is None:
+        edges = pm.filterExpand(sm=32, ex=True)
+    else:
+        edges = pm.filterExpand(edges, sm=32, ex=True)
 
-    edges is not None or pm.select(edges, r=True)
-    selectedEdges = pm.filterExpand(sm=32, ex=True)
-    not len(selectedEdges) or pm.sets(selectedEdges, forceElement=newMWBevelSet)
+    pm.select(cl=True)
+    MWBevelSet = None
+    if edges:
+        MWBevelSet = pm.sets(name=name)
+        MWBevelPartition = createPartition(MWBevelSet)
+        # pm.sets(*edges, forceElement=MWBevelSet)
+        MWBevelSet.forceElement(edges)
 
-    # `forceElement` doesn't always work.
-    if len(selectedEdges):
-        pass
+        # forceElement doesn't always work.
+        objestSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
+        objestSetsContainingEdges.discard(MWBevelSet.name())
+        for objectSet in objestSetsContainingEdges:
+            objectSet = pm.ls(objectSet, type='objectSet')[0]
+            intersection = MWBevelSet.getIntersection(objectSet)
+            not len(intersection) or objectSet.removeMembers(intersection)
+
+    return MWBevelSet
+
 
 
 
@@ -179,4 +192,5 @@ if __name__ == '__main__':
     # item = pm.ls(sl=True)[0]
     # switchSelectionModeToEdge(item)
     # selectedMeshTransformNodes()
-    getBevelSetsContainingEdgesUsingAPI2()
+    # getObjectSetsContainingEdgesUsingAPI2()
+    createBevelSet()

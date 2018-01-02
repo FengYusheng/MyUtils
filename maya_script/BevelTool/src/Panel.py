@@ -26,6 +26,9 @@ reload(options)
 import bevelTool
 reload(bevelTool)
 import utils
+reload(utils)
+import status
+reload(status)
 
 
 
@@ -229,6 +232,9 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
         super(BevelSetEditorWidget, self).__init__(parent)
         self.parent = parent
         self.optionWidget = SimpleOptionsWidget(self.parent)
+        self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
+        self.dataFont = QFont('OldEnglish', 8)
+        self.headerInBevelSetTreeView = ('Bevel Set', 'Members', 'Selected')
 
         self.setupUi(self)
         self.gridLayoutInOptionGroupBox = QGridLayout(self.optionGroupBox)
@@ -245,5 +251,32 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
         self.newSetButton.clicked.connect(self.createBevelSet)
 
 
+    def _addBevelSetToTreeView(self, newBevelSet):
+        self.dataModelInBevelSetTreeView.clear()
+        for col in range(len(self.headerInBevelSetTreeView)):
+            item = QStandardItem(self.headerInBevelSetTreeView[col])
+            item.setFont(self.headerFont)
+            self.dataModelInBevelSetTreeView.setHorizontalHeaderItem(col, item)
+
+        item = QStandardItem(newBevelSet.name())
+        item.setEditable(True)
+        item.setFont(self.dataFont)
+        self.dataModelInBevelSetTreeView.appendRow(item)
+        row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
+
+        item = QStandardItem(str(len(newBevelSet.flattened())))
+        item.setFont(self.dataFont)
+        item.setEditable(False)
+        self.dataModelInBevelSetTreeView.setItem(row, 1, item)
+
+        map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(self.headerInBevelSetTreeView)))
+
+        self.parent.statusbar.showMessage(status.MESSAGES['New bevel set'].format(newBevelSet.name()))
+
+
     def createBevelSet(self):
-        utils.createBevelSet()
+        newBevelSet = utils.createBevelSet()
+        if newBevelSet is not None:
+            self._addBevelSetToTreeView(newBevelSet)
+        else:
+            self.parent.statusbar.showMessage(status.WARNINGS['New bevel set'])
