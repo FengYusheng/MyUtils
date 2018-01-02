@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import copy
 
+import pymel.core as pm
+
 try:
     from PySide2.QtCore import *
     from PySide2.QtGui import *
@@ -264,7 +266,7 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
         self.dataModelInBevelSetTreeView.appendRow(item)
         row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
 
-        item = QStandardItem(str(len(newBevelSet.flattened())))
+        item = QStandardItem(str(len(pm.ls(newBevelSet.flattened(), flatten=True))))
         item.setFont(self.dataFont)
         item.setEditable(False)
         self.dataModelInBevelSetTreeView.setItem(row, 1, item)
