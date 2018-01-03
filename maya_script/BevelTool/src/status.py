@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-WARNINGS = {
+WARNING = {
     'New bevel set' : 'Can not create a new bevel set.'
 }
 
 
-MESSAGES = {
+INFO = {
     'New bevel set' : 'Create a new bevel set {0}.'
 }

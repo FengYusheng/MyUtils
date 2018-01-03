@@ -273,7 +273,7 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
 
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(self.headerInBevelSetTreeView)))
 
-        self.parent.statusbar.showMessage(status.MESSAGES['New bevel set'].format(newBevelSet.name()))
+        self.parent.statusbar.showMessage(status.INFO['New bevel set'].format(newBevelSet.name()))
 
 
     def createBevelSet(self):
@@ -281,4 +281,4 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
         if newBevelSet is not None:
             self._addBevelSetToTreeView(newBevelSet)
         else:
-            self.parent.statusbar.showMessage(status.WARNINGS['New bevel set'])
+            self.parent.statusbar.showMessage(status.WARNING['New bevel set'])

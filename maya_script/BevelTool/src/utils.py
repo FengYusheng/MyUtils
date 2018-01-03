@@ -123,10 +123,6 @@ def getObjectSetsContainingEdgesUsingAPI2(edges=None):
         if selectionListIterator.itemType() == om.MItSelectionList.kDagSelectionItem:
             dagPath, component = selectionListIterator.getComponent()
             if dagPath.hasFn(om.MFn.kMesh):
-                # meshFn.setObject(dagPath)
-                # print(meshFn.name())
-                # print(component.apiTypeStr) # kMeshEdgeComponent
-
                 # Filter to not re-iterate over both the transform and the shape if both are in the selection list
                 dagPathMeshNodeHandle = HashableMobjectHandle(dagPath.extendToShape().node())
                 if (not component.isNull()) or (dagPathMeshNodeHandle not in processedMeshNodeHandles):
