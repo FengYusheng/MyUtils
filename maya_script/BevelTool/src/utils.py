@@ -183,10 +183,46 @@ def createBevelSet(name='MWBevelSet#', edges=None):
 
 
 
+def flattenEdges(edges):
+    return pm.ls(edges, flatten=True)
+
+
+
+def MWBevelSets():
+    return [i for i in pm.ls(type='objectSet') if i.name().startswith('MWBevelSet')]
+
+
+
+def bevelSetOptions(bevelSetName):
+    options = None
+    bevelSetNode = pm.ls(bevelSetName)
+    members = pm.ls(bevelSetNode[0].flattened(), flatten=True)
+    if len(members):
+        meshNode = pm.ls(members[0].name().partition('.')[0], type='mesh')
+        if meshNode:
+            bevelNode = pm.listConnections(meshNode, t='polyBevel3')
+            print(repr(bevelNode))
+
+
+def bevelSetMembers(bevelSetName):
+    members = None
+    bevelSetNode = pm.ls(bevelSetName, type='objectSet')
+    if bevelSetNode:
+        members = pm.ls(bevelSetNode[0].flattened(), flatten=True)
+
+    return members
+
+
+def addMembersIntoBevelSet(bevelSetName, edges):
+    bevelSetNode = pm.ls(bevelSetName, type='objectSet')
+    not len(bevelSetNode) or bevelSetNode[0].forceElement(edges)
+    return bevelSetNode
+
 
 if __name__ == '__main__':
     # item = pm.ls(sl=True)[0]
     # switchSelectionModeToEdge(item)
     # selectedMeshTransformNodes()
     # getObjectSetsContainingEdgesUsingAPI2()
-    createBevelSet()
+    # createBevelSet()
+    print(MWBevelSets())

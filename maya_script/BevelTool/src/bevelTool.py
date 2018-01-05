@@ -11,6 +11,7 @@ import options
 def bevelOnHardEdges(*args, **kwargs):
     duplications = []
     resultPolyBevelNodes = []
+    bevelEdges = [] # The edges produced by bevel operation.
     meshTransformNodes = [i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
     with utils.MayaUndoChuck('bevelOnHardEdges'):
         for meshTransform in meshTransformNodes:
@@ -55,11 +56,12 @@ def bevelOnHardEdges(*args, **kwargs):
         pm.select(duplications, r=True)
 
     return resultPolyBevelNodes
+    # return resultPolyBevelNodes, bevelEdges
 
 
 
-def bevelOnSelectedEdges(*args, **kwargs):
-    selectedMeshEdges = pm.filterExpand(sm=32, ex=True)
+def bevelOnSelectedEdges(edges=None, *args, **kwargs):
+    selectedMeshEdges = edges if edges is not None else pm.filterExpand(sm=32, ex=True)
     if selectedMeshEdges:
         with utils.MayaUndoChuck('bevelOnSelectedEdges'):
             bevelNode = pm.polyBevel3(

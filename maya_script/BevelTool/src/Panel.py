@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import copy
 
-import pymel.core as pm
-
 try:
     from PySide2.QtCore import *
     from PySide2.QtGui import *
@@ -174,6 +172,8 @@ class SimpleOptionsWidget(QWidget, ui_SimpleOptionsWidget.Ui_simpleOptionsWidget
         self.splitter.addWidget(self.helpTabWidget)
         self.gridLayout_3.addWidget(self.splitter)
         self.helpTabWidget.setVisible(False)
+        self.bevelMemberEdgesButton.setVisible(False)
+        self.bevelButton.setVisible(True)
 
         self.fractionDoubleSpinBox.valueChanged.connect(self.editFractionBySpinBox)
         self.fractionSlider.valueChanged.connect(self.editFractionBySlider)
@@ -227,6 +227,10 @@ class SimpleOptionsWidget(QWidget, ui_SimpleOptionsWidget.Ui_simpleOptionsWidget
         self.parent.setBevelNodes(bevelNodes)
 
 
+    def bevelSelectedEdges(self, edges=None):
+        bevelTool.bevelOnSelectedEdges(edges, **self.bevelOptions)
+
+
 
 
 class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWidget):
@@ -234,6 +238,7 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
         super(BevelSetEditorWidget, self).__init__(parent)
         self.parent = parent
         self.optionWidget = SimpleOptionsWidget(self.parent)
+        self.optionWidget.optionGroupBox.setTitle('')
         self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
         self.dataFont = QFont('OldEnglish', 8)
         self.headerInBevelSetTreeView = ('Bevel Set', 'Members', 'Selected')
@@ -244,36 +249,55 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
         self.optionGroupBox.setLayout(self.gridLayoutInOptionGroupBox)
         self.optionGroupBox.setEnabled(False)
         self.optionWidget.bevelButton.setVisible(False)
+        self.optionWidget.bevelMemberEdgesButton.setVisible(True)
         self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
         self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
         self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
         self.bevelSetTreeView.setSelectionModel(self.selectionModelInBevelSetTreeView)
         self.bevelSetTreeView.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.bevelSetTreeView.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
 
         self.newSetButton.clicked.connect(self.createBevelSet)
+        self.selectionModelInBevelSetTreeView.selectionChanged.connect(self.activeBevelSetOptions)
+        self.optionWidget.bevelMemberEdgesButton.clicked.connect(self.bevelOnMWBevelSet)
 
 
-    def _addBevelSetToTreeView(self, newBevelSet):
+    def _addBevelSetToTreeView(self, newBevelSetNode=None):
         self.dataModelInBevelSetTreeView.clear()
         for col in range(len(self.headerInBevelSetTreeView)):
             item = QStandardItem(self.headerInBevelSetTreeView[col])
             item.setFont(self.headerFont)
             self.dataModelInBevelSetTreeView.setHorizontalHeaderItem(col, item)
 
-        item = QStandardItem(newBevelSet.name())
-        item.setEditable(True)
-        item.setFont(self.dataFont)
-        self.dataModelInBevelSetTreeView.appendRow(item)
-        row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
+        index = None
+        for MWBevelsetNode in utils.MWBevelSets():
+            item = QStandardItem(MWBevelsetNode.name())
+            item.setEditable(True)
+            item.setFont(self.dataFont)
+            self.dataModelInBevelSetTreeView.appendRow(item)
+            index = self.dataModelInBevelSetTreeView.indexFromItem(item)
+            row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
 
-        item = QStandardItem(str(len(pm.ls(newBevelSet.flattened(), flatten=True))))
-        item.setFont(self.dataFont)
-        item.setEditable(False)
-        self.dataModelInBevelSetTreeView.setItem(row, 1, item)
+            item = QStandardItem(str(len(utils.flattenEdges(MWBevelsetNode.flattened()))))
+            item.setFont(self.dataFont)
+            item.setEditable(False)
+            self.dataModelInBevelSetTreeView.setItem(row, 1, item)
 
+            item = QStandardItem('0')
+            item.setFont(self.dataFont)
+            item.setEditable(False)
+            self.dataModelInBevelSetTreeView.setItem(row, 2, item)
+
+        index is None or self.selectionModelInBevelSetTreeView.select(index, QItemSelectionModel.ToggleCurrent|QItemSelectionModel.Rows)
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(self.headerInBevelSetTreeView)))
 
-        self.parent.statusbar.showMessage(status.INFO['New bevel set'].format(newBevelSet.name()))
+        newBevelSetNode is None or self.parent.statusbar.showMessage(status.INFO['New bevel set'].format(newBevelSetNode.name()))
+
+
+    def _mousePressEventInBevelSetTreeView(self, event):
+        self.selectionModelInBevelSetTreeView.clearSelection()
+        QTreeView.mousePressEvent(self.bevelSetTreeView, event)
 
 
     def createBevelSet(self):
@@ -282,3 +306,34 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
             self._addBevelSetToTreeView(newBevelSet)
         else:
             self.parent.statusbar.showMessage(status.WARNING['New bevel set'])
+
+
+    def activeBevelSetOptions(self):
+        self.optionWidget.optionGroupBox.setTitle('')
+        self.optionGroupBox.setEnabled(False)
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            row = self.selectionModelInBevelSetTreeView.selectedRows()[0].row()
+            bevelSetName = self.dataModelInBevelSetTreeView.item(row, 0).text().strip()
+            if int(self.dataModelInBevelSetTreeView.item(row, 1).text()):
+                self.optionGroupBox.setEnabled(True)
+                utils.bevelSetOptions(bevelSetName)
+                self.optionWidget.optionGroupBox.setTitle(bevelSetName+' options')
+            else:
+                self.parent.statusbar.showMessage(status.INFO['No member'].format(bevelSetName))
+
+
+    def addMembersIntoBevelSet(self, bevelSetName, edges=None):
+        utils.addMembersIntoBevelSet(bevelSetName, edges) or self.parent.statusbar.showMessage(status.WARNING['Add member error'].format(bevelSetName))
+
+
+    def bevelOnMWBevelSet(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            members = utils.bevelSetMembers(bevelSetName)
+            if members:
+                self.optionWidget.bevelSelectedEdges(members)
+                self.addMembersIntoBevelSet(bevelSetName, members)
+                self._addBevelSetToTreeView()
+            else:
+                self.parent.statusbar.showMessage(status.WARNING['Memeber error'].format(bevelSetName))
