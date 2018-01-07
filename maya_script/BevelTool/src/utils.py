@@ -193,19 +193,8 @@ def MWBevelSets():
 
 
 
-def bevelSetOptions(bevelSetName):
-    options = None
-    bevelSetNode = pm.ls(bevelSetName)
-    members = pm.ls(bevelSetNode[0].flattened(), flatten=True)
-    if len(members):
-        meshNode = pm.ls(members[0].name().partition('.')[0], type='mesh')
-        if meshNode:
-            bevelNode = pm.listConnections(meshNode, t='polyBevel3')
-            print(repr(bevelNode))
-
-
 def bevelSetMembers(bevelSetName):
-    members = None
+    members = []
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
     if bevelSetNode:
         members = pm.ls(bevelSetNode[0].flattened(), flatten=True)
@@ -213,10 +202,63 @@ def bevelSetMembers(bevelSetName):
     return members
 
 
-def addMembersIntoBevelSet(bevelSetName, edges):
+
+def addMembersIntoBevelSet(bevelSetName, edges=None):
+    edges = edges if edges is not None else pm.filterExpand(sm=32, ex=True)
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
-    not len(bevelSetNode) or bevelSetNode[0].forceElement(edges)
+    if len(bevelSetNode) and (edges is not None):
+        bevelSetNode[0].forceElement(edges)
+        # forceElement doesn't always work.
+        edges = edges if isinstance(edges[0], unicode) else [e.name() for e in edges]
+        objestSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
+        objestSetsContainingEdges.discard(bevelSetNode[0].name())
+        for objectSet in objestSetsContainingEdges:
+            objectSet = pm.ls(objectSet, type='objectSet')[0]
+            intersection = bevelSetNode[0].getIntersection(objectSet)
+            not len(intersection) or objectSet.removeMembers(intersection)
+
     return bevelSetNode
+
+
+
+def selectedEdgeindices(edges=[]):
+    edges = edges if edges else pm.filterExpand(sm=32, ex=True)
+    return [int(e.name().partition('[')[2].partition(']')[0]) for e in pm.ls(edges, flatten=True)]
+
+
+
+def selectedMeshNodes():
+    pass
+
+
+
+def duplicateMeshTransfrom(meshNodeName):
+    duplicatedMeshTransform = []
+    originMesh = pm.ls(meshNodeName, type='mesh')
+    if len(originMesh):
+        duplicatedMeshName = 'MWDup' + originMesh[0].name()
+        duplicatedMeshTransform = pm.ls(duplicatedMeshName, type='mesh')
+        if not len(duplicatedMeshTransform):
+            duplicatedMeshTransform = pm.duplicate(originMesh[0], name=duplicatedMeshName, st=True, rr=True)
+            pm.move(25.0, 0.0, 0.0, duplicatedMeshTransform, r=True)
+
+    return duplicatedMeshTransform
+
+
+
+def deletePolyBevel3NodeInBevelSet(bevelSetName):
+    polyBevel3Node = []
+    members = bevelSetMembers(bevelSetName)
+    if len(members):
+        duplicatedMeshName = 'MWDup' + members[0].name().partition('.')[0]
+        duplicatedMeshTransform = pm.ls(duplicatedMeshName)
+        if len(duplicatedMeshTransform):
+            polyBevel3Node = pm.listConnections(duplicatedMeshTransform[0].getShape(), type='polyBevel3')
+
+    # return [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
+    polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
+    not len(polyBevel3Node) or pm.delete(polyBevel3Node[0])
+
 
 
 if __name__ == '__main__':
@@ -226,3 +268,4 @@ if __name__ == '__main__':
     # getObjectSetsContainingEdgesUsingAPI2()
     # createBevelSet()
     print(MWBevelSets())
+    # print(polyBevel3NodeInBevelSet('MWBevelSet1'))

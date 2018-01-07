@@ -227,7 +227,7 @@ class SimpleOptionsWidget(QWidget, ui_SimpleOptionsWidget.Ui_simpleOptionsWidget
         self.parent.setBevelNodes(bevelNodes)
 
 
-    def bevelSelectedEdges(self, edges=None):
+    def bevelSelectedEdges(self, edges=[]):
         bevelTool.bevelOnSelectedEdges(edges, **self.bevelOptions)
 
 
@@ -258,7 +258,10 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
         self.bevelSetTreeView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
 
+        self._addBevelSetToTreeView()
+
         self.newSetButton.clicked.connect(self.createBevelSet)
+        self.addMemberButton.clicked.connect(self.addNewEdgesIntoBevelSet)
         self.selectionModelInBevelSetTreeView.selectionChanged.connect(self.activeBevelSetOptions)
         self.optionWidget.bevelMemberEdgesButton.clicked.connect(self.bevelOnMWBevelSet)
 
@@ -316,14 +319,18 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
             bevelSetName = self.dataModelInBevelSetTreeView.item(row, 0).text().strip()
             if int(self.dataModelInBevelSetTreeView.item(row, 1).text()):
                 self.optionGroupBox.setEnabled(True)
-                utils.bevelSetOptions(bevelSetName)
                 self.optionWidget.optionGroupBox.setTitle(bevelSetName+' options')
             else:
                 self.parent.statusbar.showMessage(status.INFO['No member'].format(bevelSetName))
 
 
-    def addMembersIntoBevelSet(self, bevelSetName, edges=None):
+    def _addMembersIntoBevelSet(self, bevelSetName, edges=None):
         utils.addMembersIntoBevelSet(bevelSetName, edges) or self.parent.statusbar.showMessage(status.WARNING['Add member error'].format(bevelSetName))
+
+
+    def _redoBevel(self, bevelSetName):
+        utils.deletePolyBevel3NodeInBevelSet(bevelSetName)
+        # self.bevelOnMWBevelSet()
 
 
     def bevelOnMWBevelSet(self):
@@ -331,9 +338,20 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             members = utils.bevelSetMembers(bevelSetName)
-            if members:
+            if len(members):
                 self.optionWidget.bevelSelectedEdges(members)
-                self.addMembersIntoBevelSet(bevelSetName, members)
+                self._addMembersIntoBevelSet(bevelSetName, members)
                 self._addBevelSetToTreeView()
             else:
                 self.parent.statusbar.showMessage(status.WARNING['Memeber error'].format(bevelSetName))
+
+
+    def addNewEdgesIntoBevelSet(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            self._addMembersIntoBevelSet(bevelSetName)
+            self._redoBevel(bevelSetName)
+            self._addBevelSetToTreeView()
+        else:
+            self.parent.statusbar.showMessage(status.WARNING['Select bevelset'])

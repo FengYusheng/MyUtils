@@ -11,7 +11,6 @@ import options
 def bevelOnHardEdges(*args, **kwargs):
     duplications = []
     resultPolyBevelNodes = []
-    bevelEdges = [] # The edges produced by bevel operation.
     meshTransformNodes = [i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
     with utils.MayaUndoChuck('bevelOnHardEdges'):
         for meshTransform in meshTransformNodes:
@@ -56,16 +55,24 @@ def bevelOnHardEdges(*args, **kwargs):
         pm.select(duplications, r=True)
 
     return resultPolyBevelNodes
-    # return resultPolyBevelNodes, bevelEdges
 
 
 
-def bevelOnSelectedEdges(edges=None, *args, **kwargs):
-    selectedMeshEdges = edges if edges is not None else pm.filterExpand(sm=32, ex=True)
-    if selectedMeshEdges:
+def bevelOnSelectedEdges(edges=[], *args, **kwargs):
+    dupMeshTransform = None
+    selectedMeshEdges = edges if len(edges) else pm.filterExpand(sm=32, ex=True)
+
+    # Duplicate the mesh node.
+    originMesh = pm.ls(selectedMeshEdges[0].name().partition('.')[0], type='mesh')[0]
+    dupMeshTransform = utils.duplicateMeshTransfrom(originMesh.name())
+    if len(dupMeshTransform):
+        edgeIndices = utils.selectedEdgeindices(selectedMeshEdges)
+        edges = [dupMeshTransform[0].e[i] for i in edgeIndices]
+
+    if len(edges):
         with utils.MayaUndoChuck('bevelOnSelectedEdges'):
             bevelNode = pm.polyBevel3(
-                selectedMeshEdges,
+                edges,
                 fraction=kwargs['fraction'],
                 offsetAsFraction=kwargs['offsetAsFraction'],
                 autoFit=kwargs['autoFit'],
@@ -85,7 +92,9 @@ def bevelOnSelectedEdges(edges=None, *args, **kwargs):
                 ch=kwargs['ch']
             )
 
-            bevelNode[0].setName('bevelOnSelectedEdges#')
+            bevelNode[0].setName('MWBevelOnSelectedEdges#')
+
+    return dupMeshTransform
 
 
 
