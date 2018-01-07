@@ -233,6 +233,9 @@ def selectedMeshNodes():
 
 
 def duplicateMeshTransfrom(meshNodeName):
+    '''
+    TODO: delete the connection
+    '''
     duplicatedMeshTransform = []
     originMesh = pm.ls(meshNodeName, type='mesh')
     if len(originMesh):
