@@ -232,6 +232,28 @@ def selectedMeshNodes():
 
 
 
+def disconnectFromMWBevelSet(bevelSetName, meshTransform):
+    bevelSet = pm.ls(bevelSetName, type='objectSet')
+    meshTransformNode = pm.ls(meshTransform)
+    if len(bevelSet) and len(meshTransformNode):
+        meshNode = meshTransformNode[0].getShape() if isinstance(meshTransformNode[0], pm.nt.Transform) else meshTransformNode[0]
+
+        meshAttr = None
+        bevelSetAttr = bevelSet[0].name() + '.memberWireframeColor'
+        for destinationAttr in pm.connectionInfo(bevelSetAttr, dfs=True):
+            if destinationAttr.startswith(meshNode.name()):
+                meshAttr = destinationAttr.rpartition('.')[0]
+                pm.disconnectAttr(bevelSetAttr, destinationAttr)
+                break
+
+        if meshAttr is not None:
+            for destinationAttr in pm.connectionInfo(meshAttr, dfs=True):
+                if destinationAttr.startswith(bevelSet[0].name()):
+                    pm.disconnectAttr(meshAttr, destinationAttr)
+                    break
+
+
+
 def duplicateMeshTransfrom(meshNodeName):
     '''
     TODO: delete the connection
@@ -272,3 +294,4 @@ if __name__ == '__main__':
     # createBevelSet()
     print(MWBevelSets())
     # print(polyBevel3NodeInBevelSet('MWBevelSet1'))
+    # disconnectFromMWBevelSet('MWBevelSet1', 'pCube3')
