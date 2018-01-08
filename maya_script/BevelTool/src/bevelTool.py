@@ -58,13 +58,14 @@ def bevelOnHardEdges(*args, **kwargs):
 
 
 
-def bevelOnSelectedEdges(edges=[], *args, **kwargs):
+def bevelOnSelectedEdges( *args, **kwargs):
     dupMeshTransform = None
+    edges, bevelSetName = args
     selectedMeshEdges = edges if len(edges) else pm.filterExpand(sm=32, ex=True)
 
     # Duplicate the mesh node.
     originMesh = pm.ls(selectedMeshEdges[0].name().partition('.')[0], type='mesh')[0]
-    dupMeshTransform = utils.duplicateMeshTransfrom(originMesh.name())
+    dupMeshTransform = utils.duplicateMeshTransfrom(bevelSetName, originMesh.name())
     if len(dupMeshTransform):
         edgeIndices = utils.selectedEdgeindices(selectedMeshEdges)
         edges = [dupMeshTransform[0].e[i] for i in edgeIndices]

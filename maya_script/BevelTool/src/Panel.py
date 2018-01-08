@@ -227,8 +227,8 @@ class SimpleOptionsWidget(QWidget, ui_SimpleOptionsWidget.Ui_simpleOptionsWidget
         self.parent.setBevelNodes(bevelNodes)
 
 
-    def bevelSelectedEdges(self, edges=[]):
-        bevelTool.bevelOnSelectedEdges(edges, **self.bevelOptions)
+    def bevelSelectedEdges(self, *args, **kwargs):
+        bevelTool.bevelOnSelectedEdges(*args, **self.bevelOptions)
 
 
 
@@ -330,7 +330,7 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
 
     def _redoBevel(self, bevelSetName):
         utils.deletePolyBevel3NodeInBevelSet(bevelSetName)
-        # self.bevelOnMWBevelSet()
+        self.bevelOnMWBevelSet()
 
 
     def bevelOnMWBevelSet(self):
@@ -339,7 +339,7 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             members = utils.bevelSetMembers(bevelSetName)
             if len(members):
-                self.optionWidget.bevelSelectedEdges(members)
+                self.optionWidget.bevelSelectedEdges(*(members, bevelSetName))
                 self._addMembersIntoBevelSet(bevelSetName, members)
                 self._addBevelSetToTreeView()
             else:
