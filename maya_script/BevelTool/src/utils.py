@@ -255,9 +255,7 @@ def disconnectFromMWBevelSet(bevelSetName, meshTransform):
 
 
 def duplicateMeshTransfrom(bevelSetName, meshNodeName):
-    '''
-    TODO: delete the connection
-    '''
+    # TODO: Process the existing dupclicated mesh transform node.
     duplicatedMeshTransform = []
     originMesh = pm.ls(meshNodeName, type='mesh')
     if len(originMesh):
