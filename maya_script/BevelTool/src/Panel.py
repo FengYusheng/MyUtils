@@ -333,7 +333,7 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
 
 
     def _redoBevel(self, bevelSetName):
-        utils.deletePolyBevel3NodeInBevelSet(bevelSetName)
+        utils.deletePolyBevelNodeInBevelSet(bevelSetName)
         self.bevelOnMWBevelSet()
 
 
