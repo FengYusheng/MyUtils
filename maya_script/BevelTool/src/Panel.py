@@ -262,11 +262,15 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
 
         self.newSetButton.clicked.connect(self.createBevelSet)
         self.addMemberButton.clicked.connect(self.addNewEdgesIntoBevelSet)
+        self.removeMemberButton.clicked.connect(self.removeMembersFromBevelSet)
+        self.selectMemberButton.clicked.connect(self.selectMembersInBevelSet)
+        self.deleteSetButton.clicked.connect(self.deleteBevelSetFromTreeView)
         self.selectionModelInBevelSetTreeView.selectionChanged.connect(self.activeBevelSetOptions)
         self.optionWidget.bevelMemberEdgesButton.clicked.connect(self.bevelOnMWBevelSet)
 
 
     def _addBevelSetToTreeView(self, newBevelSetNode=None):
+        # TODO: rename `_refreshBevelSetInTreeView`
         self.dataModelInBevelSetTreeView.clear()
         for col in range(len(self.headerInBevelSetTreeView)):
             item = QStandardItem(self.headerInBevelSetTreeView[col])
@@ -353,5 +357,35 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
             self._addMembersIntoBevelSet(bevelSetName)
             self._redoBevel(bevelSetName)
             self._addBevelSetToTreeView()
+        else:
+            self.parent.statusbar.showMessage(status.WARNING['Select bevelset'])
+
+
+    def removeMembersFromBevelSet(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            utils.removeMembersFromBevelSet(bevelSetName)
+            self._redoBevel(bevelSetName)
+            self._addBevelSetToTreeView()
+        else:
+            self.parent.statusbar.showMessage(status.WARNING['Select bevelset'])
+
+
+    def deleteBevelSetFromTreeView(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            utils.deleteBevelSet(bevelSetName)
+            self._addBevelSetToTreeView()
+        else:
+            self.parent.statusbar.showMessage(status.WARNING['Select bevelset'])
+
+
+    def selectMembersInBevelSet(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            utils.selectMembersInBevelSet(bevelSetName)
         else:
             self.parent.statusbar.showMessage(status.WARNING['Select bevelset'])

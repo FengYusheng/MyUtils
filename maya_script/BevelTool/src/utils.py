@@ -179,6 +179,8 @@ def createBevelSet(name='MWBevelSet#', edges=None):
             intersection = MWBevelSet.getIntersection(objectSet)
             not len(intersection) or objectSet.removeMembers(intersection)
 
+    # TODO: Run bevel command on the edges.
+
     return MWBevelSet
 
 
@@ -204,6 +206,7 @@ def bevelSetMembers(bevelSetName):
 
 
 def addMembersIntoBevelSet(bevelSetName, edges=None):
+    # TODO: Only the edges belong to the same mesh can be added.
     edges = edges if edges is not None else pm.filterExpand(sm=32, ex=True)
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
     if len(bevelSetNode) and (edges is not None):
@@ -216,6 +219,17 @@ def addMembersIntoBevelSet(bevelSetName, edges=None):
             objectSet = pm.ls(objectSet, type='objectSet')[0]
             intersection = bevelSetNode[0].getIntersection(objectSet)
             not len(intersection) or objectSet.removeMembers(intersection)
+
+    return bevelSetNode
+
+
+
+def removeMembersFromBevelSet(bevelSetName, edges=None):
+    edges = edges if edges is not None else pm.filterExpand(sm=32, ex=True)
+    bevelSetNode = pm.ls(bevelSetName, type='objectSet')
+    if len(bevelSetNode) and (edges is not None):
+        edges = [e for e in edges if e in bevelSetNode[0]]
+        not len(edges) or bevelSetNode[0].removeMembers(edges)
 
     return bevelSetNode
 
@@ -254,34 +268,60 @@ def disconnectFromMWBevelSet(bevelSetName, meshTransform):
 
 
 
-def duplicateMeshTransfrom(bevelSetName, meshNodeName):
-    # TODO: Process the existing dupclicated mesh transform node.
-    duplicatedMeshTransform = []
-    originMesh = pm.ls(meshNodeName, type='mesh')
-    if len(originMesh):
-        duplicatedMeshName = 'MWDup' + originMesh[0].name()
-        duplicatedMeshTransform = pm.ls(duplicatedMeshName, type='mesh')
-        if not len(duplicatedMeshTransform):
-            duplicatedMeshTransform = pm.duplicate(originMesh[0], name=duplicatedMeshName, st=True, rr=True)
-            disconnectFromMWBevelSet(bevelSetName, duplicatedMeshTransform)
-            pm.move(25.0, 0.0, 0.0, duplicatedMeshTransform, r=True)
+def duplicateMeshTransform(bevelSetName):
+    _duplicatedMeshTransform = []
+    _duplicatedMeshTransform = pm.ls(bevelSetName+'DuplicationTransform', type='transform')
+    if not len(_duplicatedMeshTransform):
+        # TODO: Undo duplicate.
+        members = bevelSetMembers(bevelSetName)
+        originMesh = pm.ls(members[0].partition('.')[0], type='mesh')
+        _duplicatedMeshTransform = pm.duplicate(originMesh[0], name=bevelSetName+'DuplicationTransform', st=True, rr=True)
+        disconnectFromMWBevelSet(bevelSetName, _duplicatedMeshTransform)
+        pm.move(25.0, 0.0, 0.0, _duplicatedMeshTransform, r=True)
 
-    return duplicatedMeshTransform
+    return _duplicatedMeshTransform
 
 
 
 def deletePolyBevel3NodeInBevelSet(bevelSetName):
     polyBevel3Node = []
-    members = bevelSetMembers(bevelSetName)
-    if len(members):
-        duplicatedMeshName = 'MWDup' + members[0].name().partition('.')[0]
-        duplicatedMeshTransform = pm.ls(duplicatedMeshName)
-        if len(duplicatedMeshTransform):
-            polyBevel3Node = pm.listConnections(duplicatedMeshTransform[0].getShape(), type='polyBevel3')
+    _duplicatedMeshTransform = pm.ls(bevelSetName+'DuplicationTransform', type='transform')
+    if len(_duplicatedMeshTransform):
+        polyBevel3Node = pm.listConnections(_duplicatedMeshTransform[0].getShape(), type='polyBevel3')
 
     # return [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
     polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
     not len(polyBevel3Node) or pm.delete(polyBevel3Node[0])
+    # NOTE: Why does it delete the objectSet at the same time?
+    len(bevelSetMembers(bevelSetName)) or pm.delete(_duplicatedMeshTransform)
+
+
+
+def deleteBevelSet(bevelSetName):
+    bevelSetNode = pm.ls(bevelSetName, type='objectSet')
+    # TODO: Undo delete.
+    if len(bevelSetNode):
+        # Delete the duplicated mesh transform.
+        _duplicatedMeshTransform = pm.ls(bevelSetName+'DuplicationTransform', type='transform')
+        not len(_duplicatedMeshTransform) or pm.delete(_duplicatedMeshTransform)
+        pm.delete(bevelSetNode[0])
+
+
+
+def selectMembersInBevelSet(bevelSetName):
+    # TODO: Undo select?
+    members = bevelSetMembers(bevelSetName)
+    if len(members):
+        meshNode = pm.ls(members[0].name().partition('.')[0], type='mesh')
+        pm.select(meshNode, r=True)
+        switchSelectionModeToEdge(meshNode[0])
+        pm.select(members, r=True)
+
+
+
+def navigateBevelSet():
+    # TODO: Undo navigate?
+    pass
 
 
 
@@ -291,6 +331,9 @@ if __name__ == '__main__':
     # selectedMeshTransformNodes()
     # getObjectSetsContainingEdgesUsingAPI2()
     # createBevelSet()
-    print(MWBevelSets())
+    # print(MWBevelSets())
     # print(polyBevel3NodeInBevelSet('MWBevelSet1'))
     # disconnectFromMWBevelSet('MWBevelSet1', 'pCube3')
+    # removeMembersFromBevelSet('MWBevelSet1')
+    # deleteBevelSet('MWBevelSet1')
+    selectMembersInBevelSet('MWBevelSet1')
