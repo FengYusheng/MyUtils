@@ -158,6 +158,7 @@ def createBevelSet(name='MWBevelSet#', edges=None):
         `performCreateSet false;`
         performCreateSet in C:/Program Files/Autodesk/Maya2018/scripts/others/performCreateSet.mel
     '''
+    # TODO: Make the set's name be the mesh name.
     if edges is None:
         edges = pm.filterExpand(sm=32, ex=True)
     else:
@@ -283,17 +284,16 @@ def duplicateMeshTransform(bevelSetName):
 
 
 
-def deletePolyBevel3NodeInBevelSet(bevelSetName):
-    polyBevel3Node = []
+def deletePolyBevelNodeInBevelSet(bevelSetName):
     _duplicatedMeshTransform = pm.ls(bevelSetName+'DuplicationTransform', type='transform')
     if len(_duplicatedMeshTransform):
-        polyBevel3Node = pm.listConnections(_duplicatedMeshTransform[0].getShape(), type='polyBevel3')
-
-    # return [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
-    polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
-    not len(polyBevel3Node) or pm.delete(polyBevel3Node[0])
-    # NOTE: Why does it delete the objectSet at the same time?
-    len(bevelSetMembers(bevelSetName)) or pm.delete(_duplicatedMeshTransform)
+        if len(bevelSetMembers(bevelSetName)):
+            polyBevel3Node = pm.listConnections(_duplicatedMeshTransform[0].getShape(), type='polyBevel3')
+            polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
+            not len(polyBevel3Node) or pm.delete(polyBevel3Node)
+        else:
+            # NOTE: Why does it delete the empty objectSet at the same time?
+            pm.delete(_duplicatedMeshTransform)
 
 
 

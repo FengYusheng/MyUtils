@@ -109,6 +109,10 @@ class MainWindowForBevelTool(QMainWindow, ui_MainWindowForBevelTool.Ui_MainWindo
             self.setCentralWidget(Panel.BevelSetEditorWidget(self))
 
 
+    def showEvent(self, event):
+        pass
+
+
 
 def run():
     window = MainWindowForBevelTool(getMayaWindow())
