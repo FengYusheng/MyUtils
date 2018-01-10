@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
+import Global
 
 
-PLAYERPATH = './names.txt'
-
-def playerGenerator():
+def playerGenerator(filePath=Global.PLAYERSPATH):
     while True:
-        with open(PLAYERPATH, 'r', encoding='utf-8') as f:
+        with open(filePath, 'r', encoding='utf-8') as f:
             for player in f:
                 yield player
