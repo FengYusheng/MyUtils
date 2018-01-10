@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\Qt\UI\MainWindow.ui'
+# Form implementation generated from reading ui file 'Qt/UI/MainWindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.8
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -16,18 +16,16 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 23))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
-        self.viewMenu = QtWidgets.QMenu(self.menubar)
-        self.viewMenu.setObjectName("viewMenu")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        self.lotteryDock = QtWidgets.QDockWidget(MainWindow)
-        self.lotteryDock.setObjectName("lotteryDock")
+        self.controlDock = QtWidgets.QDockWidget(MainWindow)
+        self.controlDock.setObjectName("controlDock")
         self.dockWidgetContents_2 = QtWidgets.QWidget()
         self.dockWidgetContents_2.setObjectName("dockWidgetContents_2")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.dockWidgetContents_2)
@@ -39,17 +37,9 @@ class Ui_MainWindow(object):
         self.stopButton = QtWidgets.QPushButton(self.dockWidgetContents_2)
         self.stopButton.setObjectName("stopButton")
         self.verticalLayout.addWidget(self.stopButton)
-        self.lotteryDock.setWidget(self.dockWidgetContents_2)
-        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.lotteryDock)
-        self.controlDock = QtWidgets.QDockWidget(MainWindow)
-        self.controlDock.setFloating(True)
-        self.controlDock.setObjectName("controlDock")
-        self.dockWidgetContents_3 = QtWidgets.QWidget()
-        self.dockWidgetContents_3.setObjectName("dockWidgetContents_3")
-        self.controlDock.setWidget(self.dockWidgetContents_3)
-        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(8), self.controlDock)
+        self.controlDock.setWidget(self.dockWidgetContents_2)
+        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.controlDock)
         self.menubar.addAction(self.editMenu.menuAction())
-        self.menubar.addAction(self.viewMenu.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -58,9 +48,6 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Lottery"))
         self.editMenu.setTitle(_translate("MainWindow", "Edit"))
-        self.viewMenu.setTitle(_translate("MainWindow", "View"))
-        self.lotteryDock.setWindowTitle(_translate("MainWindow", "Lottery"))
         self.startButton.setText(_translate("MainWindow", "Start"))
         self.stopButton.setText(_translate("MainWindow", "Stop"))
-        self.controlDock.setWindowTitle(_translate("MainWindow", "Control panel"))
 
