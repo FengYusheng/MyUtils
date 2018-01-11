@@ -17,7 +17,8 @@ class Dashboard(QWidget):
         # https://stackoverflow.com/questions/17819698/how-to-change-fontsize-on-drawtext#17819878
         self.font.setPointSize(20)
         self.text = '你的名字！'
-        self.playerGenerator = Utils.playerGenerator()
+        self.playerNumber = self.parent.playerNumber()
+        self.playerGenerator = self.parent.playerGenerator()
 
 
     def setText(self):
@@ -43,3 +44,7 @@ class Dashboard(QWidget):
 
     def paintMatrixCodeRain(self):
         pass
+
+
+    def currentPlayer(self):
+        return self.text
