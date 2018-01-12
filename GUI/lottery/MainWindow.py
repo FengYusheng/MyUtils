@@ -69,6 +69,7 @@ class MainWindow(QMainWindow, ui_MainWindow.Ui_MainWindow):
         self._playerPath = ''
         self._prizewinners = set()
         self._playerNumber = 1
+        self.isStopTimer = False
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -80,7 +81,7 @@ class MainWindow(QMainWindow, ui_MainWindow.Ui_MainWindow):
 
         self.timer.timeout.connect(self.marquee)
         self.controlPanel.startButton.clicked.connect(self.startTimer)
-        self.controlPanel.stopButton.clicked.connect(self.stopTimer)
+        self.controlPanel.stopButton.clicked.connect(self.setStopTimerFlag)
         self.controlPanel.playerNumberSpinBox.valueChanged.connect(self.setPlayerNumber)
 
 
@@ -89,28 +90,32 @@ class MainWindow(QMainWindow, ui_MainWindow.Ui_MainWindow):
 
 
     def startTimer(self):
-        self._playerNumber -= 1
-        self.clearPrizewinners()
+        self.isStopTimer = False
+        self._prizewinners.clear()
+        self.setPlayerNumber(self.controlPanel.playerNumberSpinBox.value())
         self.controlPanel.deactivateWidgets()
         self.timer.start(self.interval)
 
 
     def stopTimer(self):
         self.timer.stop()
-        self._prizewinners.add(self.dashboard.currentPlayer())
+        self.setStopTimerFlag()
+        self.controlPanel.activateWidgets()
 
-        if self._playerNumber > 0:
-            self.startTimer()
-        else:
-            self.controlPanel.activateWidgets()
-            print(self._prizewinners)
+
+    def setStopTimerFlag(self):
+        self.isStopTimer = True
 
 
     def marquee(self):
         self.dashboard.setText()
-        # self.stopTimer()
-        if self._playerNumber > 0:
-            pass
+        if self.isStopTimer:
+            if self._playerNumber > 0:
+                self._playerNumber -= 1
+                self._prizewinners.add(self.dashboard.currentPlayer())
+            else:
+                self.stopTimer()
+                self.dashboard.showPrizewinners(self._prizewinners)
 
 
     def setPlayerPath(self, playerPath):
@@ -126,7 +131,7 @@ class MainWindow(QMainWindow, ui_MainWindow.Ui_MainWindow):
 
 
     def clearPrizewinners(self):
-        self._playerNumber > 0 or self._prizewinners.clear()
+        self._prizewinners.clear()
 
 
     def playerGenerator(self):

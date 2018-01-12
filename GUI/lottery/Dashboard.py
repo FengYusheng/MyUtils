@@ -17,13 +17,17 @@ class Dashboard(QWidget):
         # https://stackoverflow.com/questions/17819698/how-to-change-fontsize-on-drawtext#17819878
         self.font.setPointSize(20)
         self.text = '你的名字！'
-        self.playerNumber = self.parent.playerNumber()
         self.playerGenerator = self.parent.playerGenerator()
 
 
     def setText(self):
         # https://stackoverflow.com/questions/1756096/understanding-generators-in-python
         self.text = next(self.playerGenerator).strip()
+        self.update()
+
+
+    def showPrizewinners(self, winners):
+        self.text = list(winners)
         self.update()
 
 
@@ -38,7 +42,20 @@ class Dashboard(QWidget):
         painter.setPen(self.pen)
         painter.setFont(self.font)
 
-        painter.drawText(0, 0, self.text)
+        if isinstance(self.text, str):
+            painter.drawText(0, 0, self.text)
+        elif isinstance(self.text, list):
+            length = len(self.text)
+            h = 0 - int(length/2)*self.font.pointSize()
+            painter.save()
+            painter.translate(0, h)
+
+            for index, winner in enumerate(self.text):
+                height = index * self.font.pointSize() * 1.5
+                painter.drawText(0, height, winner)
+
+            painter.restore()
+            
         painter.restore()
 
 
