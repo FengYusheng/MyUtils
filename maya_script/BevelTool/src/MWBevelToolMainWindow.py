@@ -32,6 +32,15 @@ def getMayaWindow():
 class ControlPanelDelegate(QStyledItemDelegate):
     def __init__(self, parent):
         super(ControlPanelDelegate, self).__init__(parent)
+        self.parent = parent
+
+
+    def paint(self, painter, option, index):
+        parentIndex = self.parent.dataModelInControlPanelTreeView.parent(index)
+        if parentIndex.row() >= 0:
+            groupBoxOption = QStyleOptionGroupBox()
+        else:
+            QStyledItemDelegate.paint(self, painter, option, index)
 
 
 
@@ -50,6 +59,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.controlPanelTreeView.setSelectionModel(self.selectionModelInControlPanelTreeView)
         self.controlPanelTreeView.setSelectionMode(QAbstractItemView.SingleSelection)
         self.controlPanelTreeView.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.delegateInControlPanelTreeView = ControlPanelDelegate(self)
+        self.controlPanelTreeView.setItemDelegate(self.delegateInControlPanelTreeView)
 
         self._initializeControlPanel()
 
@@ -67,6 +78,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         item.setFont(self.itemFont)
         item.setEditable(False)
         parent.setChild(0, item)
+        index = self.dataModelInControlPanelTreeView.indexFromItem(item)
+
 
 
         self.controlPanelTreeView.resizeColumnToContents(0)
