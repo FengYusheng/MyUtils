@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow.ui'
 #
-# Created: Wed Jan 17 16:54:58 2018
+# Created: Wed Jan 17 14:59:08 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.toolbarGroupBox.setCheckable(False)
         self.toolbarGroupBox.setObjectName("toolbarGroupBox")
         self.bevelSetTreeView = QtWidgets.QTreeView(self.splitter)
-        self.bevelSetTreeView.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        self.bevelSetTreeView.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.bevelSetTreeView.setTextElideMode(QtCore.Qt.ElideNone)
         self.bevelSetTreeView.setIndentation(0)
         self.bevelSetTreeView.setWordWrap(False)
@@ -35,7 +35,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.gridLayout_2.addWidget(self.splitter, 0, 0, 1, 1)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 876, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 876, 23))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")

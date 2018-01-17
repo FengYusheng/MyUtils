@@ -283,9 +283,7 @@ def duplicateMeshTransform(bevelSetName):
     _duplicatedMeshTransform = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
     if not len(_duplicatedMeshTransform):
         # TODO: Undo duplicate.
-        members = bevelSetMembers(bevelSetName)
-        originMesh = pm.ls(members[0].partition('.')[0], type='mesh')
-        _duplicatedMeshTransform = pm.duplicate(originMesh[0], name=bevelSetName+'DupTrans', st=True, rr=True)
+        _duplicatedMeshTransform = pm.duplicate(meshObject[0], name=meshObject[0].name()+'DupTrans', st=True, rr=True)
         disconnectFromMWBevelSet(bevelSetName, _duplicatedMeshTransform)
         pm.move(25.0, 0.0, 0.0, _duplicatedMeshTransform, r=True)
 

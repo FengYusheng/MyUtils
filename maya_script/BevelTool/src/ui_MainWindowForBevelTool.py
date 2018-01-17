@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MainWindowForBevelTool.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MainWindowForBevelTool.ui'
 #
-# Created: Wed Jan 17 16:54:58 2018
+# Created: Wed Jan 17 14:59:08 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ class Ui_MainWindowForBevelTool(object):
         self.centralwidget.setObjectName("centralwidget")
         MainWindowForBevelTool.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindowForBevelTool)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 654, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 654, 23))
         self.menubar.setObjectName("menubar")
         self.menuEdit = QtWidgets.QMenu(self.menubar)
         self.menuEdit.setObjectName("menuEdit")

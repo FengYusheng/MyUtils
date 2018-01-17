@@ -91,14 +91,16 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetLabel.mousePressEvent = self._mousePressEventInBevelSetLabel
         self.selectionLabel.mousePressEvent = self._mousePressEventInSelectionLabel
         self.bevelOptionsLabel.mousePressEvent = self._mousePressEventInBevelOptionslabel
+        self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
         self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
         self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
         self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
         self.bevelSetTreeView.setSelectionModel(self.selectionModelInBevelSetTreeView)
 
-        self._updateBevelSetTreeView()
+        self.updateBevelSetTreeView()
 
         self.newBevelSetButton.clicked.connect(self.createNewBevelSet)
+        self.addMemberButton.clicked.connect(self.addEdgesIntoBevelSet)
 
 
     def _mousePressEventInBevelSetLabel(self, event):
@@ -119,7 +121,12 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         QLabel.mousePressEvent(self.bevelOptionsLabel, event)
 
 
-    def _updateBevelSetTreeView(self):
+    def _mousePressEventInBevelSetTreeView(self, event):
+        self.selectionModelInBevelSetTreeView.clearSelection()
+        QTreeView.mousePressEvent(self.bevelSetTreeView, event)
+
+
+    def updateBevelSetTreeView(self):
         self.dataModelInBevelSetTreeView.clear()
         for col, header in enumerate(self.HEADERSINBEVELSETTREEVIEW):
             item = QStandardItem(header)
@@ -145,7 +152,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         newBevelSet = utils.createBevelSet()
         if newBevelSet is not None:
             self.bevelOnMWBevelSet(newBevelSet.name())
-            self._updateBevelSetTreeView()
+            self.updateBevelSetTreeView()
             self.statusbar.clearMessage()
         else:
             self.statusbar.showMessage(status.WARNING['New bevel set'])
@@ -156,6 +163,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         if len(members):
             bevelTool.bevelOnSelectedEdges(*(members, bevelSetName), **self.bevelOptions)
             utils.addMembersIntoBevelSet(bevelSetName, members)
+
+
+    def addEdgesIntoBevelSet(self):
+        if selectionModelInOptionTableView.hasSelection():
+            print('hh')
+        else:
+            print('aa')
 
 
 
