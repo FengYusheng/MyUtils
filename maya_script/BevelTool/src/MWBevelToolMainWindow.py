@@ -19,6 +19,14 @@ import maya.OpenMayaUI as apiUI
 
 import ui_MWBevelToolMainWindow
 reload(ui_MWBevelToolMainWindow)
+import utils
+reload(utils)
+import bevelTool
+reload(bevelTool)
+import status
+reload(status)
+import options
+reload(options)
 
 
 
@@ -34,56 +42,120 @@ class ControlPanelDelegate(QStyledItemDelegate):
         super(ControlPanelDelegate, self).__init__(parent)
         self.parent = parent
 
+    # def createEditor(self, parent, option, index):
+    #     item = self.parent.dataModelInControlPanelTreeView.itemFromIndex(index)
+    #     editor = MWBevelToolPanels.MWBevelSetPanel(self.parent)
+    #     return editor
+    #
+    #
+    # def setEditorData(self, editor, index):
+    #     pass
+    #
+    #
+    # def setModelData(self, editor, model, index):
+    #     pass
+    #
+    #
+    # def updateEditorGeometry(self, editor, option, index):
+    #     _rect = option.rect
+    #     _rect.setHeight(editor.height())
+    #     editor.setGeometry(_rect)
 
     def paint(self, painter, option, index):
         parentIndex = self.parent.dataModelInControlPanelTreeView.parent(index)
         if parentIndex.row() >= 0:
+            bevelsetPanel = MWBevelToolPanels.MWBevelSetPanel(self.parent)
             groupBoxOption = QStyleOptionGroupBox()
+            groupBoxOption.activeSubControls = QStyle.SC_All
+            self.parent.toolbarGroupBox.initStyleOption(groupBoxOption)
+            groupBoxOption.rect = option.rect
+            groupBoxOption.rect.setHeight(bevelsetPanel.height())
+            groupBoxOption.styleObject = bevelsetPanel
+            QApplication.style().drawComplexControl(QStyle.CC_GroupBox, groupBoxOption, painter, bevelsetPanel)
         else:
             QStyledItemDelegate.paint(self, painter, option, index)
 
 
 
 class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelToolMainWindow):
+    HEADERSINBEVELSETTREEVIEW = ('Bevel Set', 'Members')
     def __init__(self, parent=None):
         super(MWBevelToolMainWindow, self).__init__(parent)
 
-        self.itemFont = QFont('OldEnglish', 10, QFont.Bold)
-        self.itemBrush = QBrush(Qt.GlobalColor.darkGray, Qt.SolidPattern)
+        self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
+        self.itemFont = QFont('OldEnglish', 10)
+        self.bevelOptions = copy.copy(options.bevelOptions)
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.dataModelInControlPanelTreeView = QStandardItemModel(self.controlDock)
-        self.controlPanelTreeView.setModel(self.dataModelInControlPanelTreeView)
-        self.selectionModelInControlPanelTreeView = QItemSelectionModel(self.dataModelInControlPanelTreeView, self.controlDock)
-        self.controlPanelTreeView.setSelectionModel(self.selectionModelInControlPanelTreeView)
-        self.controlPanelTreeView.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.controlPanelTreeView.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.delegateInControlPanelTreeView = ControlPanelDelegate(self)
-        self.controlPanelTreeView.setItemDelegate(self.delegateInControlPanelTreeView)
+        self.bevelSetLabel.mousePressEvent = self._mousePressEventInBevelSetLabel
+        self.selectionLabel.mousePressEvent = self._mousePressEventInSelectionLabel
+        self.bevelOptionsLabel.mousePressEvent = self._mousePressEventInBevelOptionslabel
+        self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
+        self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
+        self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
+        self.bevelSetTreeView.setSelectionModel(self.selectionModelInBevelSetTreeView)
 
-        self._initializeControlPanel()
+        self._updateBevelSetTreeView()
 
-
-    def _initializeControlPanel(self):
-        self.dataModelInControlPanelTreeView.clear()
-        item = QStandardItem('Bevel Set')
-        item.setFont(self.itemFont)
-        item.setEditable(False)
-        item.setBackground(self.itemBrush)
-        self.dataModelInControlPanelTreeView.appendRow(item)
-        parent = item
-
-        item = QStandardItem('Children')
-        item.setFont(self.itemFont)
-        item.setEditable(False)
-        parent.setChild(0, item)
-        index = self.dataModelInControlPanelTreeView.indexFromItem(item)
+        self.newBevelSetButton.clicked.connect(self.createNewBevelSet)
 
 
+    def _mousePressEventInBevelSetLabel(self, event):
+        isVisible = not self.bevelSetGroupBox.isVisible()
+        self.bevelSetGroupBox.setVisible(isVisible)
+        QLabel.mousePressEvent(self.bevelSetLabel, event)
 
-        self.controlPanelTreeView.resizeColumnToContents(0)
 
+    def _mousePressEventInSelectionLabel(self, event):
+        isVisible = not self.selectionGroupBox.isVisible()
+        self.selectionGroupBox.setVisible(isVisible)
+        QLabel.mousePressEvent(self.selectionLabel, event)
+
+
+    def _mousePressEventInBevelOptionslabel(self, event):
+        isVisible = not self.bevelOptionsGroupBox.isVisible()
+        self.bevelOptionsGroupBox.setVisible(isVisible)
+        QLabel.mousePressEvent(self.bevelOptionsLabel, event)
+
+
+    def _updateBevelSetTreeView(self):
+        self.dataModelInBevelSetTreeView.clear()
+        for col, header in enumerate(self.HEADERSINBEVELSETTREEVIEW):
+            item = QStandardItem(header)
+            item.setFont(self.headerFont)
+            self.dataModelInBevelSetTreeView.setHorizontalHeaderItem(col, item)
+
+        for bevelset in utils.MWBevelSets():
+            item = QStandardItem(bevelset.name()+' '*10)
+            item.setFont(self.itemFont)
+            item.setEditable(False)
+            self.dataModelInBevelSetTreeView.appendRow(item)
+            row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
+
+            item = QStandardItem(str(len(utils.bevelSetMembers(bevelset.name()))))
+            item.setEditable(False)
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, 1, item)
+
+        map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(self.HEADERSINBEVELSETTREEVIEW)))
+
+
+    def createNewBevelSet(self):
+        newBevelSet = utils.createBevelSet()
+        if newBevelSet is not None:
+            self.bevelOnMWBevelSet(newBevelSet.name())
+            self._updateBevelSetTreeView()
+            self.statusbar.clearMessage()
+        else:
+            self.statusbar.showMessage(status.WARNING['New bevel set'])
+
+
+    def bevelOnMWBevelSet(self, bevelSetName):
+        members = utils.bevelSetMembers(bevelSetName)
+        if len(members):
+            bevelTool.bevelOnSelectedEdges(*(members, bevelSetName), **self.bevelOptions)
+            utils.addMembersIntoBevelSet(bevelSetName, members)
 
 
 

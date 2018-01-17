@@ -151,14 +151,13 @@ def getObjectSetsContainingEdgesUsingAPI2(edges=None):
 
 
 
-def createBevelSet(name='MWBevelSet#', edges=None):
+def createBevelSet(edges=None):
     '''
     :Reference:
         `CreateSet;`
         `performCreateSet false;`
         performCreateSet in C:/Program Files/Autodesk/Maya2018/scripts/others/performCreateSet.mel
     '''
-    # TODO: Make the set's name be the mesh name.
     if edges is None:
         edges = pm.filterExpand(sm=32, ex=True)
     else:
@@ -166,7 +165,9 @@ def createBevelSet(name='MWBevelSet#', edges=None):
 
     pm.select(cl=True)
     MWBevelSet = None
-    if edges:
+    meshNode = getMeshObject(edges) if edges else []
+    if edges and len(meshNode):
+        name = meshNode[0].name() + 'MWBevelSet#'
         MWBevelSet = pm.sets(name=name)
         MWBevelPartition = createPartition(MWBevelSet)
         # pm.sets(*edges, forceElement=MWBevelSet)
@@ -180,8 +181,6 @@ def createBevelSet(name='MWBevelSet#', edges=None):
             intersection = MWBevelSet.getIntersection(objectSet)
             not len(intersection) or objectSet.removeMembers(intersection)
 
-    # TODO: Run bevel command on the edges.
-
     return MWBevelSet
 
 
@@ -192,17 +191,13 @@ def flattenEdges(edges):
 
 
 def MWBevelSets():
-    return [i for i in pm.ls(type='objectSet') if i.name().startswith('MWBevelSet')]
+    return [i for i in pm.ls(type='objectSet') if len(i.name().partition('MWBevelSet')[1])]
 
 
 
 def bevelSetMembers(bevelSetName):
-    members = []
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
-    if bevelSetNode:
-        members = pm.ls(bevelSetNode[0].flattened(), flatten=True)
-
-    return members
+    return pm.ls(bevelSetNode[0].flattened(), flatten=True) if bevelSetNode else []
 
 
 
@@ -242,8 +237,20 @@ def selectedEdgeindices(edges=[]):
 
 
 
-def selectedMeshNodes():
-    pass
+def getMeshObject(edges=[]):
+    """
+    :param:
+        edges, unicode list
+    """
+    meshObject = list(set(e.partition('.')[0] for e in edges))
+    print(meshObject)
+
+    if len(meshObject) > 1:
+        pm.warning('More than one objects are selected.')
+    elif 0 == len(meshObject):
+        pm.warning('You need select several mesh edges.')
+
+    return pm.ls(meshObject) if len(meshObject) == 1 else []
 
 
 
@@ -271,12 +278,14 @@ def disconnectFromMWBevelSet(bevelSetName, meshTransform):
 
 def duplicateMeshTransform(bevelSetName):
     _duplicatedMeshTransform = []
-    _duplicatedMeshTransform = pm.ls(bevelSetName+'DuplicationTransform', type='transform')
+    members = bevelSetMembers(bevelSetName)
+    meshObject = getMeshObject(members)
+    _duplicatedMeshTransform = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
     if not len(_duplicatedMeshTransform):
         # TODO: Undo duplicate.
         members = bevelSetMembers(bevelSetName)
         originMesh = pm.ls(members[0].partition('.')[0], type='mesh')
-        _duplicatedMeshTransform = pm.duplicate(originMesh[0], name=bevelSetName+'DuplicationTransform', st=True, rr=True)
+        _duplicatedMeshTransform = pm.duplicate(originMesh[0], name=bevelSetName+'DupTrans', st=True, rr=True)
         disconnectFromMWBevelSet(bevelSetName, _duplicatedMeshTransform)
         pm.move(25.0, 0.0, 0.0, _duplicatedMeshTransform, r=True)
 
@@ -330,10 +339,10 @@ if __name__ == '__main__':
     # switchSelectionModeToEdge(item)
     # selectedMeshTransformNodes()
     # getObjectSetsContainingEdgesUsingAPI2()
-    # createBevelSet()
+    createBevelSet()
     # print(MWBevelSets())
     # print(polyBevel3NodeInBevelSet('MWBevelSet1'))
     # disconnectFromMWBevelSet('MWBevelSet1', 'pCube3')
     # removeMembersFromBevelSet('MWBevelSet1')
     # deleteBevelSet('MWBevelSet1')
-    selectMembersInBevelSet('MWBevelSet1')
+    # selectMembersInBevelSet('MWBevelSet1')

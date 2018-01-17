@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MainWindowForBevelTool.ui'
 #
-# Created: Mon Jan 15 18:11:44 2018
+# Created: Wed Jan 17 16:54:58 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
