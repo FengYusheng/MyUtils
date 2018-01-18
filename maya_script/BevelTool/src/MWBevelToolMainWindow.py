@@ -91,6 +91,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetLabel.mousePressEvent = self._mousePressEventInBevelSetLabel
         self.selectionLabel.mousePressEvent = self._mousePressEventInSelectionLabel
         self.bevelOptionsLabel.mousePressEvent = self._mousePressEventInBevelOptionslabel
+        self.bevelLabel.mousePressEvent = self._mousePressEventInBevelLabel
         self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
         self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
         self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
@@ -101,6 +102,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         self.newBevelSetButton.clicked.connect(self.createNewBevelSet)
         self.addMemberButton.clicked.connect(self.addEdgesIntoBevelSet)
+        self.removeMemberButton.clicked.connect(self.removeEdgesFromBevelSet)
 
 
     def _mousePressEventInBevelSetLabel(self, event):
@@ -121,6 +123,12 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         QLabel.mousePressEvent(self.bevelOptionsLabel, event)
 
 
+    def _mousePressEventInBevelLabel(self, event):
+        isVisible = not self.bevelGroupBox.isVisible()
+        self.bevelGroupBox.setVisible(isVisible)
+        QLabel.mousePressEvent(self.bevelLabel, event)
+
+
     def _mousePressEventInBevelSetTreeView(self, event):
         self.selectionModelInBevelSetTreeView.clearSelection()
         QTreeView.mousePressEvent(self.bevelSetTreeView, event)
@@ -139,11 +147,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             item.setEditable(False)
             self.dataModelInBevelSetTreeView.appendRow(item)
             row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
+            index = self.dataModelInBevelSetTreeView.indexFromItem(item)
 
             item = QStandardItem(str(len(utils.bevelSetMembers(bevelset.name()))))
             item.setEditable(False)
             item.setFont(self.itemFont)
             self.dataModelInBevelSetTreeView.setItem(row, 1, item)
+
+            self.selectionModelInBevelSetTreeView.select(index, QItemSelectionModel.ToggleCurrent|QItemSelectionModel.Rows)
 
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(self.HEADERSINBEVELSETTREEVIEW)))
 
@@ -165,11 +176,33 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             utils.addMembersIntoBevelSet(bevelSetName, members)
 
 
+    def _redoBevel(self, bevelSetName):
+        utils.deletePolyBevelNodeInBevelSet(bevelSetName)
+        self.bevelOnMWBevelSet(bevelSetName)
+
+
     def addEdgesIntoBevelSet(self):
-        if selectionModelInOptionTableView.hasSelection():
-            print('hh')
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            if utils.addMembersIntoBevelSet(bevelSetName):
+                self._redoBevel(bevelSetName)
+                self.updateBevelSetTreeView()
+            else:
+                self.statusbar.showMessage(status.WARNING['Add member error'].format(bevelSetName))
         else:
-            print('aa')
+            self.statusbar.showMessage(status.WARNING['Select bevelset'])
+
+
+    def removeEdgesFromBevelSet(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            utils.removeMembersFromBevelSet(bevelSetName)
+            self._redoBevel(bevelSetName)
+            self.updateBevelSetTreeView()
+        else:
+            self.statusbar.showMessage(status.WARNING['Select bevelset'])
 
 
 

@@ -2,6 +2,7 @@
 import pymel.core as pm
 import maya.api.OpenMaya as om
 
+# TODO: show warnings.
 
 
 class HashableMobjectHandle(om.MObjectHandle):
@@ -163,23 +164,25 @@ def createBevelSet(edges=None):
     else:
         edges = pm.filterExpand(edges, sm=32, ex=True)
 
-    pm.select(cl=True)
     MWBevelSet = None
-    meshNode = getMeshObject(edges) if edges else []
+    meshNode = getMeshObject(pm.ls(edges)) if edges else []
     if edges and len(meshNode):
-        name = meshNode[0].name() + 'MWBevelSet#'
-        MWBevelSet = pm.sets(name=name)
-        MWBevelPartition = createPartition(MWBevelSet)
-        # pm.sets(*edges, forceElement=MWBevelSet)
-        MWBevelSet.forceElement(edges)
+        name = meshNode[0].name() + 'MWBevelSet'
+        if not pm.ls(name, type='objectSet'):
+            MWBevelSet = pm.sets(name=name)
+            MWBevelPartition = createPartition(MWBevelSet)
+            # pm.sets(*edges, forceElement=MWBevelSet)
+            MWBevelSet.forceElement(edges)
 
-        # forceElement doesn't always work.
-        objestSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
-        objestSetsContainingEdges.discard(MWBevelSet.name())
-        for objectSet in objestSetsContainingEdges:
-            objectSet = pm.ls(objectSet, type='objectSet')[0]
-            intersection = MWBevelSet.getIntersection(objectSet)
-            not len(intersection) or objectSet.removeMembers(intersection)
+            # forceElement doesn't always work.
+            objestSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
+            objestSetsContainingEdges.discard(MWBevelSet.name())
+            for objectSet in objestSetsContainingEdges:
+                objectSet = pm.ls(objectSet, type='objectSet')[0]
+                intersection = MWBevelSet.getIntersection(objectSet)
+                not len(intersection) or objectSet.removeMembers(intersection)
+        else:
+            pm.warning('{0} already exists.'.format(name))
 
     return MWBevelSet
 
@@ -202,10 +205,20 @@ def bevelSetMembers(bevelSetName):
 
 
 def addMembersIntoBevelSet(bevelSetName, edges=None):
-    # TODO: Only the edges belong to the same mesh can be added.
-    edges = edges if edges is not None else pm.filterExpand(sm=32, ex=True)
+    edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
     if len(bevelSetNode) and (edges is not None):
+        meshObject = getMeshObject(pm.ls(edges))
+        if not len(meshObject):
+            pm.warning('More than one objects are selected.')
+            return []
+
+        members = bevelSetMembers(bevelSetName)
+        originMesh = getMeshObject(members)
+        if originMesh[0].name() != meshObject[0].name():
+            pm.warning('The selected edges do not belong to the mesh object {0}'.format(originMesh[0].name()))
+            return []
+
         bevelSetNode[0].forceElement(edges)
         # forceElement doesn't always work.
         edges = edges if isinstance(edges[0], unicode) else [e.name() for e in edges]
@@ -216,7 +229,10 @@ def addMembersIntoBevelSet(bevelSetName, edges=None):
             intersection = bevelSetNode[0].getIntersection(objectSet)
             not len(intersection) or objectSet.removeMembers(intersection)
 
-    return bevelSetNode
+        return bevelSetNode
+    else:
+        pm.warning('Invalid parameters: {0}, {1}. Select a bevel set and edges'.format(bevelSetName, edges))
+        return []
 
 
 
@@ -226,8 +242,6 @@ def removeMembersFromBevelSet(bevelSetName, edges=None):
     if len(bevelSetNode) and (edges is not None):
         edges = [e for e in edges if e in bevelSetNode[0]]
         not len(edges) or bevelSetNode[0].removeMembers(edges)
-
-    return bevelSetNode
 
 
 
@@ -240,10 +254,9 @@ def selectedEdgeindices(edges=[]):
 def getMeshObject(edges=[]):
     """
     :param:
-        edges, unicode list
+        edges, pm.MeshEdge list
     """
     meshObject = list(set(e.partition('.')[0] for e in edges))
-    print(meshObject)
 
     if len(meshObject) > 1:
         pm.warning('More than one objects are selected.')
@@ -292,15 +305,19 @@ def duplicateMeshTransform(bevelSetName):
 
 
 def deletePolyBevelNodeInBevelSet(bevelSetName):
-    _duplicatedMeshTransform = pm.ls(bevelSetName+'DuplicationTransform', type='transform')
-    if len(_duplicatedMeshTransform):
-        if len(bevelSetMembers(bevelSetName)):
-            polyBevel3Node = pm.listConnections(_duplicatedMeshTransform[0].getShape(), type='polyBevel3')
-            polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
-            not len(polyBevel3Node) or pm.delete(polyBevel3Node)
-        else:
-            # NOTE: Why does it delete the empty objectSet at the same time?
-            pm.delete(_duplicatedMeshTransform)
+    members = bevelSetMembers(bevelSetName)
+    if len(members):
+        meshObject = getMeshObject(members)
+        _duplicatedMeshTransform = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
+        polyBevel3Node = pm.listConnections(_duplicatedMeshTransform[0].getShape(), type='polyBevel3')
+        polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
+        not len(polyBevel3Node) or pm.delete(polyBevel3Node)
+    else:
+        # NOTE: Why does it delete the empty objectSet at the same time?
+        # If you find something wierd, clean up the maya folder YOUR DOCUMENT\maya\VERSION\.
+        dupName = bevelSetName.partition('MWBevelSet')[0] + 'DupTrans'
+        dupTrans = pm.ls(dupName, type='transform')
+        not len(dupTrans) or pm.delete(dupTrans)
 
 
 

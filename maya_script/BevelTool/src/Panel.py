@@ -347,7 +347,7 @@ class BevelSetEditorWidget(QWidget, ui_BevelSetEditorWidget.Ui_bevelSetEditorWid
                 self._addMembersIntoBevelSet(bevelSetName, members)
                 self._addBevelSetToTreeView()
             else:
-                self.parent.statusbar.showMessage(status.WARNING['Memeber error'].format(bevelSetName))
+                self.parent.statusbar.showMessage(status.WARNING['Member error'].format(bevelSetName))
 
 
     def addNewEdgesIntoBevelSet(self):

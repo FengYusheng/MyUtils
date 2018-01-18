@@ -2,7 +2,7 @@
 
 WARNING = {
     'New bevel set'    : 'Can not create a new bevel set.',
-    'Memeber error'    : 'Can not get members in bevel set {0}.',
+    'Member error'    : 'Can not get members in bevel set {0}.',
     'Add member error' : 'Can not add memebers into bevel set {0}.',
     'Select bevelset'  : 'Select a bevelSet first.'
 }

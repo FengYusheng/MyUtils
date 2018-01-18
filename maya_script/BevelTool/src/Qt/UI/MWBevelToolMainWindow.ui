@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>876</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="editMenu">
@@ -79,7 +79,7 @@
    <property name="minimumSize">
     <size>
      <width>280</width>
-     <height>356</height>
+     <height>423</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -92,8 +92,8 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
       <widget class="QLabel" name="bevelSetLabel">
        <property name="minimumSize">
         <size>
@@ -127,7 +127,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item>
       <widget class="QGroupBox" name="bevelSetGroupBox">
        <property name="title">
         <string/>
@@ -170,7 +170,7 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item>
       <widget class="QLabel" name="selectionLabel">
        <property name="minimumSize">
         <size>
@@ -201,7 +201,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item>
       <widget class="QGroupBox" name="selectionGroupBox">
        <property name="title">
         <string/>
@@ -241,7 +241,7 @@
        </layout>
       </widget>
      </item>
-     <item row="4" column="0">
+     <item>
       <widget class="QLabel" name="bevelOptionsLabel">
        <property name="minimumSize">
         <size>
@@ -272,7 +272,7 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item>
       <widget class="QGroupBox" name="bevelOptionsGroupBox">
        <property name="title">
         <string/>
@@ -282,7 +282,54 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item>
+      <widget class="QLabel" name="bevelLabel">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bevel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::RichText</enum>
+       </property>
+       <property name="indent">
+        <number>20</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="bevelGroupBox">
+       <property name="title">
+        <string/>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
