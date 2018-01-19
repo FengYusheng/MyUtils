@@ -103,6 +103,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.newBevelSetButton.clicked.connect(self.createNewBevelSet)
         self.addMemberButton.clicked.connect(self.addEdgesIntoBevelSet)
         self.removeMemberButton.clicked.connect(self.removeEdgesFromBevelSet)
+        self.deleteBevelSetbutton.clicked.connect(self.deleteBevelSet)
+        self.selectMembersButton.clicked.connect(self.selectEdgesInBevelSet)
+        self.selectHardEdgesButton.clicked.connect(self.selectHardEdges)
+        self.selectSoftEdgesButton.clicked.connect(self.selectSoftEdges)
 
 
     def _mousePressEventInBevelSetLabel(self, event):
@@ -154,7 +158,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             item.setFont(self.itemFont)
             self.dataModelInBevelSetTreeView.setItem(row, 1, item)
 
-            self.selectionModelInBevelSetTreeView.select(index, QItemSelectionModel.ToggleCurrent|QItemSelectionModel.Rows)
+            self.selectionModelInBevelSetTreeView.select(index, QItemSelectionModel.ClearAndSelect|QItemSelectionModel.Rows)
 
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(self.HEADERSINBEVELSETTREEVIEW)))
 
@@ -203,6 +207,32 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.updateBevelSetTreeView()
         else:
             self.statusbar.showMessage(status.WARNING['Select bevelset'])
+
+
+    def selectEdgesInBevelSet(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            utils.selectMembersInBevelSet(bevelSetName)
+            self.statusbar.clearMessage()
+        else:
+            self.statusbar.showMessage(status.WARNING['Select bevelset'])
+
+
+    def deleteBevelSet(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            utils.deleteBevelSet(bevelSetName)
+            self.updateBevelSetTreeView()
+
+
+    def selectHardEdges(self):
+        utils.selectHardEdges()
+
+
+    def selectSoftEdges(self):
+        print('Select soft edges.')
 
 
 

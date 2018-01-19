@@ -326,7 +326,7 @@ def deleteBevelSet(bevelSetName):
     # TODO: Undo delete.
     if len(bevelSetNode):
         # Delete the duplicated mesh transform.
-        _duplicatedMeshTransform = pm.ls(bevelSetName+'DuplicationTransform', type='transform')
+        _duplicatedMeshTransform = pm.ls(bevelSetName.partition('MWBevelSet')[0] + 'DupTrans', type='transform')
         not len(_duplicatedMeshTransform) or pm.delete(_duplicatedMeshTransform)
         pm.delete(bevelSetNode[0])
 
@@ -343,6 +343,30 @@ def selectMembersInBevelSet(bevelSetName):
 
 
 
+def selectHardEdges():
+    meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
+
+    if len(meshTrans):
+        # Switch selection mode to edge.w
+        if pm.mel.eval('exists doMenuComponentSelection'):
+            try:
+                pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(meshTrans[0].name()))
+            except pm.MelError:
+                pass
+        else:
+            switchSelectionModeToEdge(meshTrans[0])
+
+        pm.select(meshTrans[0].e, r=True)
+        pm.polySelectConstraint(disable=True, m=2, t=0x8000, sm=1)
+        pm.polySelectConstraint(disable=True)
+
+
+
+def selectSoftEdges():
+    pass
+
+
+
 def navigateBevelSet():
     # TODO: Undo navigate?
     pass
@@ -350,14 +374,4 @@ def navigateBevelSet():
 
 
 if __name__ == '__main__':
-    # item = pm.ls(sl=True)[0]
-    # switchSelectionModeToEdge(item)
-    # selectedMeshTransformNodes()
-    # getObjectSetsContainingEdgesUsingAPI2()
-    createBevelSet()
-    # print(MWBevelSets())
-    # print(polyBevel3NodeInBevelSet('MWBevelSet1'))
-    # disconnectFromMWBevelSet('MWBevelSet1', 'pCube3')
-    # removeMembersFromBevelSet('MWBevelSet1')
-    # deleteBevelSet('MWBevelSet1')
-    # selectMembersInBevelSet('MWBevelSet1')
+    selectHardEdges()
