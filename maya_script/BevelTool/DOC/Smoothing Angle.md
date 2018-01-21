@@ -22,3 +22,21 @@ shaded. If you want the beveled edges to be soft, set the **Smoothing Angle**
 > https://knowledge.autodesk.com/support/maya/learn-explore/caas/CloudHelp/cloudhelp/2015/ENU/Maya/files/GUID-40E32F44-1EB9-4DC6-8EE4-6A013EEC626F-htm.html
 
 ## `polySoftEdge` command
+
+## `polyOptions` command
+Change the global display polygonal attributes.
+
+## Command Refernce
+
+    PolygonSoftenHarden;
+    performPolySoftEdge 0;
+    polyPerformAction "polySoftEdge -a 30" e 0;
+    // polyPerformAction "polySoftEdge -a 30" e 0 //
+    whatIs PolygonSoftenHarden;
+    // Result: Run Time Command //
+    whatIs performPolySoftEdge;
+    // Result: Mel procedure found in: C:/Program Files/Autodesk/Maya2018/scripts/others/performPolySoftEdge.mel //
+    optionVar -query polySoftEdge;
+    // Result: 30 //
+
+`nodeType`, this command returns a string which identifies the given node's type.

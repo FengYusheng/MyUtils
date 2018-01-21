@@ -107,6 +107,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectMembersButton.clicked.connect(self.selectEdgesInBevelSet)
         self.selectHardEdgesButton.clicked.connect(self.selectHardEdges)
         self.selectSoftEdgesButton.clicked.connect(self.selectSoftEdges)
+        self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
+        self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
 
 
     def _mousePressEventInBevelSetLabel(self, event):
@@ -228,11 +230,22 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def selectHardEdges(self):
+        angle = self.smoothingAngleSpinBox.value()
         utils.selectHardEdges()
 
 
     def selectSoftEdges(self):
-        print('Select soft edges.')
+        utils.selectSoftEdges()
+
+
+    def smoothingAngleFromSpinBoxToSlider(self, value):
+        _value = value * 10000
+        self.smoothingAngleSlider.value() == _value or self.smoothingAngleSlider.setValue(_value)
+
+
+    def smoothingAngleFromSliderToSpinBox(self, value):
+        _value = round((value/10000.0), 4)
+        self.smoothingAngleSpinBox.value() == _value or self.smoothingAngleSpinBox.setValue(_value)
 
 
 

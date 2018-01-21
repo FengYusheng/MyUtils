@@ -363,6 +363,26 @@ def selectHardEdges():
 
 
 def selectSoftEdges():
+    # print pm.optionVar['polySoftEdge']
+    # pm.polySoftEdge(a=180)
+    meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
+    if len(meshTrans):
+        # Switch selection mode to edge.w
+        if pm.mel.eval('exists doMenuComponentSelection'):
+            try:
+                pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(meshTrans[0].name()))
+            except pm.MelError:
+                pass
+        else:
+            switchSelectionModeToEdge(meshTrans[0])
+
+        pm.select(meshTrans[0].e, r=True)
+        pm.polySelectConstraint(disable=True, m=2, t=0x8000, sm=2)
+        pm.polySelectConstraint(disable=True)
+
+
+
+def setSmoothingAngle(angle):
     pass
 
 
@@ -374,4 +394,4 @@ def navigateBevelSet():
 
 
 if __name__ == '__main__':
-    selectHardEdges()
+    selectSoftEdges()
