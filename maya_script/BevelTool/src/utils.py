@@ -254,7 +254,7 @@ def selectedEdgeindices(edges=[]):
 def getMeshObject(edges=[]):
     """
     :param:
-        edges, pm.MeshEdge list
+        edges, pm.MeshEdge list.
     """
     meshObject = list(set(e.partition('.')[0] for e in edges))
 
@@ -345,6 +345,9 @@ def selectMembersInBevelSet(bevelSetName):
 
 def selectHardEdges():
     meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
+    if not len(meshTrans):
+        edges = [e for e in pm.ls(sl=True, noIntermediate=True) if isinstance(e, pm.MeshEdge)]
+        meshTrans = getMeshObject(edges) if len(edges) else []
 
     if len(meshTrans):
         # Switch selection mode to edge.w
@@ -366,8 +369,12 @@ def selectSoftEdges():
     # print pm.optionVar['polySoftEdge']
     # pm.polySoftEdge(a=180)
     meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
+    if not len(meshTrans):
+        edges = [e for e in pm.ls(sl=True, noIntermediate=True) if isinstance(e, pm.MeshEdge)]
+        meshTrans = getMeshObject(edges) if len(edges) else []
+
     if len(meshTrans):
-        # Switch selection mode to edge.w
+        # Switch selection mode to edge.
         if pm.mel.eval('exists doMenuComponentSelection'):
             try:
                 pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(meshTrans[0].name()))
@@ -383,7 +390,21 @@ def selectSoftEdges():
 
 
 def setSmoothingAngle(angle):
-    pass
+    meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
+    if not len(meshTrans):
+        edges = [e for e in pm.ls(sl=True, noIntermediate=True) if isinstance(e, pm.MeshEdge)]
+        meshTrans = getMeshObject(edges) if len(edges) else []
+
+    if len(meshTrans) == 1:
+        meshObject = meshTrans[0].getShape() if isinstance(meshTrans[0], pm.nt.Transform) else meshTrans[0]
+        polySoftEdgeName = 'MWPolySoftEdge_' + meshObject.name()
+        MWPolySoftEdgeNodes = [i for i in pm.listConnections(meshObject, type='polySoftEdge') if i.name().startswith('MWPolySoftEdge_')]
+        if len(MWPolySoftEdgeNodes):
+            MWPolySoftEdgeNodes[0].setAngle(angle)
+        else:
+            pm.polySoftEdge(a=angle)[0].setName(polySoftEdgeName)
+    else:
+        pm.warning('Select one mesh transform object.')
 
 
 
@@ -394,4 +415,4 @@ def navigateBevelSet():
 
 
 if __name__ == '__main__':
-    selectSoftEdges()
+    setSmoothingAngle(30.0)

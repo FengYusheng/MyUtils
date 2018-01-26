@@ -37,54 +37,188 @@ def getMayaWindow():
 
 
 
-class ControlPanelDelegate(QStyledItemDelegate):
+class ControlDelegate(QStyledItemDelegate):
     def __init__(self, parent):
-        super(ControlPanelDelegate, self).__init__(parent)
+        super(ControlDelegate, self).__init__(parent)
         self.parent = parent
+        self.col = 0
+        self.row = 0
+        self.model = None
+        self.editor = None
+        self.bevelSetName = None
+        self.isLeftButtonPressed = False
+        self.initialPos = None
+        self.editorValue = None
 
-    # def createEditor(self, parent, option, index):
-    #     item = self.parent.dataModelInControlPanelTreeView.itemFromIndex(index)
-    #     editor = MWBevelToolPanels.MWBevelSetPanel(self.parent)
-    #     return editor
-    #
-    #
-    # def setEditorData(self, editor, index):
-    #     pass
-    #
-    #
-    # def setModelData(self, editor, model, index):
-    #     pass
-    #
-    #
-    # def updateEditorGeometry(self, editor, option, index):
-    #     _rect = option.rect
-    #     _rect.setHeight(editor.height())
-    #     editor.setGeometry(_rect)
 
-    def paint(self, painter, option, index):
-        parentIndex = self.parent.dataModelInControlPanelTreeView.parent(index)
-        if parentIndex.row() >= 0:
-            bevelsetPanel = MWBevelToolPanels.MWBevelSetPanel(self.parent)
-            groupBoxOption = QStyleOptionGroupBox()
-            groupBoxOption.activeSubControls = QStyle.SC_All
-            self.parent.toolbarGroupBox.initStyleOption(groupBoxOption)
-            groupBoxOption.rect = option.rect
-            groupBoxOption.rect.setHeight(bevelsetPanel.height())
-            groupBoxOption.styleObject = bevelsetPanel
-            QApplication.style().drawComplexControl(QStyle.CC_GroupBox, groupBoxOption, painter, bevelsetPanel)
-        else:
-            QStyledItemDelegate.paint(self, painter, option, index)
+    def _mousePressEventInDelegate(self, event):
+        self.initialPos = (event.x(), event.y())
+        self.isLeftButtonPressed = True if event.button() & Qt.LeftButton else False
+        super(type(self.editor), self.editor).mousePressEvent(event)
+
+
+    def _mouseMoveEventInDelegate(self, event):
+        if self.isLeftButtonPressed:
+            posDelta = event.x() - self.initialPos[0]
+            if 1 == self.col:
+                maxValue = 1.0
+                minValue = 0.0
+                valuePerPixel = 0.001
+                valueStep = 2
+                newValue = posDelta * valuePerPixel * valueStep + self.editorValue
+                if newValue > maxValue:
+                    newValue = maxValue
+                elif newValue < minValue:
+                    newValue = minValue
+
+                bevelTool.setMWBevelOption(self.bevelSetName, 'Fraction', newValue)
+                self.editor.setText(str(newValue))
+            elif 2 == self.col:
+                maxValue = 12
+                minValue = 1
+                valuePerPixel = 0.05
+                newValue = int(posDelta * valuePerPixel + self.editorValue)
+                if newValue > maxValue:
+                    newValue = maxValue
+                elif newValue < minValue:
+                    newValue = minValue
+
+                bevelTool.setMWBevelOption(self.bevelSetName, 'Segments', newValue)
+                self.editor.setText(str(newValue))
+
+        super(type(self.editor), self.editor).mouseMoveEvent(event)
+
+
+    def _mouseReleaseEventInDelegate(self, event):
+        self.isLeftButtonPressed = False
+        super(type(self.editor), self.editor).mouseReleaseEvent(event)
+
+
+    def _setMitering(self):
+        value = self.editor.currentIndex()
+        bevelTool.setMWBevelOption(self.bevelSetName, 'Mitering', value)
+        self.model.item(self.row, 4).setEditable(True)
+        value != 4 or self.model.item(self.row, 4).setEditable(False)
+
+
+    def _setMiterAlong(self):
+        value = self.editor.currentIndex()
+        bevelTool.setMWBevelOption(self.bevelSetName, 'Miter Along', value)
+
+
+    def _setChamfer(self):
+        value = self.editor.currentIndex()
+        bevelTool.setMWBevelOption(self.bevelSetName, 'Chamfer', value)
+
+
+    def createEditor(self, parent, opiton, index):
+        col = index.column()
+        row = index.row()
+        editor = None
+        if 1 == col or 2 == col:
+            editor = QLineEdit(parent)
+            editor.mousePressEvent = self._mousePressEventInDelegate
+            editor.mouseMoveEvent = self._mouseMoveEventInDelegate
+            editor.mouseReleaseEvent = self._mouseReleaseEventInDelegate
+        elif 3 == col:
+            editor = QComboBox(parent)
+            editor.addItems(options.MITERING)
+            editor.currentIndexChanged.connect(self._setMitering)
+        elif 4 == col:
+            editor = QComboBox(parent)
+            editor.addItems(options.MITERALONG)
+            editor.currentIndexChanged.connect(self._setMiterAlong)
+        elif 5 == col:
+            editor = QComboBox(parent)
+            editor.addItems(options.CHAMFER)
+            editor.currentIndexChanged.connect(self._setChamfer)
+
+        self.bevelSetName = index.model().item(row, 0).text().strip()
+        self.editor = editor
+        self.col = col
+        self.row = row
+        self.model = index.model()
+        return editor
+
+
+    def setEditorData(self, editor, index):
+        col = index.column()
+        if 1 == col:
+            data = index.model().data(index, Qt.EditRole)
+            self.editorValue = round(float(data),3)
+            editor.setText(data)
+        elif 2 == col:
+            data = index.model().data(index, Qt.EditRole)
+            self.editorValue = int(data)
+            editor.setText(data)
+        elif 3 == col:
+            mitering = bevelTool.MWBevelOption(self.bevelSetName, 'Mitering')
+            editor.setCurrentIndex(mitering)
+        elif 4 == col:
+            miterAlong = bevelTool.MWBevelOption(self.bevelSetName, 'Miter Along')
+            editor.setCurrentIndex(miterAlong)
+        elif 5 == col:
+            chamfer = bevelTool.MWBevelOption(self.bevelSetName, 'Chamfer')
+            editor.setCurrentIndex(chamfer)
+
+
+    def setModelData(self, editor, model, index):
+        col = index.column()
+        if 1 == col:
+            try:
+                value = round(float(editor.text()), 3)
+            except ValueError as e:
+                value = self.editorValue
+
+            if value > 1.0:
+                value = 1.0
+            elif value < 0.0:
+                value = 0.0
+
+            bevelTool.setMWBevelOption(self.bevelSetName, 'Fraction', value)
+        elif 2 == col:
+            try:
+                value = int(editor.text())
+            except ValueError as e:
+                value = self.editorValue
+
+            if value > 12:
+                value = 12
+            elif value < 1:
+                value = 1
+
+            bevelTool.setMWBevelOption(self.bevelSetName, 'Segments', value)
+        elif 3 == col:
+            value = editor.currentIndex()
+            bevelTool.setMWBevelOption(self.bevelSetName, 'Mitering', value)
+            value = options.MITERING[value]
+        elif 4 == col:
+            value = editor.currentIndex()
+            bevelTool.setMWBevelOption(self.bevelSetName, 'Miter Along', value)
+            value = options.MITERALONG[value]
+        elif 5 == col:
+            value = editor.currentIndex()
+            bevelTool.setMWBevelOption(self.bevelSetName, 'Chamfer', value)
+            value = options.CHAMFER[value]
+
+        model.setData(index, str(value), Qt.EditRole)
+
+
+    def updateEditorGeometry(self, editor, option, index):
+        option.rect.setHeight(option.rect.height()*1.4)
+        editor.setGeometry(option.rect)
 
 
 
 class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelToolMainWindow):
-    HEADERSINBEVELSETTREEVIEW = ('Bevel Set', 'Members')
+    HEADERSINBEVELSETTREEVIEW = ('Bevel Set', 'Fraction', 'Segments', 'Mitering', 'Miter Along', 'Chamfer')
     def __init__(self, parent=None):
         super(MWBevelToolMainWindow, self).__init__(parent)
 
         self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
         self.itemFont = QFont('OldEnglish', 10)
         self.bevelOptions = copy.copy(options.bevelOptions)
+        self.isMouseLeftButtonClicked = False
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -97,6 +231,11 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
         self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
         self.bevelSetTreeView.setSelectionModel(self.selectionModelInBevelSetTreeView)
+        self.controlDelegate = ControlDelegate(self)
+        self.bevelSetTreeView.setItemDelegate(self.controlDelegate)
+        self.bevelOptionsLabel.setVisible(False)
+        self.bevelOptionsGroupBox.setVisible(False)
+        self.toolbarGroupBox.setVisible(False)
 
         self.updateBevelSetTreeView()
 
@@ -107,8 +246,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectMembersButton.clicked.connect(self.selectEdgesInBevelSet)
         self.selectHardEdgesButton.clicked.connect(self.selectHardEdges)
         self.selectSoftEdgesButton.clicked.connect(self.selectSoftEdges)
+        self.smoothingAngleCheckBox.stateChanged.connect(self.toggleSmoothingAngle)
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
+        self.bevelOriginButton.clicked.connect(self.bevelOriginMesh)
 
 
     def _mousePressEventInBevelSetLabel(self, event):
@@ -148,17 +289,43 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.dataModelInBevelSetTreeView.setHorizontalHeaderItem(col, item)
 
         for bevelset in utils.MWBevelSets():
-            item = QStandardItem(bevelset.name()+' '*10)
+            item = QStandardItem(bevelset.name()+' '*4)
             item.setFont(self.itemFont)
             item.setEditable(False)
             self.dataModelInBevelSetTreeView.appendRow(item)
             row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
             index = self.dataModelInBevelSetTreeView.indexFromItem(item)
 
-            item = QStandardItem(str(len(utils.bevelSetMembers(bevelset.name()))))
-            item.setEditable(False)
+            # item = QStandardItem(str(len(utils.bevelSetMembers(bevelset.name()))))
+            # item.setEditable(False)
+            # item.setFont(self.itemFont)
+            # self.dataModelInBevelSetTreeView.setItem(row, 1, item)
+
+            value = bevelTool.MWBevelOption(bevelset.name(), 'Fraction')
+            item = QStandardItem(str(value))
             item.setFont(self.itemFont)
             self.dataModelInBevelSetTreeView.setItem(row, 1, item)
+
+            value = bevelTool.MWBevelOption(bevelset.name(), 'Segments')
+            item = QStandardItem(str(value))
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, 2, item)
+
+            mitering = bevelTool.MWBevelOption(bevelset.name(), 'Mitering')
+            item = QStandardItem(options.MITERING[mitering])
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, 3, item)
+
+            value = bevelTool.MWBevelOption(bevelset.name(), 'Miter Along')
+            item = QStandardItem(options.MITERALONG[value])
+            item.setFont(self.itemFont)
+            mitering != 4 or item.setEditable(False)
+            self.dataModelInBevelSetTreeView.setItem(row, 4, item)
+
+            value = bevelTool.MWBevelOption(bevelset.name(), 'Chamfer')
+            item = QStandardItem(options.CHAMFER[value])
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, 5, item)
 
             self.selectionModelInBevelSetTreeView.select(index, QItemSelectionModel.ClearAndSelect|QItemSelectionModel.Rows)
 
@@ -231,11 +398,23 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def selectHardEdges(self):
         angle = self.smoothingAngleSpinBox.value()
+        not self.smoothingAngleCheckBox.isChecked() or utils.setSmoothingAngle(angle)
         utils.selectHardEdges()
 
 
     def selectSoftEdges(self):
+        angle = self.smoothingAngleSpinBox.value()
+        not self.smoothingAngleCheckBox.isChecked() or utils.setSmoothingAngle(angle)
         utils.selectSoftEdges()
+
+
+    def toggleSmoothingAngle(self, state):
+        if Qt.Checked == state:
+            self.smoothingAngleSlider.setEnabled(True)
+            self.smoothingAngleSpinBox.setEnabled(True)
+        else:
+            self.smoothingAngleSlider.setEnabled(False)
+            self.smoothingAngleSpinBox.setEnabled(False)
 
 
     def smoothingAngleFromSpinBoxToSlider(self, value):
@@ -246,6 +425,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
     def smoothingAngleFromSliderToSpinBox(self, value):
         _value = round((value/10000.0), 4)
         self.smoothingAngleSpinBox.value() == _value or self.smoothingAngleSpinBox.setValue(_value)
+
+
+    def bevelOriginMesh(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            print(bevelSetName)
 
 
 

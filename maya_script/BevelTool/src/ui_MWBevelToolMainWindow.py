@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow.ui'
+# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow.ui'
 #
-# Created: Sun Jan 21 08:12:38 2018
+# Created: Fri Jan 26 13:45:22 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.gridLayout_2.addWidget(self.splitter, 0, 0, 1, 1)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 876, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 876, 21))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
@@ -46,8 +46,8 @@ class Ui_MWBevelToolMainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MWBevelToolMainWindow.setStatusBar(self.statusbar)
         self.controlDock = QtWidgets.QDockWidget(MWBevelToolMainWindow)
-        self.controlDock.setMinimumSize(QtCore.QSize(280, 470))
-        self.controlDock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
+        self.controlDock.setMinimumSize(QtCore.QSize(280, 474))
+        self.controlDock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.controlDock.setObjectName("controlDock")
         self.dockWidgetContents_2 = QtWidgets.QWidget()
         self.dockWidgetContents_2.setObjectName("dockWidgetContents_2")
@@ -107,20 +107,22 @@ class Ui_MWBevelToolMainWindow(object):
         self.selectSoftEdgesButton = QtWidgets.QPushButton(self.selectionGroupBox)
         self.selectSoftEdgesButton.setObjectName("selectSoftEdgesButton")
         self.verticalLayout.addWidget(self.selectSoftEdgesButton)
-        self.smoothingAngleLable = QtWidgets.QLabel(self.selectionGroupBox)
-        self.smoothingAngleLable.setTextFormat(QtCore.Qt.RichText)
-        self.smoothingAngleLable.setAlignment(QtCore.Qt.AlignCenter)
-        self.smoothingAngleLable.setObjectName("smoothingAngleLable")
-        self.verticalLayout.addWidget(self.smoothingAngleLable)
+        self.smoothingAngleCheckBox = QtWidgets.QCheckBox(self.selectionGroupBox)
+        self.smoothingAngleCheckBox.setObjectName("smoothingAngleCheckBox")
+        self.verticalLayout.addWidget(self.smoothingAngleCheckBox)
         self.smoothingAngleSlider = QtWidgets.QSlider(self.selectionGroupBox)
+        self.smoothingAngleSlider.setEnabled(False)
         self.smoothingAngleSlider.setMaximum(1800000)
+        self.smoothingAngleSlider.setProperty("value", 300000)
         self.smoothingAngleSlider.setOrientation(QtCore.Qt.Horizontal)
         self.smoothingAngleSlider.setObjectName("smoothingAngleSlider")
         self.verticalLayout.addWidget(self.smoothingAngleSlider)
         self.smoothingAngleSpinBox = QtWidgets.QDoubleSpinBox(self.selectionGroupBox)
+        self.smoothingAngleSpinBox.setEnabled(False)
         self.smoothingAngleSpinBox.setAlignment(QtCore.Qt.AlignCenter)
         self.smoothingAngleSpinBox.setDecimals(4)
         self.smoothingAngleSpinBox.setMaximum(180.0)
+        self.smoothingAngleSpinBox.setProperty("value", 30.0)
         self.smoothingAngleSpinBox.setObjectName("smoothingAngleSpinBox")
         self.verticalLayout.addWidget(self.smoothingAngleSpinBox)
         self.verticalLayout_3.addWidget(self.selectionGroupBox)
@@ -152,9 +154,9 @@ class Ui_MWBevelToolMainWindow(object):
         self.bevelGroupBox.setObjectName("bevelGroupBox")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.bevelGroupBox)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.pushButton = QtWidgets.QPushButton(self.bevelGroupBox)
-        self.pushButton.setObjectName("pushButton")
-        self.verticalLayout_2.addWidget(self.pushButton)
+        self.bevelOriginButton = QtWidgets.QPushButton(self.bevelGroupBox)
+        self.bevelOriginButton.setObjectName("bevelOriginButton")
+        self.verticalLayout_2.addWidget(self.bevelOriginButton)
         self.verticalLayout_3.addWidget(self.bevelGroupBox)
         spacerItem = QtWidgets.QSpacerItem(20, 409, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem)
@@ -180,8 +182,8 @@ class Ui_MWBevelToolMainWindow(object):
         self.selectMembersButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Members", None, -1))
         self.selectHardEdgesButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Hard Edges", None, -1))
         self.selectSoftEdgesButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Soft Edges", None, -1))
-        self.smoothingAngleLable.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Smoothing angle", None, -1))
+        self.smoothingAngleCheckBox.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Smoothing angle", None, -1))
         self.bevelOptionsLabel.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Bevel Options</span></p></body></html>", None, -1))
         self.bevelLabel.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Bevel</span></p></body></html>", None, -1))
-        self.pushButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "PushButton", None, -1))
+        self.bevelOriginButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Bevel origin mesh", None, -1))
 

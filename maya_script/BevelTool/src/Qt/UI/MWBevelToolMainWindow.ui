@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>876</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="editMenu">
@@ -79,11 +79,11 @@
    <property name="minimumSize">
     <size>
      <width>280</width>
-     <height>470</height>
+     <height>474</height>
     </size>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+    <set>Qt::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
     <string>Control Panel</string>
@@ -232,22 +232,22 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="smoothingAngleLable">
+         <widget class="QCheckBox" name="smoothingAngleCheckBox">
           <property name="text">
            <string>Smoothing angle</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::RichText</enum>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QSlider" name="smoothingAngleSlider">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="maximum">
            <number>1800000</number>
+          </property>
+          <property name="value">
+           <number>300000</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -256,6 +256,9 @@
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="smoothingAngleSpinBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -264,6 +267,9 @@
           </property>
           <property name="maximum">
            <double>180.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>30.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -349,9 +355,9 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="bevelOriginButton">
           <property name="text">
-           <string>PushButton</string>
+           <string>Bevel origin mesh</string>
           </property>
          </widget>
         </item>

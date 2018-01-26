@@ -34,10 +34,11 @@ BOOLOPTIONS = ('offsetAsFraction', 'autoFit', 'chamfer', 'worldSpace', 'subdivid
 
 
 SIMPLEOPTIONS = (
-    'fraction',
-    'segments',
-    'mitering' ,
-    'miterAlong'
+    'Fraction',
+    'Segments',
+    'Mitering' ,
+    'Miter Along',
+    'Chamfer'
 )
 
 
@@ -60,3 +61,8 @@ FULLOPTIONS = (
     'forceParallel',
     'ch'
 )
+
+
+MITERING = ('Auto', 'Uniform', 'Patch', 'Radial', 'None')
+MITERALONG = ('Auto', 'Center', 'Edge', 'Hard Edge')
+CHAMFER = ('off', 'on')

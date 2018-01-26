@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 
 import pymel.core as pm
 
@@ -99,6 +100,98 @@ def bevelOnSelectedEdges( *args, **kwargs):
 
 
 
+def MWBevelOption(bevelSetName, bevelOption):
+    value = ''
+    members = utils.bevelSetMembers(bevelSetName)
+    if len(members):
+        meshObject = utils.getMeshObject(members)
+        dupMeshTrans = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
+        polyBevel3Node = pm.listConnections(dupMeshTrans[0].getShape(), type='polyBevel3') if len(dupMeshTrans) else pm.listConnections(meshObject[0], type='polyBevel3')
+
+        if 'Fraction' == bevelOption:
+            value = polyBevel3Node[0].fraction.get()
+        elif 'Input Compoenets' == bevelOption:
+            value = polyBevel3Node[0].inputComponents.get() # Result: [u'e[0:39]', u'e[56]']
+        elif 'Segments' == bevelOption:
+            value = polyBevel3Node[0].segments.get()
+        elif 'Mitering' == bevelOption:
+            value = polyBevel3Node[0].mitering.get()
+        elif 'Miter Along' == bevelOption:
+            value = polyBevel3Node[0].miterAlong.get()
+        elif 'Chamfer' == bevelOption:
+            value = polyBevel3Node[0].chamfer.get()
+
+    return value
+
+
+
+def setMWBevelOption(bevelSetName, bevelOption, value):
+    members = utils.bevelSetMembers(bevelSetName)
+    if len(members):
+        meshObject = utils.getMeshObject(members)
+        dupMeshTrans = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
+        polyBevel3Node = pm.listConnections(dupMeshTrans[0].getShape(), type='polyBevel3') if len(dupMeshTrans) else pm.listConnections(meshObject[0], type='polyBevel3')
+
+        if 'Fraction' == bevelOption:
+            polyBevel3Node[0].fraction.set(value)
+        elif 'Segments' == bevelOption:
+            polyBevel3Node[0].segments.set(value)
+        elif 'Mitering' == bevelOption:
+            polyBevel3Node[0].mitering.set(value)
+        elif 'Miter Along' == bevelOption:
+            polyBevel3Node[0].miterAlong.set(value)
+        elif 'Chamfer' == bevelOption:
+            polyBevel3Node[0].chamfer.set(value)
+
+
+def MWBevelInput(bevelSetName):
+    # meshObject = pm.ls('polyBevel1', type='polyBevel3')
+    # print meshObject[0].inputComponents.get()
+    meshObject2 = pm.ls('polyBevel2', type='polyBevel3')
+    print meshObject2[0].inputComponents.get()
+
+
+def bevelOriginMesh(bevelSetName):
+    members = utils.bevelSetMembers(bevelSetName)
+    if len(members):
+        meshObject = utils.getMeshObject(members)
+        dupMeshTrans = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
+        polyBevel3Node = pm.listConnections(dupMeshTrans[0].getShape(), type='polyBevel3')
+        pm.delete(dupMeshTrans)
+
+        bevelOptions = copy.copy(options.bevelOptions)
+        bevelOptions['fraction'] = MWBevelOption(bevelSetName, 'Fraction')
+        bevelOptions['segments'] = MWBevelOption(bevelSetName, 'Segments')
+        bevelOptions['mitering'] = MWBevelOption(bevelSetName, 'Mitering')
+        bevelOptions['miterAlong'] = MWBevelOption(bevelSetName, 'Miter Along')
+        bevelOptions['chamfer'] = MWBevelOption(bevelSetName, 'Chamfer')
+
+        with utils.MayaUndoChuck('bevelOnSelectedEdges'):
+            bevelNode = pm.polyBevel3(
+                members,
+                fraction=bevelOptions['fraction'],
+                offsetAsFraction=bevelOptions['offsetAsFraction'],
+                autoFit=bevelOptions['autoFit'],
+                depth=bevelOptions['depth'],
+                mitering=bevelOptions['mitering'],
+                miterAlong=bevelOptions['miterAlong'],
+                chamfer=bevelOptions['chamfer'],
+                segments=bevelOptions['segments'],
+                worldSpace=bevelOptions['worldSpace'],
+                smoothingAngle=bevelOptions['smoothingAngle'],
+                subdivideNgons=bevelOptions['subdivideNgons'],
+                mergeVertices=bevelOptions['mergeVertices'],
+                mergeVertexTolerance=bevelOptions['mergeVertexTolerance'],
+                miteringAngle=bevelOptions['miteringAngle'],
+                angleTolerance=bevelOptions['angleTolerance'],
+                forceParallel=bevelOptions['forceParallel'],
+                ch=bevelOptions['ch']
+            )
+
+            bevelNode[0].setName(meshObject[0].name()+'MWBevel#')
+
+
+
 if __name__ == '__main__':
-    # bevelOnHardEdges()
-    bevelOnSelectedEdges(**options.bevelOptions)
+    # bevelOriginMesh('pCylinderShape1MWBevelSet')
+    MWBevelInput('pCylinderShape1MWBevelSet')
