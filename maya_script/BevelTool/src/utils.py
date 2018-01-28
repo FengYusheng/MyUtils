@@ -2,7 +2,6 @@
 import pymel.core as pm
 import maya.api.OpenMaya as om
 
-# TODO: show warnings.
 
 
 class HashableMobjectHandle(om.MObjectHandle):
@@ -328,6 +327,12 @@ def deleteBevelSet(bevelSetName):
         # Delete the duplicated mesh transform.
         _duplicatedMeshTransform = pm.ls(bevelSetName.partition('MWBevelSet')[0] + 'DupTrans', type='transform')
         not len(_duplicatedMeshTransform) or pm.delete(_duplicatedMeshTransform)
+
+        # Delete the polyBevel3 node if the origin mesh node has been beveled.
+        if bevelSetName.partition('_')[1] == '_':
+            polyBevel3Node = pm.ls('MWOriginBevelOn'+bevelSetName, type='polyBevel3')
+            not len(polyBevel3Node) or pm.delete(polyBevel3Node)
+
         pm.delete(bevelSetNode[0])
 
 
@@ -408,11 +413,5 @@ def setSmoothingAngle(angle):
 
 
 
-def navigateBevelSet():
-    # TODO: Undo navigate?
-    pass
-
-
-
 if __name__ == '__main__':
-    setSmoothingAngle(30.0)
+    createBevelSet()

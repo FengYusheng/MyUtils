@@ -431,7 +431,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
-            print(bevelSetName)
+            bevelTool.bevelOriginMesh(bevelSetName)
+            self.updateBevelSetTreeView()
 
 
 
