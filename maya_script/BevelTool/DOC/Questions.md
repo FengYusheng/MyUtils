@@ -29,3 +29,11 @@ Are these handlers static methods?
 ## Python
 
 ### `Super()`
+
+
+## Maya Command
+
+1. `maya.cmds.displayRGBColor`, this command changes or queries the display color
+for anything in the application that allows the user to set its color.
+
+2. Get Maya main window in Maya python api 2.0.

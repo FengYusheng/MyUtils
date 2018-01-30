@@ -10,5 +10,6 @@ WARNING = {
 
 INFO = {
     'New bevel set' : 'Create a new bevel set {0}.',
-    'No member'     : 'No member in {0}'
+    'No member'     : 'No member in {0}',
+    'Bevel set'     : 'More than one bevel set are selected.'
 }

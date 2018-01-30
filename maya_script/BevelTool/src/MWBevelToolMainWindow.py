@@ -15,7 +15,8 @@ except ImportError:
     from PySide import __version__
     from shiboken import wrapInstance
 
-import maya.OpenMayaUI as apiUI
+import maya.OpenMayaUI as apiUI # Python api 1.0
+import maya.api.OpenMaya as om # Python api 2.0
 
 import ui_MWBevelToolMainWindow
 reload(ui_MWBevelToolMainWindow)
@@ -219,6 +220,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.itemFont = QFont('OldEnglish', 10)
         self.bevelOptions = copy.copy(options.bevelOptions)
         self.isMouseLeftButtonClicked = False
+        self.registeredMayaCallbacks = []
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -227,6 +229,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelOptionsLabel.mousePressEvent = self._mousePressEventInBevelOptionslabel
         self.bevelLabel.mousePressEvent = self._mousePressEventInBevelLabel
         self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
+        self.bevelSetTreeView.showEvent = self._showEventInBevelSetTreeView
+        self.bevelSetTreeView.hideEvent = self._hideEventInBevelSetTreeView
         self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
         self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
         self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
@@ -250,6 +254,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
         self.bevelOriginButton.clicked.connect(self.bevelOriginMesh)
+        self.selectionModelInBevelSetTreeView.selectionChanged.connect(self.activeControlButtons)
 
 
     def _mousePressEventInBevelSetLabel(self, event):
@@ -279,6 +284,36 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
     def _mousePressEventInBevelSetTreeView(self, event):
         self.selectionModelInBevelSetTreeView.clearSelection()
         QTreeView.mousePressEvent(self.bevelSetTreeView, event)
+
+
+    def _activeSelectionListchangedCallback(self, clientData=None):
+        self.selectionModelInBevelSetTreeView.clearSelection()
+        bevelSet = utils.navigateBevelSetFromActiveSelectionList(clientData)
+        if len(bevelSet) == 1:
+            item = self.dataModelInBevelSetTreeView.findItems(bevelSet[0]+' '*4, Qt.MatchFixedString|Qt.MatchCaseSensitive, 0)
+            if len(item):
+                index = self.dataModelInBevelSetTreeView.indexFromItem(item[0])
+                self.selectionModelInBevelSetTreeView.select(index, QItemSelectionModel.ClearAndSelect|QItemSelectionModel.Rows)
+        elif len(bevelSet) > 1:
+            self.statusbar.showMessage(status.INFO['Bevel set'])
+
+
+    def _removeBevelSetCallback(self, dgNode, client=None):
+        self.updateBevelSetTreeView()
+
+
+
+    def _showEventInBevelSetTreeView(self, event):
+        cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MDGMessage.addNodeRemovedCallback(self._removeBevelSetCallback, 'objectSet', None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        QTreeView.showEvent(self.bevelSetTreeView, event)
+
+
+    def _hideEventInBevelSetTreeView(self, event):
+        self.registeredMayaCallbacks = []
+        QTreeView.hideEvent(self.bevelSetTreeView, event)
 
 
     def updateBevelSetTreeView(self):
@@ -326,8 +361,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             item = QStandardItem(options.CHAMFER[value])
             item.setFont(self.itemFont)
             self.dataModelInBevelSetTreeView.setItem(row, 5, item)
-
-            self.selectionModelInBevelSetTreeView.select(index, QItemSelectionModel.ClearAndSelect|QItemSelectionModel.Rows)
 
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(self.HEADERSINBEVELSETTREEVIEW)))
 
@@ -433,6 +466,19 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             bevelTool.bevelOriginMesh(bevelSetName)
             self.updateBevelSetTreeView()
+
+
+    def activeControlButtons(self):
+        self.addMemberButton.setEnabled(True)
+        self.removeMemberButton.setEnabled(True)
+        self.selectMembersButton.setEnabled(True)
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            if utils.isBevelSetBeveled(bevelSetName):
+                self.addMemberButton.setEnabled(False)
+                self.removeMemberButton.setEnabled(False)
+                self.selectMembersButton.setEnabled(False)
 
 
 

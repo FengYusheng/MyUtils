@@ -1,6 +1,25 @@
 # -*- coding: utf-8 -*-
 import pymel.core as pm
-import maya.api.OpenMaya as om
+import maya.api.OpenMaya as om # Python api 2.0
+
+
+
+class MCallBackIdWrapper(object):
+    """
+    :Refernce:
+        MCallbackIdWrapper in C:\Program Files\Autodesk\Maya2018\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py
+    """
+    def __init__(self, callbackId):
+        super(MCallBackIdWrapper, self).__init__()
+        self.callbackId = callbackId
+
+
+    def __del__(self):
+        om.MMessage.removeCallback(self.callbackId)
+
+
+    def __repr__(self):
+        return 'MCallBackIdWrapper(%r)'%self.callbackId
 
 
 
@@ -133,7 +152,7 @@ def getObjectSetsContainingEdgesUsingAPI2(edges=None):
                     connectedSets, connectedSetMembers = meshFn.getConnectedSetsAndMembers(dagPath.instanceNumber(), False)
                     for iConnectedSets in range(len(connectedSets)):
                         setFn.setObject(connectedSets[iConnectedSets])
-                        if setFn.name().startswith('MWBevelSet'):
+                        if len(setFn.name().partition('MWBevelSet')[1]):
                             memberList = om.MSelectionList()
                             not len(connectedSetMembers) or memberList.add((dagPath, connectedSetMembers[iConnectedSets]))
 
@@ -203,6 +222,11 @@ def bevelSetMembers(bevelSetName):
 
 
 
+def isBevelSetBeveled(bevelSetName):
+    return bevelSetName.partition('MWBevelSet_')[1] == 'MWBevelSet_'
+
+
+
 def addMembersIntoBevelSet(bevelSetName, edges=None):
     edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
@@ -213,8 +237,8 @@ def addMembersIntoBevelSet(bevelSetName, edges=None):
             return []
 
         members = bevelSetMembers(bevelSetName)
-        originMesh = getMeshObject(members)
-        if originMesh[0].name() != meshObject[0].name():
+        originMesh = getMeshObject(members) if len(members) else None
+        if originMesh is not None and originMesh[0].name() != meshObject[0].name():
             pm.warning('The selected edges do not belong to the mesh object {0}'.format(originMesh[0].name()))
             return []
 
@@ -309,7 +333,7 @@ def deletePolyBevelNodeInBevelSet(bevelSetName):
         meshObject = getMeshObject(members)
         _duplicatedMeshTransform = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
         polyBevel3Node = pm.listConnections(_duplicatedMeshTransform[0].getShape(), type='polyBevel3')
-        polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOnSelectedEdges')]
+        polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOn')]
         not len(polyBevel3Node) or pm.delete(polyBevel3Node)
     else:
         # NOTE: Why does it delete the empty objectSet at the same time?
@@ -332,6 +356,10 @@ def deleteBevelSet(bevelSetName):
         if bevelSetName.partition('_')[1] == '_':
             polyBevel3Node = pm.ls('MWOriginBevelOn'+bevelSetName, type='polyBevel3')
             not len(polyBevel3Node) or pm.delete(polyBevel3Node)
+
+            # If a bevel set which hasn't been beveled on origin mesh exists, delete it.
+            _bevelSet = pm.ls(bevelSetName.partition('_')[0], type='objectSet')
+            not len(_bevelSet) or pm.delete(_bevelSet)
 
         pm.delete(bevelSetNode[0])
 
@@ -404,14 +432,48 @@ def setSmoothingAngle(angle):
         meshObject = meshTrans[0].getShape() if isinstance(meshTrans[0], pm.nt.Transform) else meshTrans[0]
         polySoftEdgeName = 'MWPolySoftEdge_' + meshObject.name()
         MWPolySoftEdgeNodes = [i for i in pm.listConnections(meshObject, type='polySoftEdge') if i.name().startswith('MWPolySoftEdge_')]
+
+        # TODO: Delete the polySoftEdge nodes?
+        polySoftEdgeNodes = list(set([i for i in pm.listConnections(meshObject, type='polySoftEdge')]) - set(MWPolySoftEdgeNodes))
+        not len(polySoftEdgeNodes) or pm.delete(polySoftEdgeNodes)
+
         if len(MWPolySoftEdgeNodes):
             MWPolySoftEdgeNodes[0].setAngle(angle)
         else:
             pm.polySoftEdge(a=angle)[0].setName(polySoftEdgeName)
+
+        # Set the smoothing angle of the mesh duplication.
+        dupTrans = pm.ls(meshObject.name()+'DupTrans', type='transform')
+        if len(dupTrans):
+            pm.select(dupTrans, r=True)
+            dupTrans = dupTrans[0].getShape()
+            MWPolySoftEdgeNodes = [i for i in pm.listConnections(dupTrans, type='polySoftEdge') if i.name().startswith('MWPolySoftEdge_')]
+
+            polySoftEdgeNodes = list(set([i for i in pm.listConnections(dupTrans, type='polySoftEdge')]) - set(MWPolySoftEdgeNodes))
+            not len(polySoftEdgeNodes) or pm.delete(polySoftEdgeNodes)
+
+            if len(MWPolySoftEdgeNodes):
+                MWPolySoftEdgeNodes[0].setAngle(angle)
+            else:
+                pm.polySoftEdge(a=angle)
+            pm.select(meshTrans, r=True)
     else:
         pm.warning('Select one mesh transform object.')
 
 
 
+def navigateBevelSetFromActiveSelectionList(clientData=None):
+    selectedEdges = pm.filterExpand(sm=32, ex=True)
+    selectedBevelSet = [i.name() for i in pm.ls(sl=True, type='objectSet') if len(i.name().partition('MWBevelSet')[1])]
+    if (not len(selectedBevelSet)) and selectedEdges is not None:
+        selectedBevelSet = list(getObjectSetsContainingEdgesUsingAPI2(selectedEdges))
+
+    if len(selectedBevelSet) > 1:
+        pm.warning('More than one objects are selected.')
+
+    return selectedBevelSet
+
+
+
 if __name__ == '__main__':
-    createBevelSet()
+    navigateBevelSetFromActiveSelectionList()
