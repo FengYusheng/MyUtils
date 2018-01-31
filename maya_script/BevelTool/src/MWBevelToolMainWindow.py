@@ -298,7 +298,16 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.statusbar.showMessage(status.INFO['Bevel set'])
 
 
-    def _removeBevelSetCallback(self, dgNode, client=None):
+    def _removeBevelSetCallback(self, dgNode, clientData=None):
+        self.updateBevelSetTreeView()
+
+
+    def _beforeSceneUpdateCallback(self, clientData=None):
+        self.setEnabled(False)
+
+
+    def _sceneUpdateCallback(self, clientData=None):
+        self.setEnabled(True)
         self.updateBevelSetTreeView()
 
 
@@ -307,6 +316,40 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MDGMessage.addNodeRemovedCallback(self._removeBevelSetCallback, 'objectSet', None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeNew, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterNew, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeImport, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterImport, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeOpen, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterOpen, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeRemoveReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterRemoveReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeImportReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterImportReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeLoadReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage,kAfterLoadReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeUnloadReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterUnloadReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kMayaExiting, self._beforeSceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         QTreeView.showEvent(self.bevelSetTreeView, event)
 

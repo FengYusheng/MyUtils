@@ -151,12 +151,6 @@ def setMWBevelOption(bevelSetName, bevelOption, value):
         polyBevel3Node[0].chamfer.set(value)
 
 
-def MWBevelInput(bevelSetName):
-    # meshObject = pm.ls('polyBevel1', type='polyBevel3')
-    # print meshObject[0].inputComponents.get()
-    meshObject2 = pm.ls('polyBevel2', type='polyBevel3')
-    print meshObject2[0].inputComponents.get()
-
 
 def bevelOriginMesh(bevelSetName):
     members = utils.bevelSetMembers(bevelSetName)
@@ -203,4 +197,3 @@ def bevelOriginMesh(bevelSetName):
 
 if __name__ == '__main__':
     bevelOriginMesh('pCylinderShape1MWBevelSet')
-    # MWBevelInput('pCylinderShape1MWBevelSet')
