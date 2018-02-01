@@ -223,7 +223,7 @@ def bevelSetMembers(bevelSetName):
 
 
 def isBevelSetBeveled(bevelSetName):
-    return bevelSetName.partition('MWBevelSet_')[1] == 'MWBevelSet_'
+    return len(bevelSetMembers(bevelSetName)) == 0
 
 
 

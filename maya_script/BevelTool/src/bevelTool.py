@@ -102,16 +102,7 @@ def bevelOnSelectedEdges( *args, **kwargs):
 
 def MWBevelOption(bevelSetName, bevelOption):
     value = ''
-    members = utils.bevelSetMembers(bevelSetName)
-    if len(members):
-        meshObject = utils.getMeshObject(members)
-        dupMeshTrans = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
-        polyBevel3Node = pm.listConnections(dupMeshTrans[0].getShape(), type='polyBevel3')
-    else:
-        # The origin mesh has been beveled.
-        polyBevel3Node = pm.ls('MWOriginBevelOn'+bevelSetName, type='polyBevel3')
-
-
+    polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
     if 'Fraction' == bevelOption:
         value = polyBevel3Node[0].fraction.get()
     elif 'Input Compoenets' == bevelOption:
@@ -130,15 +121,7 @@ def MWBevelOption(bevelSetName, bevelOption):
 
 
 def setMWBevelOption(bevelSetName, bevelOption, value):
-    members = utils.bevelSetMembers(bevelSetName)
-    if len(members):
-        meshObject = utils.getMeshObject(members)
-        dupMeshTrans = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
-        polyBevel3Node = pm.listConnections(dupMeshTrans[0].getShape(), type='polyBevel3')
-    else:
-        # The origin mesh has been beveled.
-        polyBevel3Node = pm.ls('MWOriginBevelOn'+bevelSetName, type='polyBevel3')
-
+    polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
     if 'Fraction' == bevelOption:
         polyBevel3Node[0].fraction.set(value)
     elif 'Segments' == bevelOption:
@@ -152,21 +135,18 @@ def setMWBevelOption(bevelSetName, bevelOption, value):
 
 
 
-def bevelOriginMesh(bevelSetName):
+def bevelMembers(bevelSetName):
+    pass
+
+
+
+def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
     members = utils.bevelSetMembers(bevelSetName)
     if len(members):
         meshObject = utils.getMeshObject(members)
-        dupMeshTrans = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
-        polyBevel3Node = pm.listConnections(dupMeshTrans[0].getShape(), type='polyBevel3')
+        bevelOptions = kwargs
 
-        bevelOptions = copy.copy(options.bevelOptions)
-        bevelOptions['fraction'] = MWBevelOption(bevelSetName, 'Fraction')
-        bevelOptions['segments'] = MWBevelOption(bevelSetName, 'Segments')
-        bevelOptions['mitering'] = MWBevelOption(bevelSetName, 'Mitering')
-        bevelOptions['miterAlong'] = MWBevelOption(bevelSetName, 'Miter Along')
-        bevelOptions['chamfer'] = MWBevelOption(bevelSetName, 'Chamfer')
-
-        with utils.MayaUndoChuck('bevelOnSelectedEdges'):
+        with utils.MayaUndoChuck('MWBevel'):
             bevelNode = pm.polyBevel3(
                 members,
                 fraction=bevelOptions['fraction'],
@@ -188,12 +168,5 @@ def bevelOriginMesh(bevelSetName):
                 ch=bevelOptions['ch']
             )
 
-            bevelNode[0].setName('MWOriginBevelOn'+bevelSetName+'_#')
-            newBevelSetName = bevelNode[0].name().partition('MWOriginBevelOn')[2]
-            pm.ls(bevelSetName, type='objectSet')[0].rename(newBevelSetName)
-            pm.delete(dupMeshTrans)
-
-
-
-if __name__ == '__main__':
-    bevelOriginMesh('pCylinderShape1MWBevelSet')
+            bevelNode[0].setName('MWBevel_'+bevelSetName+'_#')
+            pm.ls(bevelSetName, type='objectSet')[0].rename(bevelNode[0].name().partition('MWBevel_')[2])

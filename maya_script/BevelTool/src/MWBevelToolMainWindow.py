@@ -343,7 +343,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeLoadReference, self._beforeSceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
-        cb = om.MSceneMessage.addCallback(om.MSceneMessage,kAfterLoadReference, self._sceneUpdateCallback, None)
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterLoadReference, self._sceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeUnloadReference, self._beforeSceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
@@ -421,8 +421,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
     def bevelOnMWBevelSet(self, bevelSetName):
         members = utils.bevelSetMembers(bevelSetName)
         if len(members):
-            bevelTool.bevelOnSelectedEdges(*(members, bevelSetName), **self.bevelOptions)
-            utils.addMembersIntoBevelSet(bevelSetName, members)
+            bevelTool.bevelOnSelectedBevelSet(bevelSetName, **self.bevelOptions)
 
 
     def _redoBevel(self, bevelSetName):
@@ -521,7 +520,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             if utils.isBevelSetBeveled(bevelSetName):
                 self.addMemberButton.setEnabled(False)
                 self.removeMemberButton.setEnabled(False)
-                self.selectMembersButton.setEnabled(False)
 
 
 
