@@ -218,9 +218,11 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
         self.itemFont = QFont('OldEnglish', 10)
+        self.bevelSetMinorBrush = QBrush(Qt.GlobalColor.darkGray)
         self.bevelOptions = copy.copy(options.bevelOptions)
         self.isMouseLeftButtonClicked = False
         self.registeredMayaCallbacks = []
+        self.polyBevel3Info = []
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -253,7 +255,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.smoothingAngleCheckBox.stateChanged.connect(self.toggleSmoothingAngle)
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
-        self.bevelOriginButton.clicked.connect(self.bevelOriginMesh)
+        self.memberButton.clicked.connect(self.showMembers)
         self.selectionModelInBevelSetTreeView.selectionChanged.connect(self.activeControlButtons)
 
 
@@ -508,6 +510,15 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             bevelTool.bevelOriginMesh(bevelSetName)
             self.updateBevelSetTreeView()
+
+
+    def showMembers(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            self.polyBevel3Info = bevelTool.bevelMembers(bevelSetName)
+            map(lambda info:utils.deletePolyBevelNodeInBevelSet(info['Bevel']), self.polyBevel3Info[::-1])
+            utils.addMembersIntoBevelSet(bevelSetName, self.polyBevel3Info[0]['members'])
 
 
     def activeControlButtons(self):

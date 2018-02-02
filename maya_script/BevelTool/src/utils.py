@@ -328,19 +328,10 @@ def duplicateMeshTransform(bevelSetName):
 
 
 def deletePolyBevelNodeInBevelSet(bevelSetName):
-    members = bevelSetMembers(bevelSetName)
-    if len(members):
-        meshObject = getMeshObject(members)
-        _duplicatedMeshTransform = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
-        polyBevel3Node = pm.listConnections(_duplicatedMeshTransform[0].getShape(), type='polyBevel3')
-        polyBevel3Node = [bevel for bevel in polyBevel3Node if bevel.name().startswith('MWBevelOn')]
-        not len(polyBevel3Node) or pm.delete(polyBevel3Node)
-    else:
-        # NOTE: Why does it delete the empty objectSet at the same time?
-        # If you find something wierd, clean up the maya folder YOUR DOCUMENT\maya\VERSION\.
-        dupName = bevelSetName.partition('MWBevelSet')[0] + 'DupTrans'
-        dupTrans = pm.ls(dupName, type='transform')
-        not len(dupTrans) or pm.delete(dupTrans)
+    # NOTE: Why does it delete the empty objectSet at the same time?
+    # If you find something wierd, clean up the maya folder YOUR DOCUMENT\maya\VERSION\.
+    polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
+    not len(polyBevel3Node) or pm.delete(polyBevel3Node)
 
 
 

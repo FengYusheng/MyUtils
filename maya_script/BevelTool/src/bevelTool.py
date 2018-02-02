@@ -105,7 +105,7 @@ def MWBevelOption(bevelSetName, bevelOption):
     polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
     if 'Fraction' == bevelOption:
         value = polyBevel3Node[0].fraction.get()
-    elif 'Input Compoenets' == bevelOption:
+    elif 'Input Components' == bevelOption:
         value = polyBevel3Node[0].inputComponents.get() # Result: [u'e[0:39]', u'e[56]']
     elif 'Segments' == bevelOption:
         value = polyBevel3Node[0].segments.get()
@@ -136,7 +136,24 @@ def setMWBevelOption(bevelSetName, bevelOption, value):
 
 
 def bevelMembers(bevelSetName):
-    pass
+    polyBevel3Info = []
+    _bevelSetName = bevelSetName
+    meshName = _bevelSetName.rpartition('MWBevelSet_')[0]
+    num = int(bevelSetName.rpartition('MWBevelSet_')[2])
+    polyBevel3Node = pm.ls('MWBevel_'+_bevelSetName, type='polyBevel3')
+    while len(polyBevel3Node):
+        edgeIndices = MWBevelOption(_bevelSetName, 'Input Components')
+        members = [pm.ls(meshName+'.'+e)[0] for e in edgeIndices]
+        bevelOptions = [MWBevelOption(_bevelSetName, i) for i in options.SIMPLEOPTIONS]
+        polyBevel3Info.append({'Bevel':_bevelSetName, 'members':members, 'options':bevelOptions})
+
+        num += 1
+        _bevelSetName = meshName + 'MWBevelSet_' + str(num)
+        polyBevel3Node = pm.ls('MWBevel_'+_bevelSetName, type='polyBevel3')
+
+    return polyBevel3Info
+
+
 
 
 
@@ -170,3 +187,8 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
 
             bevelNode[0].setName('MWBevel_'+bevelSetName+'_#')
             pm.ls(bevelSetName, type='objectSet')[0].rename(bevelNode[0].name().partition('MWBevel_')[2])
+
+
+
+if __name__ == '__main__':
+    bevelMembers('pCylinderShape1MWBevelSet_1')
