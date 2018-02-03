@@ -185,8 +185,11 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
                 ch=bevelOptions['ch']
             )
 
-            bevelNode[0].setName('MWBevel_'+bevelSetName+'_#')
-            pm.ls(bevelSetName, type='objectSet')[0].rename(bevelNode[0].name().partition('MWBevel_')[2])
+            if bevelSetName.rpartition('_')[1] == '_':
+                bevelNode[0].setName('MWBevel_'+bevelSetName)
+            else:
+                bevelNode[0].setName('MWBevel_'+bevelSetName+'_#')
+                pm.ls(bevelSetName, type='objectSet')[0].rename(bevelNode[0].name().partition('MWBevel_')[2])
 
 
 

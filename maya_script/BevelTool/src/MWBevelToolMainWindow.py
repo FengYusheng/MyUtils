@@ -229,7 +229,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetLabel.mousePressEvent = self._mousePressEventInBevelSetLabel
         self.selectionLabel.mousePressEvent = self._mousePressEventInSelectionLabel
         self.bevelOptionsLabel.mousePressEvent = self._mousePressEventInBevelOptionslabel
-        self.bevelLabel.mousePressEvent = self._mousePressEventInBevelLabel
         self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
         self.bevelSetTreeView.showEvent = self._showEventInBevelSetTreeView
         self.bevelSetTreeView.hideEvent = self._hideEventInBevelSetTreeView
@@ -256,6 +255,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
         self.memberButton.clicked.connect(self.showMembers)
+        self.bevelButton.clicked.connect(self.backToBevelState)
         self.selectionModelInBevelSetTreeView.selectionChanged.connect(self.activeControlButtons)
 
 
@@ -275,12 +275,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         isVisible = not self.bevelOptionsGroupBox.isVisible()
         self.bevelOptionsGroupBox.setVisible(isVisible)
         QLabel.mousePressEvent(self.bevelOptionsLabel, event)
-
-
-    def _mousePressEventInBevelLabel(self, event):
-        isVisible = not self.bevelGroupBox.isVisible()
-        self.bevelGroupBox.setVisible(isVisible)
-        QLabel.mousePressEvent(self.bevelLabel, event)
 
 
     def _mousePressEventInBevelSetTreeView(self, event):
@@ -316,8 +310,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def _showEventInBevelSetTreeView(self, event):
         cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
-        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
-        cb = om.MDGMessage.addNodeRemovedCallback(self._removeBevelSetCallback, 'objectSet', None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeNew, self._beforeSceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
@@ -376,11 +368,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
             index = self.dataModelInBevelSetTreeView.indexFromItem(item)
 
-            # item = QStandardItem(str(len(utils.bevelSetMembers(bevelset.name()))))
-            # item.setEditable(False)
-            # item.setFont(self.itemFont)
-            # self.dataModelInBevelSetTreeView.setItem(row, 1, item)
-
             value = bevelTool.MWBevelOption(bevelset.name(), 'Fraction')
             item = QStandardItem(str(value))
             item.setFont(self.itemFont)
@@ -422,13 +409,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def bevelOnMWBevelSet(self, bevelSetName):
         members = utils.bevelSetMembers(bevelSetName)
-        if len(members):
-            bevelTool.bevelOnSelectedBevelSet(bevelSetName, **self.bevelOptions)
+        not len(members) or bevelTool.bevelOnSelectedBevelSet(bevelSetName, **self.bevelOptions)
 
 
     def _redoBevel(self, bevelSetName):
         utils.deletePolyBevelNodeInBevelSet(bevelSetName)
         self.bevelOnMWBevelSet(bevelSetName)
+        map(lambda i:utils.deleteBevelSet(i['Bevel']), self.polyBevel3Info[1:])
 
 
     def addEdgesIntoBevelSet(self):
@@ -518,7 +505,21 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             self.polyBevel3Info = bevelTool.bevelMembers(bevelSetName)
             map(lambda info:utils.deletePolyBevelNodeInBevelSet(info['Bevel']), self.polyBevel3Info[::-1])
-            utils.addMembersIntoBevelSet(bevelSetName, self.polyBevel3Info[0]['members'])
+            map(lambda info:utils.addMembersIntoBevelSet(info['Bevel'], info['members']), self.polyBevel3Info)
+            utils.selectMembersInBevelSet(bevelSetName)
+
+
+    def backToBevelState(self):
+        for bevelInfo in self.polyBevel3Info:
+            bevelOptions = copy.copy(options.bevelOptions)
+            bevelOptions['fraction'] = bevelInfo['options'][0]
+            bevelOptions['segments'] = bevelInfo['options'][1]
+            bevelOptions['mitering'] = bevelInfo['options'][2]
+            bevelOptions['miterAlong'] = bevelInfo['options'][3]
+            bevelOptions['chamfer'] = 0 if bevelInfo['options'][4] == False else 1
+            bevelTool.bevelOnSelectedBevelSet(bevelInfo['Bevel'], **bevelOptions)
+
+        self.updateBevelSetTreeView()
 
 
     def activeControlButtons(self):

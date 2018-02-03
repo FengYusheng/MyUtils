@@ -79,7 +79,7 @@
    <property name="minimumSize">
     <size>
      <width>280</width>
-     <height>503</height>
+     <height>515</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -138,75 +138,14 @@
        <property name="checkable">
         <bool>false</bool>
        </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
          <widget class="QPushButton" name="newBevelSetButton">
           <property name="text">
            <string>New</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="addMemberButton">
-          <property name="text">
-           <string>Add</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="removeMemberButton">
-          <property name="text">
-           <string>Remove</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="deleteBevelSetbutton">
-          <property name="text">
-           <string>Delete</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="bevelLabel">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bevel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::RichText</enum>
-       </property>
-       <property name="indent">
-        <number>20</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="bevelGroupBox">
-       <property name="title">
-        <string/>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QPushButton" name="memberButton">
           <property name="text">
@@ -217,7 +156,28 @@
         <item>
          <widget class="QPushButton" name="bevelButton">
           <property name="text">
-           <string>Bevel</string>
+           <string>Back to bevel </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="addMemberButton">
+          <property name="text">
+           <string>Add</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="removeMemberButton">
+          <property name="text">
+           <string>Remove</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="deleteBevelSetbutton">
+          <property name="text">
+           <string>Delete</string>
           </property>
          </widget>
         </item>

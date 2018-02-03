@@ -338,21 +338,12 @@ def deletePolyBevelNodeInBevelSet(bevelSetName):
 def deleteBevelSet(bevelSetName):
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
     # TODO: Undo delete.
-    if len(bevelSetNode):
-        # Delete the duplicated mesh transform.
-        _duplicatedMeshTransform = pm.ls(bevelSetName.partition('MWBevelSet')[0] + 'DupTrans', type='transform')
-        not len(_duplicatedMeshTransform) or pm.delete(_duplicatedMeshTransform)
+    if not len(bevelSetMembers(bevelSetName)):
+        # Delete the polyBevel3 node.
+        polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
+        pm.delete(polyBevel3Node)
 
-        # Delete the polyBevel3 node if the origin mesh node has been beveled.
-        if bevelSetName.partition('_')[1] == '_':
-            polyBevel3Node = pm.ls('MWOriginBevelOn'+bevelSetName, type='polyBevel3')
-            not len(polyBevel3Node) or pm.delete(polyBevel3Node)
-
-            # If a bevel set which hasn't been beveled on origin mesh exists, delete it.
-            _bevelSet = pm.ls(bevelSetName.partition('_')[0], type='objectSet')
-            not len(_bevelSet) or pm.delete(_bevelSet)
-
-        pm.delete(bevelSetNode[0])
+    pm.delete(bevelSetNode)
 
 
 
@@ -463,8 +454,3 @@ def navigateBevelSetFromActiveSelectionList(clientData=None):
         pm.warning('More than one objects are selected.')
 
     return selectedBevelSet
-
-
-
-if __name__ == '__main__':
-    navigateBevelSetFromActiveSelectionList()
