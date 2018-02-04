@@ -268,6 +268,13 @@ def removeMembersFromBevelSet(bevelSetName, edges=None):
 
 
 
+def clearBevelSet(bevelSetName):
+    bevelNode = pm.ls(bevelSetName, type='objectSet')
+    members = bevelSetMembers(bevelSetName)
+    not (len(bevelNode) and len(members)) or bevelNode[0].removeMembers(members)
+
+
+
 def selectedEdgeindices(edges=[]):
     edges = edges if edges else pm.filterExpand(sm=32, ex=True)
     return [int(e.name().partition('[')[2].partition(']')[0]) for e in pm.ls(edges, flatten=True)]
@@ -336,14 +343,20 @@ def deletePolyBevelNodeInBevelSet(bevelSetName):
 
 
 def deleteBevelSet(bevelSetName):
+    _bevelSetName = bevelSetName
+    deleteBevelNodeStack = []
+    num = int(bevelSetName.rpartition('_')[2])
+    meshName = bevelSetName.rpartition('MWBevelSet_')[0]
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
     # TODO: Undo delete.
-    if not len(bevelSetMembers(bevelSetName)):
-        # Delete the polyBevel3 node.
-        polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
-        pm.delete(polyBevel3Node)
+    while len(bevelSetNode):
+        len(bevelSetMembers(_bevelSetName)) or deleteBevelNodeStack.append(_bevelSetName)
+        pm.delete(bevelSetNode)
+        num += 1
+        _bevelSetName = meshName + 'MWBevelSet_' + str(num)
+        bevelSetNode = pm.ls(_bevelSetName, type='objectSet')
 
-    pm.delete(bevelSetNode)
+    map(lambda name:deletePolyBevelNodeInBevelSet(name), deleteBevelNodeStack[::-1]) # Delete polyBevel3 node in reversed order.
 
 
 

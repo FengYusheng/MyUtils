@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>876</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="editMenu">
@@ -148,6 +148,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="memberButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Show members</string>
           </property>
@@ -155,6 +158,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="bevelButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Back to bevel </string>
           </property>
@@ -162,6 +168,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="addMemberButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Add</string>
           </property>
@@ -169,6 +178,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="removeMemberButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Remove</string>
           </property>
@@ -176,6 +188,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="deleteBevelSetbutton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Delete</string>
           </property>

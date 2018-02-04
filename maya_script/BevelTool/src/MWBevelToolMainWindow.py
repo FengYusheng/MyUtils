@@ -416,6 +416,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         utils.deletePolyBevelNodeInBevelSet(bevelSetName)
         self.bevelOnMWBevelSet(bevelSetName)
         map(lambda i:utils.deleteBevelSet(i['Bevel']), self.polyBevel3Info[1:])
+        self.polyBevel3Info = []
 
 
     def addEdgesIntoBevelSet(self):
@@ -505,7 +506,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             self.polyBevel3Info = bevelTool.bevelMembers(bevelSetName)
             map(lambda info:utils.deletePolyBevelNodeInBevelSet(info['Bevel']), self.polyBevel3Info[::-1])
-            map(lambda info:utils.addMembersIntoBevelSet(info['Bevel'], info['members']), self.polyBevel3Info)
+            # Clear the bevel set. The bevel set may contain some edges after deleting the polyBevel3 node.
+            map(lambda info:utils.clearBevelSet(info['Bevel']), self.polyBevel3Info[1:])
+            utils.addMembersIntoBevelSet(bevelSetName, self.polyBevel3Info[0]['members'])
             utils.selectMembersInBevelSet(bevelSetName)
 
 
@@ -517,21 +520,28 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             bevelOptions['mitering'] = bevelInfo['options'][2]
             bevelOptions['miterAlong'] = bevelInfo['options'][3]
             bevelOptions['chamfer'] = 0 if bevelInfo['options'][4] == False else 1
+            utils.addMembersIntoBevelSet(bevelInfo['Bevel'], bevelInfo['members'])
             bevelTool.bevelOnSelectedBevelSet(bevelInfo['Bevel'], **bevelOptions)
 
         self.updateBevelSetTreeView()
+        self.polyBevel3Info = []
 
 
     def activeControlButtons(self):
-        self.addMemberButton.setEnabled(True)
-        self.removeMemberButton.setEnabled(True)
-        self.selectMembersButton.setEnabled(True)
+        self.memberButton.setEnabled(False)
+        self.bevelButton.setEnabled(False)
+        self.addMemberButton.setEnabled(False)
+        self.removeMemberButton.setEnabled(False)
+        self.deleteBevelSetbutton.setEnabled(False)
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
-            if utils.isBevelSetBeveled(bevelSetName):
-                self.addMemberButton.setEnabled(False)
-                self.removeMemberButton.setEnabled(False)
+            _member = utils.bevelSetMembers(bevelSetName)
+            len(_member) or self.memberButton.setEnabled(True)
+            not len(_member) or self.bevelButton.setEnabled(True)
+            not len(_member) or self.addMemberButton.setEnabled(True)
+            not len(_member) or self.removeMemberButton.setEnabled(True)
+            self.deleteBevelSetbutton.setEnabled(True)
 
 
 

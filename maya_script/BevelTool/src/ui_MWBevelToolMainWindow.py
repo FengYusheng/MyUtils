@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow.ui'
 #
-# Created: Sat Feb 03 18:24:25 2018
+# Created: Sun Feb  4 09:51:36 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.gridLayout_2.addWidget(self.splitter, 0, 0, 1, 1)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 876, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 876, 23))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
@@ -74,18 +74,23 @@ class Ui_MWBevelToolMainWindow(object):
         self.newBevelSetButton.setObjectName("newBevelSetButton")
         self.verticalLayout_2.addWidget(self.newBevelSetButton)
         self.memberButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
+        self.memberButton.setEnabled(False)
         self.memberButton.setObjectName("memberButton")
         self.verticalLayout_2.addWidget(self.memberButton)
         self.bevelButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
+        self.bevelButton.setEnabled(False)
         self.bevelButton.setObjectName("bevelButton")
         self.verticalLayout_2.addWidget(self.bevelButton)
         self.addMemberButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
+        self.addMemberButton.setEnabled(False)
         self.addMemberButton.setObjectName("addMemberButton")
         self.verticalLayout_2.addWidget(self.addMemberButton)
         self.removeMemberButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
+        self.removeMemberButton.setEnabled(False)
         self.removeMemberButton.setObjectName("removeMemberButton")
         self.verticalLayout_2.addWidget(self.removeMemberButton)
         self.deleteBevelSetbutton = QtWidgets.QPushButton(self.bevelSetGroupBox)
+        self.deleteBevelSetbutton.setEnabled(False)
         self.deleteBevelSetbutton.setObjectName("deleteBevelSetbutton")
         self.verticalLayout_2.addWidget(self.deleteBevelSetbutton)
         self.verticalLayout_3.addWidget(self.bevelSetGroupBox)

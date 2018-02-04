@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/SimpleOptionsWidget.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/SimpleOptionsWidget.ui'
 #
-# Created: Sat Feb 03 18:24:25 2018
+# Created: Sun Feb  4 09:51:36 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
