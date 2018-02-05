@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow.ui'
+# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow.ui'
 #
-# Created: Sun Feb  4 09:51:36 2018
+# Created: Mon Feb 05 17:00:13 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.gridLayout_2.addWidget(self.splitter, 0, 0, 1, 1)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 876, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 876, 21))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
@@ -124,6 +124,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.selectionGroupBox)
         self.verticalLayout.setObjectName("verticalLayout")
         self.selectMembersButton = QtWidgets.QPushButton(self.selectionGroupBox)
+        self.selectMembersButton.setEnabled(False)
         self.selectMembersButton.setObjectName("selectMembersButton")
         self.verticalLayout.addWidget(self.selectMembersButton)
         self.selectHardEdgesButton = QtWidgets.QPushButton(self.selectionGroupBox)

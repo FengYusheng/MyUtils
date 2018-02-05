@@ -218,6 +218,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
         self.itemFont = QFont('OldEnglish', 10)
+        self.itemEditedBrush = QBrush(Qt.GlobalColor.blue)
         self.bevelSetMinorBrush = QBrush(Qt.GlobalColor.darkGray)
         self.bevelOptions = copy.copy(options.bevelOptions)
         self.isMouseLeftButtonClicked = False
@@ -350,7 +351,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def _hideEventInBevelSetTreeView(self, event):
         self.registeredMayaCallbacks = []
+        self.backToBevelState()
         QTreeView.hideEvent(self.bevelSetTreeView, event)
+
+
+    def _editItemBrush(self, bevelSetName):
+        item = self.dataModelInBevelSetTreeView.findItems(bevelSetName+' '*4, Qt.MatchFixedString|Qt.MatchCaseSensitive, 0)
+        len(item) != 1 or item[0].setBackground(self.itemEditedBrush)
 
 
     def updateBevelSetTreeView(self):
@@ -437,7 +444,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             utils.removeMembersFromBevelSet(bevelSetName)
-            self._redoBevel(bevelSetName)
+            if len(utils.bevelSetMembers(bevelSetName)):
+                self._redoBevel(bevelSetName)
+            else:
+                utils.deleteBevelSet(bevelSetName)
             self.updateBevelSetTreeView()
         else:
             self.statusbar.showMessage(status.WARNING['Select bevelset'])
@@ -504,12 +514,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            self.backToBevelState()
             self.polyBevel3Info = bevelTool.bevelMembers(bevelSetName)
             map(lambda info:utils.deletePolyBevelNodeInBevelSet(info['Bevel']), self.polyBevel3Info[::-1])
             # Clear the bevel set. The bevel set may contain some edges after deleting the polyBevel3 node.
-            map(lambda info:utils.clearBevelSet(info['Bevel']), self.polyBevel3Info[1:])
+            map(lambda info:utils.clearBevelSet(info['Bevel']), self.polyBevel3Info)
             utils.addMembersIntoBevelSet(bevelSetName, self.polyBevel3Info[0]['members'])
             utils.selectMembersInBevelSet(bevelSetName)
+            self._editItemBrush(bevelSetName)
 
 
     def backToBevelState(self):
@@ -528,19 +540,23 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def activeControlButtons(self):
+        self.newBevelSetButton.setEnabled(True)
         self.memberButton.setEnabled(False)
         self.bevelButton.setEnabled(False)
         self.addMemberButton.setEnabled(False)
         self.removeMemberButton.setEnabled(False)
         self.deleteBevelSetbutton.setEnabled(False)
+        self.selectMembersButton.setEnabled(False)
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             _member = utils.bevelSetMembers(bevelSetName)
             len(_member) or self.memberButton.setEnabled(True)
+            not len(_member) or self.newBevelSetButton.setEnabled(False)
             not len(_member) or self.bevelButton.setEnabled(True)
             not len(_member) or self.addMemberButton.setEnabled(True)
             not len(_member) or self.removeMemberButton.setEnabled(True)
+            not len(_member) or self.selectMembersButton.setEnabled(True)
             self.deleteBevelSetbutton.setEnabled(True)
 
 

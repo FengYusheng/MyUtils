@@ -68,6 +68,7 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
     members = utils.bevelSetMembers(bevelSetName)
     if len(members):
         meshObject = utils.getMeshObject(members)
+        bevelSet = pm.ls(bevelSetName, type='objectSet')
         bevelOptions = kwargs
 
         with utils.MayaUndoChuck('MWBevel'):
@@ -96,7 +97,9 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
                 bevelNode[0].setName('MWBevel_'+bevelSetName)
             else:
                 bevelNode[0].setName('MWBevel_'+bevelSetName+'_#')
-                pm.ls(bevelSetName, type='objectSet')[0].rename(bevelNode[0].name().partition('MWBevel_')[2])
+                bevelSet[0].rename(bevelNode[0].name().partition('MWBevel_')[2])
+
+            utils.disconnectFromMWBevelSet(bevelSet[0].name(), meshObject)
 
 
 

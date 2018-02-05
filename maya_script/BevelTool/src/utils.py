@@ -212,7 +212,7 @@ def flattenEdges(edges):
 
 
 def MWBevelSets():
-    return [i for i in pm.ls(type='objectSet') if len(i.name().partition('MWBevelSet')[1])]
+    return [i for i in pm.ls(type='objectSet') if len(i.name().partition('MWBevelSet_')[1])]
 
 
 
@@ -260,7 +260,7 @@ def addMembersIntoBevelSet(bevelSetName, edges=None):
 
 
 def removeMembersFromBevelSet(bevelSetName, edges=None):
-    edges = edges if edges is not None else pm.filterExpand(sm=32, ex=True)
+    edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
     if len(bevelSetNode) and (edges is not None):
         edges = [e for e in edges if e in bevelSetNode[0]]
@@ -271,7 +271,8 @@ def removeMembersFromBevelSet(bevelSetName, edges=None):
 def clearBevelSet(bevelSetName):
     bevelNode = pm.ls(bevelSetName, type='objectSet')
     members = bevelSetMembers(bevelSetName)
-    not (len(bevelNode) and len(members)) or bevelNode[0].removeMembers(members)
+    members = pm.filterExpand(members, sm=32, ex=True) if len(members) else []
+    not (len(members) and len(bevelNode)) or bevelNode[0].removeMembers(members)
 
 
 
@@ -394,8 +395,6 @@ def selectHardEdges():
 
 
 def selectSoftEdges():
-    # print pm.optionVar['polySoftEdge']
-    # pm.polySoftEdge(a=180)
     meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
     if not len(meshTrans):
         edges = [e for e in pm.ls(sl=True, noIntermediate=True) if isinstance(e, pm.MeshEdge)]
