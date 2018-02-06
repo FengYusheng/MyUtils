@@ -228,8 +228,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.bevelSetLabel.mousePressEvent = self._mousePressEventInBevelSetLabel
+        self.bevelLabel.mousePressEvent = self._mousePressEventInBevelLabel
         self.selectionLabel.mousePressEvent = self._mousePressEventInSelectionLabel
-        self.bevelOptionsLabel.mousePressEvent = self._mousePressEventInBevelOptionslabel
         self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
         self.bevelSetTreeView.showEvent = self._showEventInBevelSetTreeView
         self.bevelSetTreeView.hideEvent = self._hideEventInBevelSetTreeView
@@ -239,8 +239,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetTreeView.setSelectionModel(self.selectionModelInBevelSetTreeView)
         self.controlDelegate = ControlDelegate(self)
         self.bevelSetTreeView.setItemDelegate(self.controlDelegate)
-        self.bevelOptionsLabel.setVisible(False)
-        self.bevelOptionsGroupBox.setVisible(False)
+        self.viewMenu.addAction(self.controlDock.toggleViewAction())
         self.toolbarGroupBox.setVisible(False)
 
         self.updateBevelSetTreeView()
@@ -257,6 +256,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
         self.memberButton.clicked.connect(self.showMembers)
         self.bevelButton.clicked.connect(self.backToBevelState)
+        self.finishBevelButton.clicked.connect(self.finishBevel)
+        self.finishBevelAction.triggered.connect(self.finishBevel)
         self.selectionModelInBevelSetTreeView.selectionChanged.connect(self.activeControlButtons)
 
 
@@ -266,16 +267,16 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         QLabel.mousePressEvent(self.bevelSetLabel, event)
 
 
+    def _mousePressEventInBevelLabel(self, event):
+        isVisible = not self.bevelGroupBox.isVisible()
+        self.bevelGroupBox.setVisible(isVisible)
+        QLabel.mousePressEvent(self.bevelLabel, event)
+
+
     def _mousePressEventInSelectionLabel(self, event):
         isVisible = not self.selectionGroupBox.isVisible()
         self.selectionGroupBox.setVisible(isVisible)
         QLabel.mousePressEvent(self.selectionLabel, event)
-
-
-    def _mousePressEventInBevelOptionslabel(self, event):
-        isVisible = not self.bevelOptionsGroupBox.isVisible()
-        self.bevelOptionsGroupBox.setVisible(isVisible)
-        QLabel.mousePressEvent(self.bevelOptionsLabel, event)
 
 
     def _mousePressEventInBevelSetTreeView(self, event):
@@ -308,9 +309,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.updateBevelSetTreeView()
 
 
-
     def _showEventInBevelSetTreeView(self, event):
         cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MDGMessage.addNodeRemovedCallback(self._removeBevelSetCallback, 'objectSet', None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeNew, self._beforeSceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
@@ -405,13 +407,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def createNewBevelSet(self):
-        newBevelSet = utils.createBevelSet()
-        if newBevelSet is not None:
-            self.bevelOnMWBevelSet(newBevelSet.name())
-            self.updateBevelSetTreeView()
-            self.statusbar.clearMessage()
-        else:
-            self.statusbar.showMessage(status.WARNING['New bevel set'])
+        with utils.MayaUndoChuck('Create a bevel set.'):
+            newBevelSet = utils.createBevelSet()
+            if newBevelSet is not None:
+                self.bevelOnMWBevelSet(newBevelSet.name())
+                self.updateBevelSetTreeView()
+                self.statusbar.clearMessage()
+            else:
+                self.statusbar.showMessage(status.WARNING['New bevel set'])
 
 
     def bevelOnMWBevelSet(self, bevelSetName):
@@ -430,11 +433,12 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
-            if utils.addMembersIntoBevelSet(bevelSetName):
-                self._redoBevel(bevelSetName)
-                self.updateBevelSetTreeView()
-            else:
-                self.statusbar.showMessage(status.WARNING['Add member error'].format(bevelSetName))
+            with utils.MayaUndoChuck('Add members.'):
+                if utils.addMembersIntoBevelSet(bevelSetName):
+                    self._redoBevel(bevelSetName)
+                    self.updateBevelSetTreeView()
+                else:
+                    self.statusbar.showMessage(status.WARNING['Add member error'].format(bevelSetName))
         else:
             self.statusbar.showMessage(status.WARNING['Select bevelset'])
 
@@ -502,14 +506,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.smoothingAngleSpinBox.value() == _value or self.smoothingAngleSpinBox.setValue(_value)
 
 
-    def bevelOriginMesh(self):
-        if self.selectionModelInBevelSetTreeView.hasSelection():
-            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
-            bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
-            bevelTool.bevelOriginMesh(bevelSetName)
-            self.updateBevelSetTreeView()
-
-
     def showMembers(self):
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
@@ -558,6 +554,11 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             not len(_member) or self.removeMemberButton.setEnabled(True)
             not len(_member) or self.selectMembersButton.setEnabled(True)
             self.deleteBevelSetbutton.setEnabled(True)
+
+
+    def finishBevel(self):
+        utils.finishBevel()
+        self.updateBevelSetTreeView()
 
 
 

@@ -39,6 +39,7 @@ class HashableMobjectHandle(om.MObjectHandle):
 
 class MayaUndoChuck():
     """
+    :TODO: flush undo?
     :Reference:
         `MayaUndoChunk` in "C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py"
     """
@@ -75,26 +76,6 @@ def switchSelectionModeToEdge(item):
         not pm.mel.eval('exists dR_selTypeChanged') or pm.mel.eval('dR_selTypeChanged("edge")')
     except pm.MelError:
         pass
-
-
-
-def selectedMeshTransformNodes():
-    '''
-    A shape node may have more than one transform node as its parent node, use
-    `i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)`
-    to get mesh transform nodes
-
-    :Reference:
-        http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=__Nodes_index_html
-
-        Reference: getSelectedMeshComponents() in C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py
-    '''
-    # meshTransformNodes = []
-    # for mesh in pm.ls(dag=True, sl=True, noIntermediate=True, type='mesh'):
-    #     transformNode = pm.listRelatives(mesh, parent=True, path=True)[0]
-    #     not isinstance(transformNode, pm.nt.Transform) or meshTransformNodes.append(transformNode)
-
-    return [i for i in pm.ls(sl=True) if isinstance(i, pm.nt.DagNode) and hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
 
 
 
@@ -187,6 +168,7 @@ def createBevelSet(edges=None):
     if edges and len(meshNode):
         name = meshNode[0].name() + 'MWBevelSet'
         if not pm.ls(name, type='objectSet'):
+            # with MayaUndoChuck('Create a bevel set'):
             MWBevelSet = pm.sets(name=name)
             MWBevelPartition = createPartition(MWBevelSet)
             # pm.sets(*edges, forceElement=MWBevelSet)
@@ -212,7 +194,7 @@ def flattenEdges(edges):
 
 
 def MWBevelSets():
-    return [i for i in pm.ls(type='objectSet') if len(i.name().partition('MWBevelSet_')[1])]
+    return [i for i in pm.ls(type='objectSet') if len(i.name().rpartition('MWBevelSet_')[1])]
 
 
 
@@ -379,7 +361,7 @@ def selectHardEdges():
         meshTrans = getMeshObject(edges) if len(edges) else []
 
     if len(meshTrans):
-        # Switch selection mode to edge.w
+        # Switch selection mode to edge.
         if pm.mel.eval('exists doMenuComponentSelection'):
             try:
                 pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(meshTrans[0].name()))
@@ -435,22 +417,6 @@ def setSmoothingAngle(angle):
             MWPolySoftEdgeNodes[0].setAngle(angle)
         else:
             pm.polySoftEdge(a=angle)[0].setName(polySoftEdgeName)
-
-        # Set the smoothing angle of the mesh duplication.
-        dupTrans = pm.ls(meshObject.name()+'DupTrans', type='transform')
-        if len(dupTrans):
-            pm.select(dupTrans, r=True)
-            dupTrans = dupTrans[0].getShape()
-            MWPolySoftEdgeNodes = [i for i in pm.listConnections(dupTrans, type='polySoftEdge') if i.name().startswith('MWPolySoftEdge_')]
-
-            polySoftEdgeNodes = list(set([i for i in pm.listConnections(dupTrans, type='polySoftEdge')]) - set(MWPolySoftEdgeNodes))
-            not len(polySoftEdgeNodes) or pm.delete(polySoftEdgeNodes)
-
-            if len(MWPolySoftEdgeNodes):
-                MWPolySoftEdgeNodes[0].setAngle(angle)
-            else:
-                pm.polySoftEdge(a=angle)
-            pm.select(meshTrans, r=True)
     else:
         pm.warning('Select one mesh transform object.')
 
@@ -466,3 +432,8 @@ def navigateBevelSetFromActiveSelectionList(clientData=None):
         pm.warning('More than one objects are selected.')
 
     return selectedBevelSet
+
+
+
+def finishBevel():
+    pm.delete(MWBevelSets())
