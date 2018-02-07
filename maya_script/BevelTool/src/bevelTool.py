@@ -12,18 +12,19 @@ import options
 def MWBevelOption(bevelSetName, bevelOption):
     value = ''
     polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
-    if 'Fraction' == bevelOption:
-        value = polyBevel3Node[0].fraction.get()
-    elif 'Input Components' == bevelOption:
-        value = polyBevel3Node[0].inputComponents.get() # Result: [u'e[0:39]', u'e[56]']
-    elif 'Segments' == bevelOption:
-        value = polyBevel3Node[0].segments.get()
-    elif 'Mitering' == bevelOption:
-        value = polyBevel3Node[0].mitering.get()
-    elif 'Miter Along' == bevelOption:
-        value = polyBevel3Node[0].miterAlong.get()
-    elif 'Chamfer' == bevelOption:
-        value = polyBevel3Node[0].chamfer.get()
+    if len(polyBevel3Node):
+        if 'Fraction' == bevelOption:
+            value = polyBevel3Node[0].fraction.get()
+        elif 'Input Components' == bevelOption:
+            value = polyBevel3Node[0].inputComponents.get() # Result: [u'e[0:39]', u'e[56]']
+        elif 'Segments' == bevelOption:
+            value = polyBevel3Node[0].segments.get()
+        elif 'Mitering' == bevelOption:
+            value = polyBevel3Node[0].mitering.get()
+        elif 'Miter Along' == bevelOption:
+            value = polyBevel3Node[0].miterAlong.get()
+        elif 'Chamfer' == bevelOption:
+            value = polyBevel3Node[0].chamfer.get()
 
     return value
 
@@ -31,16 +32,17 @@ def MWBevelOption(bevelSetName, bevelOption):
 
 def setMWBevelOption(bevelSetName, bevelOption, value):
     polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
-    if 'Fraction' == bevelOption:
-        polyBevel3Node[0].fraction.set(value)
-    elif 'Segments' == bevelOption:
-        polyBevel3Node[0].segments.set(value)
-    elif 'Mitering' == bevelOption:
-        polyBevel3Node[0].mitering.set(value)
-    elif 'Miter Along' == bevelOption:
-        polyBevel3Node[0].miterAlong.set(value)
-    elif 'Chamfer' == bevelOption:
-        polyBevel3Node[0].chamfer.set(value)
+    if len(polyBevel3Node):
+        if 'Fraction' == bevelOption:
+            polyBevel3Node[0].fraction.set(value)
+        elif 'Segments' == bevelOption:
+            polyBevel3Node[0].segments.set(value)
+        elif 'Mitering' == bevelOption:
+            polyBevel3Node[0].mitering.set(value)
+        elif 'Miter Along' == bevelOption:
+            polyBevel3Node[0].miterAlong.set(value)
+        elif 'Chamfer' == bevelOption:
+            polyBevel3Node[0].chamfer.set(value)
 
 
 
@@ -71,7 +73,6 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
         bevelSet = pm.ls(bevelSetName, type='objectSet')
         bevelOptions = kwargs
 
-        # with utils.MayaUndoChuck('MWBevel'):
         bevelNode = pm.polyBevel3(
             members,
             fraction=bevelOptions['fraction'],
@@ -100,6 +101,7 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
             bevelSet[0].rename(bevelNode[0].name().partition('MWBevel_')[2])
 
         utils.disconnectFromMWBevelSet(bevelSet[0].name(), meshObject)
+        utils.lockBevelSet(bevelSet, True)
 
 
 

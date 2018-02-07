@@ -219,6 +219,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
         self.itemFont = QFont('OldEnglish', 10)
         self.itemEditedBrush = QBrush(Qt.GlobalColor.blue)
+        self.descendantItemBrush = QBrush(Qt.GlobalColor.darkGray)
         self.bevelSetMinorBrush = QBrush(Qt.GlobalColor.darkGray)
         self.bevelOptions = copy.copy(options.bevelOptions)
         self.isMouseLeftButtonClicked = False
@@ -312,8 +313,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
     def _showEventInBevelSetTreeView(self, event):
         cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
-        cb = om.MDGMessage.addNodeRemovedCallback(self._removeBevelSetCallback, 'objectSet', None)
-        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        # cb = om.MDGMessage.addNodeRemovedCallback(self._removeBevelSetCallback, 'objectSet', None)
+        # self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeNew, self._beforeSceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterNew, self._sceneUpdateCallback, None)
@@ -348,18 +349,30 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kMayaExiting, self._beforeSceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        utils.enableUndo(False)
+
         QTreeView.showEvent(self.bevelSetTreeView, event)
 
 
     def _hideEventInBevelSetTreeView(self, event):
         self.registeredMayaCallbacks = []
         self.backToBevelState()
+        utils.enableUndo(True)
         QTreeView.hideEvent(self.bevelSetTreeView, event)
 
 
     def _editItemBrush(self, bevelSetName):
         item = self.dataModelInBevelSetTreeView.findItems(bevelSetName+' '*4, Qt.MatchFixedString|Qt.MatchCaseSensitive, 0)
         len(item) != 1 or item[0].setBackground(self.itemEditedBrush)
+
+        meshName = bevelSetName.rpartition('MWBevelSet_')[0]
+        num = int(bevelSetName.rpartition('MWBevelSet_')[2]) + 1
+        while utils.MWBevelSetExists(meshName+'MWBevelSet_'+str(num)):
+            _bevelSetName = meshName + 'MWBevelSet_' + str(num) + ' '*4
+            item = self.dataModelInBevelSetTreeView.findItems(_bevelSetName, Qt.MatchFixedString|Qt.MatchCaseSensitive, 0)
+            len(item) != 1 or item[0].setBackground(self.descendantItemBrush)
+            num += 1
 
 
     def updateBevelSetTreeView(self):
@@ -407,14 +420,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def createNewBevelSet(self):
-        with utils.MayaUndoChuck('Create a bevel set.'):
-            newBevelSet = utils.createBevelSet()
-            if newBevelSet is not None:
-                self.bevelOnMWBevelSet(newBevelSet.name())
-                self.updateBevelSetTreeView()
-                self.statusbar.clearMessage()
-            else:
-                self.statusbar.showMessage(status.WARNING['New bevel set'])
+        self.backToBevelState()
+        newBevelSet = utils.createBevelSet()
+        if newBevelSet is not None:
+            self.bevelOnMWBevelSet(newBevelSet.name())
+            self.updateBevelSetTreeView()
+            self.statusbar.clearMessage()
+        else:
+            self.statusbar.showMessage(status.WARNING['New bevel set'])
 
 
     def bevelOnMWBevelSet(self, bevelSetName):
@@ -433,12 +446,11 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
-            with utils.MayaUndoChuck('Add members.'):
-                if utils.addMembersIntoBevelSet(bevelSetName):
-                    self._redoBevel(bevelSetName)
-                    self.updateBevelSetTreeView()
-                else:
-                    self.statusbar.showMessage(status.WARNING['Add member error'].format(bevelSetName))
+            if utils.addMembersIntoBevelSet(bevelSetName):
+                self._redoBevel(bevelSetName)
+                self.updateBevelSetTreeView()
+            else:
+                self.statusbar.showMessage(status.WARNING['Add member error'].format(bevelSetName))
         else:
             self.statusbar.showMessage(status.WARNING['Select bevelset'])
 
@@ -531,8 +543,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             utils.addMembersIntoBevelSet(bevelInfo['Bevel'], bevelInfo['members'])
             bevelTool.bevelOnSelectedBevelSet(bevelInfo['Bevel'], **bevelOptions)
 
-        self.updateBevelSetTreeView()
-        self.polyBevel3Info = []
+        if len(self.polyBevel3Info):
+            self.updateBevelSetTreeView()
+            self.polyBevel3Info = []
 
 
     def activeControlButtons(self):
@@ -543,11 +556,15 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.removeMemberButton.setEnabled(False)
         self.deleteBevelSetbutton.setEnabled(False)
         self.selectMembersButton.setEnabled(False)
+        self.finishBevelButton.setEnabled(False)
+        self.finishBevelAction.setEnabled(False)
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             bevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             _member = utils.bevelSetMembers(bevelSetName)
             len(_member) or self.memberButton.setEnabled(True)
+            len(self.polyBevel3Info) or self.finishBevelButton.setEnabled(True)
+            len(self.polyBevel3Info) or self.finishBevelAction.setEnabled(True)
             not len(_member) or self.newBevelSetButton.setEnabled(False)
             not len(_member) or self.bevelButton.setEnabled(True)
             not len(_member) or self.addMemberButton.setEnabled(True)

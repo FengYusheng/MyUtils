@@ -56,6 +56,23 @@ class MayaUndoChuck():
 
 
 
+class UnlockBevelSet(object):
+    def __init__(self, bevelSetName):
+        super(UnlockBevelSet, self).__init__()
+        self.bevelSetName = bevelSetName
+
+
+    def __enter__(self):
+        bevelSetNode = pm.ls(self.bevelSetName, type='objectSet')
+        not len(bevelSetNode) or pm.lockNode(bevelSetNode, lock=False)
+
+
+    def __exit__(self, type, value, trackback):
+        bevelSetNode = pm.ls(self.bevelSetName, type='objectSet')
+        not len(bevelSetNode) or pm.lockNode(bevelSetNode, lock=True)
+
+
+
 def switchSelectionModeToEdge(item):
     '''
     :Reference:
@@ -168,7 +185,6 @@ def createBevelSet(edges=None):
     if edges and len(meshNode):
         name = meshNode[0].name() + 'MWBevelSet'
         if not pm.ls(name, type='objectSet'):
-            # with MayaUndoChuck('Create a bevel set'):
             MWBevelSet = pm.sets(name=name)
             MWBevelPartition = createPartition(MWBevelSet)
             # pm.sets(*edges, forceElement=MWBevelSet)
@@ -198,6 +214,11 @@ def MWBevelSets():
 
 
 
+def MWBevelSetExists(bevelSetName):
+    return len(pm.ls(bevelSetName, type='objectSet'))
+
+
+
 def bevelSetMembers(bevelSetName):
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
     return pm.ls(bevelSetNode[0].flattened(), flatten=True) if bevelSetNode else []
@@ -205,7 +226,7 @@ def bevelSetMembers(bevelSetName):
 
 
 def isBevelSetBeveled(bevelSetName):
-    return len(bevelSetMembers(bevelSetName)) == 0
+    return len(bevelSetMembers(bevelSetName))
 
 
 
@@ -224,15 +245,16 @@ def addMembersIntoBevelSet(bevelSetName, edges=None):
             pm.warning('The selected edges do not belong to the mesh object {0}'.format(originMesh[0].name()))
             return []
 
-        bevelSetNode[0].forceElement(edges)
-        # forceElement doesn't always work.
-        edges = edges if isinstance(edges[0], unicode) else [e.name() for e in edges]
-        objestSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
-        objestSetsContainingEdges.discard(bevelSetNode[0].name())
-        for objectSet in objestSetsContainingEdges:
-            objectSet = pm.ls(objectSet, type='objectSet')[0]
-            intersection = bevelSetNode[0].getIntersection(objectSet)
-            not len(intersection) or objectSet.removeMembers(intersection)
+        with UnlockBevelSet(bevelSetName):
+            bevelSetNode[0].forceElement(edges)
+            # forceElement doesn't always work.
+            edges = edges if isinstance(edges[0], unicode) else [e.name() for e in edges]
+            objestSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
+            objestSetsContainingEdges.discard(bevelSetNode[0].name())
+            for objectSet in objestSetsContainingEdges:
+                objectSet = pm.ls(objectSet, type='objectSet')[0]
+                intersection = bevelSetNode[0].getIntersection(objectSet)
+                not len(intersection) or objectSet.removeMembers(intersection)
 
         return bevelSetNode
     else:
@@ -246,7 +268,8 @@ def removeMembersFromBevelSet(bevelSetName, edges=None):
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
     if len(bevelSetNode) and (edges is not None):
         edges = [e for e in edges if e in bevelSetNode[0]]
-        not len(edges) or bevelSetNode[0].removeMembers(edges)
+        with UnlockBevelSet(bevelSetName):
+            not len(edges) or bevelSetNode[0].removeMembers(edges)
 
 
 
@@ -254,7 +277,8 @@ def clearBevelSet(bevelSetName):
     bevelNode = pm.ls(bevelSetName, type='objectSet')
     members = bevelSetMembers(bevelSetName)
     members = pm.filterExpand(members, sm=32, ex=True) if len(members) else []
-    not (len(members) and len(bevelNode)) or bevelNode[0].removeMembers(members)
+    with UnlockBevelSet(bevelSetName):
+        not (len(members) and len(bevelNode)) or bevelNode[0].removeMembers(members)
 
 
 
@@ -284,21 +308,21 @@ def disconnectFromMWBevelSet(bevelSetName, meshTransform):
     bevelSet = pm.ls(bevelSetName, type='objectSet')
     meshTransformNode = pm.ls(meshTransform)
     if len(bevelSet) and len(meshTransformNode):
-        meshNode = meshTransformNode[0].getShape() if isinstance(meshTransformNode[0], pm.nt.Transform) else meshTransformNode[0]
-
-        meshAttr = None
-        bevelSetAttr = bevelSet[0].name() + '.memberWireframeColor'
-        for destinationAttr in pm.connectionInfo(bevelSetAttr, dfs=True):
-            if destinationAttr.startswith(meshNode.name()):
-                meshAttr = destinationAttr.rpartition('.')[0]
-                pm.disconnectAttr(bevelSetAttr, destinationAttr)
-                break
-
-        if meshAttr is not None:
-            for destinationAttr in pm.connectionInfo(meshAttr, dfs=True):
-                if destinationAttr.startswith(bevelSet[0].name()):
-                    pm.disconnectAttr(meshAttr, destinationAttr)
+        with UnlockBevelSet(bevelSetName):
+            meshNode = meshTransformNode[0].getShape() if isinstance(meshTransformNode[0], pm.nt.Transform) else meshTransformNode[0]
+            meshAttr = None
+            bevelSetAttr = bevelSet[0].name() + '.memberWireframeColor'
+            for destinationAttr in pm.connectionInfo(bevelSetAttr, dfs=True):
+                if destinationAttr.startswith(meshNode.name()):
+                    meshAttr = destinationAttr.rpartition('.')[0]
+                    pm.disconnectAttr(bevelSetAttr, destinationAttr)
                     break
+
+            if meshAttr is not None:
+                for destinationAttr in pm.connectionInfo(meshAttr, dfs=True):
+                    if destinationAttr.startswith(bevelSet[0].name()):
+                        pm.disconnectAttr(meshAttr, destinationAttr)
+                        break
 
 
 
@@ -331,13 +355,13 @@ def deleteBevelSet(bevelSetName):
     num = int(bevelSetName.rpartition('_')[2])
     meshName = bevelSetName.rpartition('MWBevelSet_')[0]
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
-    # TODO: Undo delete.
     while len(bevelSetNode):
-        len(bevelSetMembers(_bevelSetName)) or deleteBevelNodeStack.append(_bevelSetName)
-        pm.delete(bevelSetNode)
-        num += 1
-        _bevelSetName = meshName + 'MWBevelSet_' + str(num)
-        bevelSetNode = pm.ls(_bevelSetName, type='objectSet')
+        with UnlockBevelSet(_bevelSetName):
+            len(bevelSetMembers(_bevelSetName)) or deleteBevelNodeStack.append(_bevelSetName)
+            pm.delete(bevelSetNode)
+            num += 1
+            _bevelSetName = meshName + 'MWBevelSet_' + str(num)
+            bevelSetNode = pm.ls(_bevelSetName, type='objectSet')
 
     map(lambda name:deletePolyBevelNodeInBevelSet(name), deleteBevelNodeStack[::-1]) # Delete polyBevel3 node in reversed order.
 
@@ -436,4 +460,23 @@ def navigateBevelSetFromActiveSelectionList(clientData=None):
 
 
 def finishBevel():
-    pm.delete(MWBevelSets())
+    for bevelSet in MWBevelSets():
+        lockBevelSet(bevelSet.name(), False)
+        pm.delete(bevelSet)
+
+
+
+def lockBevelSet(bevelSetName, isLocked=True):
+    bevelSet = pm.ls(bevelSetName, type='objectSet')
+    not len(bevelSet) or pm.lockNode(bevelSet, lock=isLocked)
+
+
+
+def enableUndo(enable=True):
+    pm.undoInfo(state=enable)
+
+
+
+if __name__ == '__main__':
+    lockBevelSet('pCylinderShape1MWBevelSet_3')
+    lockBevelSet('pCylinderShape1MWBevelSet_3', False)

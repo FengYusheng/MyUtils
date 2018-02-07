@@ -39,3 +39,5 @@ for anything in the application that allows the user to set its color.
 2. Get Maya main window in Maya python api 2.0.
 
 3. `print pm.optionVar['polySoftEdge']`
+
+4. Edit undo list.
