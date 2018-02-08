@@ -3,3 +3,5 @@ http://gen.lib.rus.ec/search.php?req=Hands-On+Machine+Learning+with+Scikit-Learn
 
 2.
 http://lesterbanks.com/2012/09/driving-a-shape-by-inmesh-outmesh-connections-in-maya/
+
+3. http://3dtechart.com/tutorials/book/complete-maya-programming-vol.2/view
