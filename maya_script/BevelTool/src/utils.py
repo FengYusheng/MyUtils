@@ -326,21 +326,6 @@ def disconnectFromMWBevelSet(bevelSetName, meshTransform):
 
 
 
-def duplicateMeshTransform(bevelSetName):
-    _duplicatedMeshTransform = []
-    members = bevelSetMembers(bevelSetName)
-    meshObject = getMeshObject(members)
-    _duplicatedMeshTransform = pm.ls(meshObject[0].name()+'DupTrans', type='transform')
-    if not len(_duplicatedMeshTransform):
-        # TODO: Undo duplicate.
-        _duplicatedMeshTransform = pm.duplicate(meshObject[0], name=meshObject[0].name()+'DupTrans', st=True, rr=True)
-        disconnectFromMWBevelSet(bevelSetName, _duplicatedMeshTransform)
-        pm.move(25.0, 0.0, 0.0, _duplicatedMeshTransform, r=True)
-
-    return _duplicatedMeshTransform
-
-
-
 def deletePolyBevelNodeInBevelSet(bevelSetName):
     # NOTE: Why does it delete the empty objectSet at the same time?
     # If you find something wierd, clean up the maya folder YOUR DOCUMENT\maya\VERSION\.

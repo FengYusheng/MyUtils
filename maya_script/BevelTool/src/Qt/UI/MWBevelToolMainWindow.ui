@@ -80,7 +80,7 @@
    <property name="minimumSize">
     <size>
      <width>280</width>
-     <height>545</height>
+     <height>560</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -93,7 +93,7 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QLabel" name="bevelSetLabel">
        <property name="minimumSize">
@@ -139,7 +139,7 @@
        <property name="checkable">
         <bool>false</bool>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QPushButton" name="newBevelSetButton">
           <property name="text">
@@ -164,6 +164,13 @@
           </property>
           <property name="text">
            <string>Back to bevel </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
