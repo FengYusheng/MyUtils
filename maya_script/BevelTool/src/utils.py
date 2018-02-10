@@ -462,6 +462,11 @@ def enableUndo(enable=True):
 
 
 
+def intermediateObject():
+    ioMeshes = pm.ls(dag=True, sl=True, io=True)
+    print(ioMeshes)
+
+
+
 if __name__ == '__main__':
-    lockBevelSet('pCylinderShape1MWBevelSet_3')
-    lockBevelSet('pCylinderShape1MWBevelSet_3', False)
+    intermediateObject()
