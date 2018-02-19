@@ -41,7 +41,7 @@ def loadBevelToolUI():
         compileUi(source, f, False, 4, False)
 
     destination = bevelToolDir + '/src/ui_MWBevelToolMainWindow.py'
-    source = bevelToolDir + '/src/Qt/UI/MWBevelToolMainWindow.ui'
+    source = bevelToolDir + '/src/Qt/UI/MWBevelToolMainWindow_io.ui'
     with open(destination, 'w') as f:
         compileUi(source, f, False, 4, False)
 

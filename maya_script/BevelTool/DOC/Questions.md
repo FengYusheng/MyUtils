@@ -41,3 +41,6 @@ for anything in the application that allows the user to set its color.
 3. `print pm.optionVar['polySoftEdge']`
 
 4. Edit undo list.
+
+## Private work
+1. Reverse link list: reverse the bevel nodes of a mesh in Maya.

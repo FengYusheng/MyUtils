@@ -66,6 +66,12 @@ def bevelMembers(bevelSetName):
 
 
 
+def getInputComponent(bevelNodeName):
+    bevelNode = pm.ls(bevelNodeName, type='polyBevel3')
+    print bevelNode[0].inputComponents.get()
+
+
+
 def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
     members = utils.bevelSetMembers(bevelSetName)
     if len(members):
@@ -106,4 +112,5 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
 
 
 if __name__ == '__main__':
-    bevelMembers('pCylinderShape1MWBevelSet_1')
+    getInputComponent('polyBevel1')
+    getInputComponent('polyBevel2')
