@@ -42,6 +42,8 @@ def getMayaWindow():
 class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelToolMainWindow):
     def __init__(self, parent=None):
         super(MWBevelToolMainWindow, self).__init__(parent)
+        self.editingInfo = {}
+        self.registeredMayaCallbacks = []
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -67,13 +69,30 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         QLabel.mousePressEvent(self.bevelSetLabel, event)
 
 
+    def _activeSelectionListchangedCallback(self, clientData=None):
+        utils.navigateBevelSetFromActiveSelectionList(self.editingInfo)
+
+
+    def showEvent(self, event):
+        cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        super(MWBevelToolMainWindow, self).showEvent(event)
+
+
+    def hideEvent(self, event):
+        self.registeredMayaCallbacks = []
+        super(MWBevelToolMainWindow, self).hideEvent(event)
+
+
     def startBevel(self):
-        self.startButton.setEnabled(False)
-        self.completeButton.setEnabled(True)
-        self.createBevelSetButton.setEnabled(True)
-        self.addButton.setEnabled(True)
-        self.removeButton.setEnabled(True)
-        self.deleteButton.setEnabled(True)
+        isEditing, self.editingInfo['mesh'] = utils.activeBevel()
+        if isEditing:
+            self.startButton.setEnabled(False)
+            self.completeButton.setEnabled(True)
+            self.createBevelSetButton.setEnabled(True)
+            self.addButton.setEnabled(True)
+            self.removeButton.setEnabled(True)
+            self.deleteButton.setEnabled(True)
 
 
     def completeBevel(self):

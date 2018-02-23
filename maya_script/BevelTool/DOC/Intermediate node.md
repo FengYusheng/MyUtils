@@ -28,3 +28,20 @@ http://discourse.techart.online/t/maya-missing-geo/2358
     // Connected polySurfaceShape2.outMesh to polyBevel1.inputPolymesh. //
     setAttr "polySurfaceShape2.intermediateObject" 1;
     setAttr "pCubeShape1.overrideEnabled" 0;
+
+
+## Construction history
+As you work in Maya, most of your actions create nodes in **construction
+history** of the objects you work on. At each point in your work, the current
+ scene is the result of all the nodes you've created so far.
+
+Construction history is part of the dependency graph in Maya. While  
+construction history refers to the *history* of actions that created the
+scene, the entire dependency graph refers to all *connections(input and
+output)* between nodes.
+
+Some common uses of the construction history:
+1. Edit the transform attributes of a node in the attribute editor or channel box.
+2. Change dependency relationships between node attributes in the Hypergraph or Node Editor.
+3. Make some nodes inactive while you focus on editing others.
+4. Delete all or part of the construction history of an object or an animation to **bake** it in the current state. Doing so can reduce a scene's recalculation time and file size, but it can also change object appearance by simplifying a sequence of operations.

@@ -431,16 +431,11 @@ def setSmoothingAngle(angle):
 
 
 
-def navigateBevelSetFromActiveSelectionList(clientData=None):
-    selectedEdges = pm.filterExpand(sm=32, ex=True)
-    selectedBevelSet = [i.name() for i in pm.ls(sl=True, type='objectSet') if len(i.name().partition('MWBevelSet')[1])]
-    if (not len(selectedBevelSet)) and selectedEdges is not None:
-        selectedBevelSet = list(getObjectSetsContainingEdgesUsingAPI2(selectedEdges))
-
-    if len(selectedBevelSet) > 1:
-        pm.warning('More than one objects are selected.')
-
-    return selectedBevelSet
+def navigateBevelSetFromActiveSelectionList(editingInfo):
+    edges = pm.filterExpand(sm=32, ex=True)
+    if edges is not None:
+        mesh = getMeshObject(edges)[0]
+        print mesh.name()
 
 
 
@@ -462,11 +457,36 @@ def enableUndo(enable=True):
 
 
 
-def intermediateObject():
-    ioMeshes = pm.ls(dag=True, sl=True, io=True)
-    print(ioMeshes)
+def displayIOMesh(meshTrans):
+    originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
+    pm.select(meshTrans, r=True)
+    ioMesh = pm.ls(dag=True, os=True, io=True)
+    if len(ioMesh):
+        with MayaUndoChuck('Start to MW Bevel.'):
+            originMesh[0].overrideEnabled.get() or originMesh[0].overrideEnabled.set(True)
+            originMesh[0].overrideDisplayType.set(2) # Reference.
+            pm.displaySmoothness(divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3) # displaySmoothness isn't undoable.
 
+            # Edit the latest intermediate object attributes.
+            not ioMesh[-1].intermediateObject.get() or ioMesh[-1].intermediateObject.set(False)
+            ioMesh[-1].overrideEnabled.get() or ioMesh[-1].overrideEnabled.set(True)
+            ioMesh[-1].overrideDisplayType.set(0) # Normal.
+            ioMesh[-1].overrideTexturing.set(False)
+            pm.select(ioMesh[-1], r=True)
+            switchSelectionModeToEdge(ioMesh[-1])
+
+
+
+def activeBevel():
+    editingMeshTrans = ''
+    transforms = pm.ls(dag=True, os=True, transforms=True)
+    hasSelection = len(transforms) > 0
+    if hasSelection:
+        editingMeshTrans = pm.listRelatives(transforms[-1], shapes=True, ni=True)[0].name()
+        displayIOMesh(transforms[-1])
+
+    return hasSelection, editingMeshTrans
 
 
 if __name__ == '__main__':
-    intermediateObject()
+    activeBevel()
