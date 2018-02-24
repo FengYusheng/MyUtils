@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from collections import defaultdict
 
 """
 polyBevel3 -fraction 0.5 -offsetAsFraction 1 -autoFit 1 -depth 1 -mitering 0
@@ -66,3 +67,6 @@ FULLOPTIONS = (
 MITERING = ('Auto', 'Uniform', 'Patch', 'Radial', 'None')
 MITERALONG = ('Auto', 'Center', 'Edge', 'Hard Edge')
 CHAMFER = ('off', 'on')
+
+
+drawOverredeAttributes = defaultdict(lambda: 'MW Bevel Tool')

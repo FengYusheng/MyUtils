@@ -2,7 +2,6 @@
 # This version bevels the selected mesh object with the assistance of its intermediate objects.
 
 import copy
-import collections
 
 try:
     from PySide2.QtCore import *
@@ -42,7 +41,6 @@ def getMayaWindow():
 class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelToolMainWindow):
     def __init__(self, parent=None):
         super(MWBevelToolMainWindow, self).__init__(parent)
-        self.editingInfo = {}
         self.registeredMayaCallbacks = []
 
         self.setupUi(self)
@@ -70,7 +68,15 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def _activeSelectionListchangedCallback(self, clientData=None):
-        utils.navigateBevelSetFromActiveSelectionList(self.editingInfo)
+        if False == utils.navigateBevelSetFromActiveSelectionList():
+            utils.restoreDrawOverrideAttributes()
+            self.startButton.setEnabled(True)
+            self.completeButton.setEnabled(False)
+            self.createBevelSetButton.setEnabled(False)
+            self.addButton.setEnabled(False)
+            self.removeButton.setEnabled(False)
+            self.deleteButton.setEnabled(False)
+            self.statusbar.clearMessage()
 
 
     def showEvent(self, event):
@@ -85,14 +91,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def startBevel(self):
-        isEditing, self.editingInfo['mesh'] = utils.activeBevel()
-        if isEditing:
+        if utils.activeBevel():
             self.startButton.setEnabled(False)
             self.completeButton.setEnabled(True)
             self.createBevelSetButton.setEnabled(True)
             self.addButton.setEnabled(True)
             self.removeButton.setEnabled(True)
             self.deleteButton.setEnabled(True)
+            self.statusbar.showMessage('Start to Bevel "{0}"'.format(options.drawOverredeAttributes['mesh']))
 
 
     def completeBevel(self):

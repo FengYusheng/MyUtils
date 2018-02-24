@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+from collections import defaultdict
+
 import pymel.core as pm
 import maya.api.OpenMaya as om # Python api 2.0
+
+from options import drawOverredeAttributes
 
 
 
@@ -431,11 +435,11 @@ def setSmoothingAngle(angle):
 
 
 
-def navigateBevelSetFromActiveSelectionList(editingInfo):
+def navigateBevelSetFromActiveSelectionList():
+    global drawOverredeAttributes
     edges = pm.filterExpand(sm=32, ex=True)
-    if edges is not None:
-        mesh = getMeshObject(edges)[0]
-        print mesh.name()
+    mesh = getMeshObject(edges)[0].name() if edges is not None else ''
+    return mesh in (drawOverredeAttributes['mesh'], drawOverredeAttributes['ioMesh'])
 
 
 
@@ -457,10 +461,45 @@ def enableUndo(enable=True):
 
 
 
+def saveDrawOverrideAttributes(originMesh):
+    global drawOverredeAttributes
+    drawOverredeAttributes['mesh'] = originMesh.name()
+    drawOverredeAttributes['originMesh overrideEnabled'] = originMesh.overrideEnabled.get()
+    drawOverredeAttributes['originMesh overrideDisplayType'] = originMesh.overrideDisplayType.get()
+
+    ioMesh = pm.ls(dag=True, os=True, io=True)
+    if len(ioMesh):
+        drawOverredeAttributes['ioMesh'] = ioMesh[0].name()
+        drawOverredeAttributes['ioMesh overrideEnabled'] = ioMesh[0].overrideEnabled.get()
+        drawOverredeAttributes['ioMesh overrideDisplayType'] = ioMesh[0].overrideDisplayType.get()
+        drawOverredeAttributes['ioMesh overrideTexturing'] = ioMesh[0].overrideTexturing.get()
+
+
+
+def restoreDrawOverrideAttributes():
+    global drawOverredeAttributes
+    ioMesh = pm.ls(drawOverredeAttributes['ioMesh'], type='mesh')
+    if len(ioMesh):
+        ioMesh[0].overrideTexturing.set(drawOverredeAttributes['ioMesh overrideTexturing'])
+        ioMesh[0].overrideDisplayType.set(drawOverredeAttributes['ioMesh overrideDisplayType'])
+        ioMesh[0].overrideEnabled.set(drawOverredeAttributes['ioMesh overrideEnabled'])
+
+    mesh = pm.ls(drawOverredeAttributes['mesh'], type='mesh')
+    if len(mesh):
+        mesh[0].overrideDisplayType.set(drawOverredeAttributes['originMesh overrideDisplayType'])
+        mesh[0].overrideEnabled.set(drawOverredeAttributes['originMesh overrideEnabled'])
+
+    drawOverredeAttributes = defaultdict(lambda: 'MW Bevel Tool')
+
+    print drawOverredeAttributes
+
+
+
 def displayIOMesh(meshTrans):
     originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
     pm.select(meshTrans, r=True)
     ioMesh = pm.ls(dag=True, os=True, io=True)
+    saveDrawOverrideAttributes(originMesh[0])
     if len(ioMesh):
         with MayaUndoChuck('Start to MW Bevel.'):
             originMesh[0].overrideEnabled.get() or originMesh[0].overrideEnabled.set(True)
@@ -468,7 +507,7 @@ def displayIOMesh(meshTrans):
             pm.displaySmoothness(divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3) # displaySmoothness isn't undoable.
 
             # Edit the latest intermediate object attributes.
-            not ioMesh[-1].intermediateObject.get() or ioMesh[-1].intermediateObject.set(False)
+            ioMesh[-1].intermediateObject.set(False)
             ioMesh[-1].overrideEnabled.get() or ioMesh[-1].overrideEnabled.set(True)
             ioMesh[-1].overrideDisplayType.set(0) # Normal.
             ioMesh[-1].overrideTexturing.set(False)
@@ -481,11 +520,8 @@ def activeBevel():
     editingMeshTrans = ''
     transforms = pm.ls(dag=True, os=True, transforms=True)
     hasSelection = len(transforms) > 0
-    if hasSelection:
-        editingMeshTrans = pm.listRelatives(transforms[-1], shapes=True, ni=True)[0].name()
-        displayIOMesh(transforms[-1])
-
-    return hasSelection, editingMeshTrans
+    not hasSelection or displayIOMesh(transforms[-1])
+    return hasSelection
 
 
 if __name__ == '__main__':

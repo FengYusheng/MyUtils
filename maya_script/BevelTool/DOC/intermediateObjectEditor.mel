@@ -1,0 +1,323 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: intermediateObjectEditor
+''    Author:  
+''    Last Updated: May 16, 2008
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/mel_scripts/character/4939.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+/*
+Courtesy of Xvivo, LLC
+Written by Mark Bamforth 
+(c) 2007 Mark Bamforth 
+contact: info@xvivo.net 
+
+Displays intermediate objects within a 3D object, if any. Also allows for the extraction, removal and replacement of intermediate objects.
+
+Intended purpose:
+Enable tweaking of points and reapplying of UVs on an object after it has been rigged and skinned.
+
+If one object is selected, only the options to show, remove or extract its intermediate object(s) are visible.
+
+If two objects are selected,  the option to replace an intermediate object is also available. The first objected selected is the one containing the intermediate object(s), and the second object selected is the intended replacement.
+
+5/16/2008
+-Can now be executed by sourcing it through the Script Editor
+
+USAGE:
+Can be executed 2 ways:
+
+Source it through the Script Editor
+OR
+Turn this script into a shelf button. Click the button.
+
+To turn a script into a button:
+1. Either load or paste the script into the Script Editor
+2. Hilite the entire script
+3. Drag the hilited script's text onto a tool shelf using the middle mouse button.
+
+Follow the directions in the window that appears.
+
+This script may not be redistributed, in whole or in part, without written consent from Xvivo, LLC.
+MODIFY AT YOUR OWN RISK
+*/
+
+editIntermediateObjects();
+
+global proc editIntermediateObjects()
+{
+	string $selAry[] = `ls -sl`;
+	int $selAryLen = size($selAry);
+	string $obj;
+	string $intObjAry[];
+	int $intObjAryLen;
+	string $status = "";
+
+	int $i;
+
+
+	if(($selAryLen == 0) || ($selAryLen > 2))
+	{
+		warning "Please select 1 or 2 objects.";
+		return;
+	}
+
+	if(nodeType($selAry[0])!= "transform")
+	{
+		warning "Please select a transformable object.";
+		return;
+	}
+
+	$obj = $selAry[0];
+	$intObjAry = getIntermediates($obj);
+	$intObjAryLen = size($intObjAry);
+
+	if($intObjAryLen == 0)
+	{
+		warning "No intermediate objects were found in this object.";
+		return;
+	}
+
+	$status = `layoutDialog -t ("Intermediate objects for " + $obj) -ui "editIntermediateObjects_UI"`;
+	restoreIntermediates($intObjAry);
+
+	if($status != "dismiss")
+		processIntermediates($obj, $status);
+}
+
+global proc processIntermediates(string $obj, string $status)
+{
+	string $bfr[];
+	string $cmd;
+	int $indx;
+	string $tgtObj;
+
+	tokenize($status, $bfr);
+
+	$cmd = $bfr[0];
+	$indx = $bfr[1];
+	$tgtObj = $bfr[2];
+
+	switch($cmd)
+	{
+		case "extract":
+			extractIntermediate($obj, $indx);
+			break;
+
+		case "delete":
+			delete $tgtObj;
+			break;
+
+		case "replace":
+			replaceIntermediate($bfr[3], $tgtObj);
+			break;
+	}
+}
+
+global proc editIntermediateObjects_UI()
+{
+	string $sl[] = `ls -sl`;
+	int $numSel = size($sl);
+
+	string $objs[] = `getIntermediates $sl[0]`;
+	int $numObjs = size($objs);
+
+	string $form = `setParent -q`;
+	string $chkAry[];
+	string $delBtnAry[];
+	string $repBtnAry[];
+	string $extBtnAry[];
+	string $txtAry[];
+
+	string $onC;
+	string $offC;
+	string $cmd;
+	string $dis;
+
+	int $i;
+
+	if($numSel==1)
+	{
+		formLayout -e -width 200 $form;
+		rowColumnLayout -numberOfColumns 4
+						-columnWidth 1 150
+						-columnWidth 2 60;
+	}
+	else
+	{
+		formLayout -e -width 250 $form;
+		rowColumnLayout -numberOfColumns 5
+						-columnWidth 1 150
+						-columnWidth 2 60;
+	}
+
+	for($i=0; $i<$numObjs; $i++)
+	{
+			$txtAry[$i] = `text -l $objs[$i]`;
+			$onC = "setAttr " + $objs[$i] + ".intermediateObject 0; refresh;";
+			$offC = "setAttr " + $objs[$i] + ".intermediateObject 1; refresh;";
+			$chkAry[$i] = `checkBox -label "show" -onCommand $onC -offCommand $offC`;
+
+			string $dis = ("extract " + $i + " " + $objs[$i]);
+			$cmd = ("layoutDialog -dismiss \"" + $dis  + "\";");
+			print($cmd + "\n");
+			$delBtnAry[$i] = `button -l "extract" -command $cmd`;
+
+			string $dis = ("delete " + $i + " " + $objs[$i]);
+			$cmd = ("layoutDialog -dismiss \"" + $dis  + "\";");
+			print($cmd + "\n");
+			$extBtnAry[$i] = `button -l "delete" -command $cmd`;
+
+			if($numSel == 2)
+			{
+				string $dis = ("replace " + $i + " " + $objs[$i] + " " + $sl[1]);
+				$cmd = ("layoutDialog -dismiss \"" + $dis  + "\";");
+				print($cmd + "\n");
+				$repBtnAry[$i] = `button -l "replace" -command $cmd`;
+			}
+	}
+
+	setParent ..;
+}
+
+global proc replaceIntermediateSelected()
+{
+	string $selAry[] = `ls -sl`;
+	replaceIntermediate($selAry[0], $selAry[1]);
+}
+
+global proc replaceIntermediate(string $lhs, string $rhs)
+{
+	string $lShps[] = `listRelatives -s $lhs`;
+	
+	$lhs = $lShps[0];
+
+	if(nodeType($lhs) == nodeType($rhs))
+	{
+		if(nodeType($lhs) == "mesh")
+		{
+			connectAttr -f ($lhs + ".outMesh") ($rhs + ".inMesh");
+			refresh;
+			disconnectAttr ($lhs + ".outMesh") ($rhs + ".inMesh");
+		}
+		else if((nodeType($lhs) == "nurbsSurface") || (nodeType($lhs) == "nurbsCurve"))
+		{
+			connectAttr -f ($lhs + ".worldSpace[0]") ($rhs + ".create");
+			refresh;
+			disconnectAttr ($lhs + ".worldSpace[0]") ($rhs + ".create");
+		}
+	}
+	else
+		error "Source and target shape types do not match";
+}
+
+global proc string[] extractIntermediatesSelected()
+{
+	string $selAry[] = `ls -sl`;
+	string $sl = $selAry[0];
+
+	return extractIntermediates($sl);
+}
+
+global proc string[] getIntermediates(string $obj)
+{
+	string $rslt[];
+	string $shpAry[] = `listRelatives -c -s $obj`;
+	int $shpAryLen = size($shpAry);
+
+	for($i=0; $i < $shpAryLen; $i++)
+	{
+		if(`getAttr ($shpAry[$i] + ".intermediateObject")` == 1)
+			$rslt = pushString($rslt, $shpAry[$i]);
+	}
+
+	return $rslt;
+}
+
+global proc string extractIntermediate(string $obj, int $indx)
+{
+	string $ints[] = extractIntermediates($obj);
+	int $numInts = size($ints);
+
+	int $i;
+
+	for($i=0; $i < $numInts; $i++)
+	{
+		if($i != $indx)
+			delete $ints[$i];
+	}
+
+	return $ints[$indx];
+}
+
+global proc string[] extractIntermediates(string $obj)
+{
+	string $shpAry[] = `listRelatives -c -s $obj`;
+	int $shpAryLen = size($shpAry);
+	int $indxAry[];
+
+	string $dups[];
+	string $rslt[];
+
+	string $newObj;
+	string $newShapes[];
+	int $indx;
+
+	string $delAry[];
+
+	int $i;
+	int $j;
+
+	for($i=0; $i < $shpAryLen; $i++)
+	{
+		if(`getAttr ($shpAry[$i] + ".intermediateObject")` == 1)
+		{
+			setAttr ($shpAry[$i] + ".intermediateObject") 0;
+			$dups = `duplicate -ic $obj`;
+			setAttr ($shpAry[$i] + ".intermediateObject") 1;
+
+			$newObj = $dups[0];
+
+			$delAry = `listRelatives -type transform -f $newObj`;
+			
+			if(size($delAry) > 0)
+				delete delAry;
+
+			$indx = $i;
+
+			$newShapes = `listRelatives -c -s $newObj`;
+
+			for($j=0; $j<$shpAryLen; $j++)
+			{
+				if($j!=$indx)
+					delete $newShapes[$j];
+			}
+
+			$rslt = pushString($rslt, $dups[0]);
+		}
+	}
+
+	return $rslt;
+}
+
+global proc string[] pushString(string $lst[], string $new)
+{
+	int $cnt = size($lst);
+	$lst[$cnt] = $new;
+
+	return $lst;
+}
+
+global proc restoreIntermediates(string $intObjAry[])
+{
+	int $intObjAryLen = size($intObjAry);
+
+	for($i=0; $i<$intObjAryLen; $i++)
+		setAttr ($intObjAry[$i] + ".intermediateObject") 1;
+}
