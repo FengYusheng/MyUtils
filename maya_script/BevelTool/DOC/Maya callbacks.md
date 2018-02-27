@@ -39,3 +39,5 @@ This is the base class for message callbacks.
 1. `removeCallback`, removes the specified callback from Maya. This method
 must be called for all callbacks registered by a plug-in before that plug-in
  is unloaded.
+
+## `OpenMaya.MObjectSetMessage`

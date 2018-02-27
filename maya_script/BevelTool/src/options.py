@@ -69,4 +69,4 @@ MITERALONG = ('Auto', 'Center', 'Edge', 'Hard Edge')
 CHAMFER = ('off', 'on')
 
 
-drawOverredeAttributes = defaultdict(lambda: 'MW Bevel Tool')
+drawOverredeAttributes = defaultdict(lambda: ' ')

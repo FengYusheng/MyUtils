@@ -4,7 +4,7 @@ from collections import defaultdict
 import pymel.core as pm
 import maya.api.OpenMaya as om # Python api 2.0
 
-from options import drawOverredeAttributes
+import options
 
 
 
@@ -162,7 +162,7 @@ def getObjectSetsContainingEdgesUsingAPI2(edges=None):
                             if (not component.isNull()) and (component.apiTypeStr == 'kMeshEdgeComponent'):
                                 selectionListToRemoveItems = om.MSelectionList(memberList)
                                 selectionListToRemoveItems.merge(dagPath, component, om.MSelectionList.kRemoveFromList)
-                                selectionListToRemoveItems.isEmpty() or  memberList.merge(selectionListToRemoveItems, om.MSelectionList.kRemoveFromList)
+                                selectionListToRemoveItems.isEmpty() or memberList.merge(selectionListToRemoveItems, om.MSelectionList.kRemoveFromList)
 
                             memberList.isEmpty() or setsContainingEdges.add(setFn.name())
 
@@ -184,27 +184,18 @@ def createBevelSet(edges=None):
     else:
         edges = pm.filterExpand(edges, sm=32, ex=True)
 
-    MWBevelSet = None
-    meshNode = getMeshObject(pm.ls(edges)) if edges else []
-    if edges and len(meshNode):
-        name = meshNode[0].name() + 'MWBevelSet'
-        if not pm.ls(name, type='objectSet'):
-            MWBevelSet = pm.sets(name=name)
-            MWBevelPartition = createPartition(MWBevelSet)
-            # pm.sets(*edges, forceElement=MWBevelSet)
-            MWBevelSet.forceElement(edges)
+    if edges is not None:
+        pm.select(cl=True)
+        MWBevelSet = pm.sets(name='MWBevelSet#')
+        MWBevelPartition = createPartition(MWBevelSet)
+        MWBevelSet.forceElement(edges)
 
-            # forceElement doesn't always work.
-            objestSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
-            objestSetsContainingEdges.discard(MWBevelSet.name())
-            for objectSet in objestSetsContainingEdges:
-                objectSet = pm.ls(objectSet, type='objectSet')[0]
-                intersection = MWBevelSet.getIntersection(objectSet)
-                not len(intersection) or objectSet.removeMembers(intersection)
-        else:
-            pm.warning('{0} already exists.'.format(name))
-
-    return MWBevelSet
+        objectSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
+        objectSetsContainingEdges.discard(MWBevelSet.name())
+        for objectSet in objectSetsContainingEdges:
+            objectSet = pm.ls(objectSet, type='objectSet')[0]
+            intersection = MWBevelSet.getIntersection(objectSet)
+            not len(intersection) or objectSet.removeMembers(intersection)
 
 
 
@@ -297,14 +288,17 @@ def getMeshObject(edges=[]):
     :param:
         edges, pm.MeshEdge list.
     """
-    meshObject = list(set(e.partition('.')[0] for e in edges))
+    dagObject = list(set(e.partition('.')[0] for e in edges))
 
-    if len(meshObject) > 1:
+    if len(dagObject) > 1:
         pm.warning('More than one objects are selected.')
-    elif 0 == len(meshObject):
+    elif 0 == len(dagObject):
         pm.warning('You need select several mesh edges.')
+    else:
+        dagObject = pm.ls(dagObject)
+        dagObject = dagObject if isinstance(dagObject[0], pm.nt.Mesh) else pm.listRelatives(dagObject[0], shapes=True, ni=True)
 
-    return pm.ls(meshObject) if len(meshObject) == 1 else []
+    return dagObject if len(dagObject) else []
 
 
 
@@ -435,11 +429,16 @@ def setSmoothingAngle(angle):
 
 
 
-def navigateBevelSetFromActiveSelectionList():
-    global drawOverredeAttributes
+def isActiveSelectionListChanged():
     edges = pm.filterExpand(sm=32, ex=True)
-    mesh = getMeshObject(edges)[0].name() if edges is not None else ''
-    return mesh in (drawOverredeAttributes['mesh'], drawOverredeAttributes['ioMesh'])
+    mesh = getMeshObject(edges) if edges is not None else pm.ls(dag=True, os=True, type='mesh')
+    isSelectionModeChanged = isAnotherMeshSelected = False
+    if options.drawOverredeAttributes['mesh'] != ' ' or options.drawOverredeAttributes['ioMesh'] != ' ':
+        isAnotherMeshSelected = mesh[0].name() not in (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh']) if len(mesh) else False
+        isSelectionModeChanged = not ((pm.selectMode(q=True, object=True) and pm.selectType(q=True, ocm=True, edge=True)) or (pm.selectMode(q=True, component=True) and pm.selectType(edge=True)))
+
+    print isSelectionModeChanged, options.drawOverredeAttributes.items()
+    return isAnotherMeshSelected or isSelectionModeChanged
 
 
 
@@ -462,46 +461,44 @@ def enableUndo(enable=True):
 
 
 def saveDrawOverrideAttributes(originMesh):
-    global drawOverredeAttributes
-    drawOverredeAttributes['mesh'] = originMesh.name()
-    drawOverredeAttributes['originMesh overrideEnabled'] = originMesh.overrideEnabled.get()
-    drawOverredeAttributes['originMesh overrideDisplayType'] = originMesh.overrideDisplayType.get()
+    options.drawOverredeAttributes['mesh'] = originMesh.name()
+    options.drawOverredeAttributes['originMesh overrideEnabled'] = originMesh.overrideEnabled.get()
+    options.drawOverredeAttributes['originMesh overrideDisplayType'] = originMesh.overrideDisplayType.get()
 
     ioMesh = pm.ls(dag=True, os=True, io=True)
     if len(ioMesh):
-        drawOverredeAttributes['ioMesh'] = ioMesh[0].name()
-        drawOverredeAttributes['ioMesh overrideEnabled'] = ioMesh[0].overrideEnabled.get()
-        drawOverredeAttributes['ioMesh overrideDisplayType'] = ioMesh[0].overrideDisplayType.get()
-        drawOverredeAttributes['ioMesh overrideTexturing'] = ioMesh[0].overrideTexturing.get()
+        options.drawOverredeAttributes['ioMesh'] = ioMesh[0].name()
+        options.drawOverredeAttributes['ioMesh overrideEnabled'] = ioMesh[0].overrideEnabled.get()
+        options.drawOverredeAttributes['ioMesh overrideDisplayType'] = ioMesh[0].overrideDisplayType.get()
+        options.drawOverredeAttributes['ioMesh overrideTexturing'] = ioMesh[0].overrideTexturing.get()
 
 
 
 def restoreDrawOverrideAttributes():
-    global drawOverredeAttributes
-    ioMesh = pm.ls(drawOverredeAttributes['ioMesh'], type='mesh')
+    ioMesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
     if len(ioMesh):
-        ioMesh[0].overrideTexturing.set(drawOverredeAttributes['ioMesh overrideTexturing'])
-        ioMesh[0].overrideDisplayType.set(drawOverredeAttributes['ioMesh overrideDisplayType'])
-        ioMesh[0].overrideEnabled.set(drawOverredeAttributes['ioMesh overrideEnabled'])
+        ioMesh[0].overrideTexturing.set(options.drawOverredeAttributes['ioMesh overrideTexturing'])
+        ioMesh[0].overrideDisplayType.set(options.drawOverredeAttributes['ioMesh overrideDisplayType'])
+        ioMesh[0].overrideEnabled.set(options.drawOverredeAttributes['ioMesh overrideEnabled'])
+        ioMesh[0].intermediateObject.set(True)
 
-    mesh = pm.ls(drawOverredeAttributes['mesh'], type='mesh')
+    mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
     if len(mesh):
-        mesh[0].overrideDisplayType.set(drawOverredeAttributes['originMesh overrideDisplayType'])
-        mesh[0].overrideEnabled.set(drawOverredeAttributes['originMesh overrideEnabled'])
+        mesh[0].overrideDisplayType.set(options.drawOverredeAttributes['originMesh overrideDisplayType'])
+        mesh[0].overrideEnabled.set(options.drawOverredeAttributes['originMesh overrideEnabled'])
 
-    drawOverredeAttributes = defaultdict(lambda: 'MW Bevel Tool')
-
-    print drawOverredeAttributes
+    options.drawOverredeAttributes.clear()
+    pm.select(cl=True)
 
 
 
 def displayIOMesh(meshTrans):
     originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
-    pm.select(meshTrans, r=True)
+    pm.select(originMesh[0], r=True)
     ioMesh = pm.ls(dag=True, os=True, io=True)
     saveDrawOverrideAttributes(originMesh[0])
-    if len(ioMesh):
-        with MayaUndoChuck('Start to MW Bevel.'):
+    with MayaUndoChuck('Start to MW Bevel.'):
+        if len(ioMesh):
             originMesh[0].overrideEnabled.get() or originMesh[0].overrideEnabled.set(True)
             originMesh[0].overrideDisplayType.set(2) # Reference.
             pm.displaySmoothness(divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3) # displaySmoothness isn't undoable.
@@ -513,6 +510,8 @@ def displayIOMesh(meshTrans):
             ioMesh[-1].overrideTexturing.set(False)
             pm.select(ioMesh[-1], r=True)
             switchSelectionModeToEdge(ioMesh[-1])
+        else:
+            switchSelectionModeToEdge(originMesh[0])
 
 
 
@@ -524,5 +523,11 @@ def activeBevel():
     return hasSelection
 
 
+
+def conditionMessage():
+    for _ in om.MConditionMessage.getConditionNames():
+        print _
+
+
 if __name__ == '__main__':
-    activeBevel()
+    conditionMessage()

@@ -59,6 +59,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         self.startButton.clicked.connect(self.startBevel)
         self.completeButton.clicked.connect(self.completeBevel)
+        self.createBevelSetButton.clicked.connect(self.createBevelSet)
 
 
     def _mousePressEventInBevelSetLable(self, event):
@@ -68,7 +69,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def _activeSelectionListchangedCallback(self, clientData=None):
-        if False == utils.navigateBevelSetFromActiveSelectionList():
+        if True == utils.isActiveSelectionListChanged():
             utils.restoreDrawOverrideAttributes()
             self.startButton.setEnabled(True)
             self.completeButton.setEnabled(False)
@@ -87,6 +88,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def hideEvent(self, event):
         self.registeredMayaCallbacks = []
+        utils.restoreDrawOverrideAttributes()
         super(MWBevelToolMainWindow, self).hideEvent(event)
 
 
@@ -110,12 +112,15 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.deleteButton.setEnabled(False)
 
 
+    def createBevelSet(self):
+        utils.createBevelSet()
+
+
 
 
 def run():
     window = MWBevelToolMainWindow(getMayaWindow())
     window.show()
-
 
 
 
