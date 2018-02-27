@@ -431,14 +431,8 @@ def setSmoothingAngle(angle):
 
 def isActiveSelectionListChanged():
     edges = pm.filterExpand(sm=32, ex=True)
-    mesh = getMeshObject(edges) if edges is not None else pm.ls(dag=True, os=True, type='mesh')
-    isSelectionModeChanged = isAnotherMeshSelected = False
-    if options.drawOverredeAttributes['mesh'] != ' ' or options.drawOverredeAttributes['ioMesh'] != ' ':
-        isAnotherMeshSelected = mesh[0].name() not in (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh']) if len(mesh) else False
-        isSelectionModeChanged = not ((pm.selectMode(q=True, object=True) and pm.selectType(q=True, ocm=True, edge=True)) or (pm.selectMode(q=True, component=True) and pm.selectType(edge=True)))
-
-    print isSelectionModeChanged, options.drawOverredeAttributes.items()
-    return isAnotherMeshSelected or isSelectionModeChanged
+    mesh = getMeshObject(edges) if edges is not None else pm.ls(dag=True, os=True, type='mesh', ni=True) # original mesh
+    return len(mesh) > 0 and options.drawOverredeAttributes['mesh'] != ' ' and options.drawOverredeAttributes['ioMesh'] != ' ' and mesh[0].name() not in (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
 
 
 
@@ -494,7 +488,7 @@ def restoreDrawOverrideAttributes():
 
 def displayIOMesh(meshTrans):
     originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
-    pm.select(originMesh[0], r=True)
+    pm.select(meshTrans, r=True) # I can't select the intermediate object if I select the origin mesh directly hear.
     ioMesh = pm.ls(dag=True, os=True, io=True)
     saveDrawOverrideAttributes(originMesh[0])
     with MayaUndoChuck('Start to MW Bevel.'):
@@ -511,7 +505,7 @@ def displayIOMesh(meshTrans):
             pm.select(ioMesh[-1], r=True)
             switchSelectionModeToEdge(ioMesh[-1])
         else:
-            switchSelectionModeToEdge(originMesh[0])
+            switchSelectionModeToEdge(meshTrans)
 
 
 
