@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import copy
-
 import pymel.core as pm
 
 import utils
@@ -108,6 +106,40 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
 
         utils.disconnectFromMWBevelSet(bevelSet[0].name(), meshObject)
         utils.lockBevelSet(bevelSet, True)
+
+
+
+def bevelSelectedEdges(*args, **kwargs):
+    edgeIndices, mesh, MWBevelSetName = args
+    bevelOptions = kwargs
+    MWBevelName = MWBevelSetName + '_Bevel_' + mesh
+    MWBevelNode = pm.ls(MWBevelName, type='polyBevel3')
+    mesh = pm.ls(mesh,type='mesh')
+    edges = [mesh[0].e[i] for i in edgeIndices]
+    0 == len(MWBevelNode) or pm.delete(MWBevelNode)
+    MWBevelNode = pm.polyBevel3(
+        edges,
+        fraction=bevelOptions['fraction'],
+        offsetAsFraction=bevelOptions['offsetAsFraction'],
+        autoFit=bevelOptions['autoFit'],
+        depth=bevelOptions['depth'],
+        mitering=bevelOptions['mitering'],
+        miterAlong=bevelOptions['miterAlong'],
+        chamfer=bevelOptions['chamfer'],
+        segments=bevelOptions['segments'],
+        worldSpace=bevelOptions['worldSpace'],
+        smoothingAngle=bevelOptions['smoothingAngle'],
+        subdivideNgons=bevelOptions['subdivideNgons'],
+        mergeVertices=bevelOptions['mergeVertices'],
+        mergeVertexTolerance=bevelOptions['mergeVertexTolerance'],
+        miteringAngle=bevelOptions['miteringAngle'],
+        angleTolerance=bevelOptions['angleTolerance'],
+        forceParallel=bevelOptions['forceParallel'],
+        ch=bevelOptions['ch']
+    )
+
+    MWBevelNode[0].rename(MWBevelName)
+
 
 
 
