@@ -54,6 +54,7 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="displayDrawOverrideAttrAction"/>
    </widget>
    <widget class="QMenu" name="viewMenu">
     <property name="title">
@@ -162,6 +163,11 @@
   <action name="finishBevelAction">
    <property name="text">
     <string>Finish Bevel</string>
+   </property>
+  </action>
+  <action name="displayDrawOverrideAttrAction">
+   <property name="text">
+    <string>Display DrawOverrideAttributes</string>
    </property>
   </action>
  </widget>

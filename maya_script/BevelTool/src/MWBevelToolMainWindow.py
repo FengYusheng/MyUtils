@@ -27,6 +27,7 @@ reload(ui_MWBevelToolMainWindow)
 
 
 def getMayaWindow():
+    # TODO: pm.lsUI(windows=True)
     ptr = apiUI.MQtUtil.mainWindow()
     if ptr is not None:
         return wrapInstance(long(ptr), QWidget)
@@ -56,6 +57,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.completeButton.clicked.connect(self.completeBevel)
         self.createBevelSetButton.clicked.connect(self.createBevelSet)
         self.addButton.clicked.connect(self.addEdgesIntoBevelSet)
+        self.displayDrawOverrideAttrAction.triggered.connect(self.displayDrawOverrideAttr)
 
 
     def _mousePressEventInBevelSetLable(self, event):
@@ -66,7 +68,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def _restore(self):
         utils.restoreDrawOverrideAttributes()
-        options.drawOverredeAttributes.clear()
         self.startButton.setEnabled(True)
         self.completeButton.setEnabled(False)
         self.createBevelSetButton.setEnabled(False)
@@ -88,6 +89,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def hideEvent(self, event):
         self.registeredMayaCallbacks = []
+        # TODO: with MayaUndoChuck()?
         utils.restoreDrawOverrideAttributes()
         super(MWBevelToolMainWindow, self).hideEvent(event)
 
@@ -138,6 +140,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.statusbar.showMessage(
                 'MW Bevel Tool only works in edge seletion mode, click "Start" button to edit the selected object.'
                 )
+
+
+    def displayDrawOverrideAttr(self):
+        print(options.drawOverredeAttributes)
 
 
 

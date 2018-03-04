@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Tue Feb 13 19:20:13 2018
+# Created: Fri Mar  2 14:07:54 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -82,6 +82,9 @@ class Ui_MWBevelToolMainWindow(object):
         MWBevelToolMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.controlPanelDock)
         self.finishBevelAction = QtWidgets.QAction(MWBevelToolMainWindow)
         self.finishBevelAction.setObjectName("finishBevelAction")
+        self.displayDrawOverrideAttrAction = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.displayDrawOverrideAttrAction.setObjectName("displayDrawOverrideAttrAction")
+        self.editMenu.addAction(self.displayDrawOverrideAttrAction)
         self.menubar.addAction(self.editMenu.menuAction())
         self.menubar.addAction(self.viewMenu.menuAction())
 
@@ -101,4 +104,5 @@ class Ui_MWBevelToolMainWindow(object):
         self.removeButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Remove", None, -1))
         self.deleteButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Delete", None, -1))
         self.finishBevelAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Finish Bevel", None, -1))
+        self.displayDrawOverrideAttrAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Display DrawOverrideAttributes", None, -1))
 

@@ -142,7 +142,6 @@ def bevelSelectedEdges(*args, **kwargs):
 
 
 
-
 if __name__ == '__main__':
     getInputComponent('polyBevel1')
     getInputComponent('polyBevel2')

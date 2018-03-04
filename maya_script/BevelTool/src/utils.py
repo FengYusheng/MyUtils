@@ -139,21 +139,6 @@ def isBevelSetBeveled(bevelSetName):
 
 
 
-def addMembersIntoBevelSet(bevelSetName, edges=None):
-    edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
-    MWBevelSet = pm.ls(bevelSetName, type='objectSet')
-    if len(MWBevelSet) and (edges is not None):
-        with MayaUndoChuck('Add edges into a Bevel Set.'):
-            MWBevelSet[0].forceElement(edges)
-            objectSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2(edges)
-            objectSetsContainingEdges.discard(MWBevelSet[0].name())
-            for objectSet in objectSetsContainingEdges:
-                objectSet = pm.ls(objectSet, type='objectSet')[0]
-                intersection = MWBevelSet[0].getIntersection(objectSet)
-                not len(intersection) or objectSet.removeMembers(intersection)
-
-
-
 def removeMembersFromBevelSet(bevelSetName, edges=None):
     edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
     bevelSetNode = pm.ls(bevelSetName, type='objectSet')
@@ -333,7 +318,7 @@ def isActiveSelectionListChanged():
 
 
 def isSelectionModechanged():
-    return not (pm.selectMode(q=True, object=True) and pm.selectType(q=True, ocm=True, edge=True)) or (pm.selectMode(q=True, component=True) and pm.selectType(q=True, edge=True))
+    return not (len(pm.ls(hilite=True)) > 0 and pm.selectType(q=True, edge=True))
 
 
 
@@ -383,14 +368,12 @@ def restoreDrawOverrideAttributes():
         mesh[0].overrideDisplayType.set(options.drawOverredeAttributes['originMesh overrideDisplayType'])
         mesh[0].overrideEnabled.set(options.drawOverredeAttributes['originMesh overrideEnabled'])
 
+    options.drawOverredeAttributes.clear()
 
 
-def displayIOMesh(meshTrans):
-    originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
-    pm.select(meshTrans, r=True) # I can't select the intermediate object if I select the origin mesh directly hear.
-    ioMesh = pm.ls(dag=True, os=True, io=True)
-    saveDrawOverrideAttributes(originMesh[0])
-    with MayaUndoChuck('Start to MW Bevel.'):
+
+def displayIOMesh(meshTrans, operation=None):
+    def _displayIOMeshe(originMesh, ioMesh):
         if len(ioMesh):
             originMesh[0].overrideEnabled.get() or originMesh[0].overrideEnabled.set(True)
             originMesh[0].overrideDisplayType.set(2) # Reference.
@@ -398,7 +381,7 @@ def displayIOMesh(meshTrans):
 
             # Edit the latest intermediate object attributes.
             ioMesh[-1].intermediateObject.set(False)
-            ioMesh[-1].overrideEnabled.get() or ioMesh[-1].overrideEnabled.set(True)
+            ioMesh[-1].overrideEnabled.set(True)
             ioMesh[-1].overrideDisplayType.set(0) # Normal.
             ioMesh[-1].overrideTexturing.set(False)
             pm.select(ioMesh[-1], r=True)
@@ -406,13 +389,24 @@ def displayIOMesh(meshTrans):
         else:
             switchSelectionModeToEdge(meshTrans)
 
+    originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
+    pm.select(meshTrans, r=True) # I can't select the intermediate object if I select the origin mesh directly hear.
+    ioMesh = pm.ls(dag=True, os=True, io=True)
+    restoreDrawOverrideAttributes()
+    saveDrawOverrideAttributes(originMesh[0])
+    if operation is not None:
+        with MayaUndoChuck(operation):
+            _displayIOMeshe(originMesh, ioMesh)
+    else:
+        _displayIOMeshe(originMesh, ioMesh)
+
 
 
 def activeBevel():
     editingMeshTrans = ''
     transforms = pm.ls(dag=True, os=True, transforms=True)
     hasSelection = len(transforms) > 0
-    not hasSelection or displayIOMesh(transforms[-1])
+    not hasSelection or displayIOMesh(transforms[-1], 'Start to MW bevel.')
     return hasSelection
 
 
@@ -489,6 +483,29 @@ def createPartition(objectSetNode, name='MWBevelPartition'):
 
 
 
+def _addMembersIntoBevelSet(bevelSetName, edges=None):
+    origin, intermediate = options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh']
+    edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
+    MWBevelSet = pm.ls(bevelSetName, type='objectSet')
+    if len(MWBevelSet) and (edges is not None):
+        indices = [int(e.name().rpartition('[')[2].rpartition(']')[0]) for e in pm.ls(edges, flatten=True)]
+        mesh = pm.ls(intermediate, type='mesh') if intermediate != ' ' else pm.ls(origin, type='mesh')
+        edges = [mesh[0].e[i] for i in indices]
+        MWBevelSet[0].forceElement(edges)
+        objectSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2([e.name() for e in edges])
+        objectSetsContainingEdges.discard(MWBevelSet[0].name())
+        for objectSet in objectSetsContainingEdges:
+            objectSet = pm.ls(objectSet, type='objectSet')[0]
+            intersection = MWBevelSet[0].getIntersection(objectSet)
+            not len(intersection) or objectSet.removeMembers(intersection)
+
+
+
+def addEdgesIntoBevelSet(MWBevelSetName, edges=None):
+    pass
+
+
+
 def createBevelSet(edges=None):
     '''
     :Reference:
@@ -502,6 +519,9 @@ def createBevelSet(edges=None):
         edges = pm.filterExpand(edges, sm=32, ex=True)
 
     if edges is not None:
+        originMesh = pm.ls(options.drawOverredeAttributes['mesh'])
+        meshTrans = originMesh[0].getTransform()
+        edgeIndices = [int(e.name().partition('[')[2].partition(']')[0]) for e in pm.ls(edges, flatten=True)]
         with MayaUndoChuck('Create a MW bevel set.'):
             pm.select(cl=True)
             MWBevelSet = pm.sets(name='MWBevelSet#')
@@ -515,12 +535,16 @@ def createBevelSet(edges=None):
                 intersection = MWBevelSet.getIntersection(objectSet)
                 not len(intersection) or objectSet.removeMembers(intersection)
 
-            options.drawOverredeAttributes['MWBevelSet'] = MWBevelSet.name()
-            edgeIndices = [int(e.rpartition('[')[2].rpartition(']')[0]) for e in edges]
-            bevelTool.bevelSelectedEdges(*(edgeIndices, options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['MWBevelSet']), **copy.copy(options.bevelOptions))
+            MWBevelSetName = MWBevelSet.name()
+            bevelTool.bevelSelectedEdges(*(edgeIndices, options.drawOverredeAttributes['mesh'], MWBevelSetName), **copy.copy(options.bevelOptions))
 
-            # Display the latest intermediate object.
-            restoreDrawOverrideAttributes()
+            if options.drawOverredeAttributes['ioMesh'] == ' ':
+                disconnectFromMWBevelSet(MWBevelSetName, options.drawOverredeAttributes['mesh'])
+            else:
+                disconnectFromMWBevelSet(MWBevelSetName, options.drawOverredeAttributes['ioMesh'])
+
+            displayIOMesh(meshTrans)
+            addMembersIntoBevelSet(MWBevelSetName, edges)
 
 
 
