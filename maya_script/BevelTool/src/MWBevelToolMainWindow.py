@@ -38,6 +38,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
     def __init__(self, parent=None):
         super(MWBevelToolMainWindow, self).__init__(parent)
         self.registeredMayaCallbacks = []
+        self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
+        self.itemFont = QFont('OldEnglish', 10)
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -58,6 +60,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.createBevelSetButton.clicked.connect(self.createBevelSet)
         self.addButton.clicked.connect(self.addEdgesIntoBevelSet)
         self.displayDrawOverrideAttrAction.triggered.connect(self.displayDrawOverrideAttr)
+
+        self.updateBevelSetTreeView()
 
 
     def _mousePressEventInBevelSetLable(self, event):
@@ -89,9 +93,25 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def hideEvent(self, event):
         self.registeredMayaCallbacks = []
-        # TODO: with MayaUndoChuck()?
-        utils.restoreDrawOverrideAttributes()
+        utils.restoreDrawOverrideAttributes("Restore before exiting.")
         super(MWBevelToolMainWindow, self).hideEvent(event)
+
+
+    def updateBevelSetTreeView(self):
+        self.dataModelInBevelSetTreeView.clear()
+        for header, col in options.TREEVIEWHEADERS.items():
+            item = QStandardItem(header)
+            item.setFont(self.headerFont)
+            self.dataModelInBevelSetTreeView.setHorizontalHeaderItem(col, item)
+
+        for MWBevelSetName in utils.MWBevelSets():
+            item = QStandardItem(MWBevelSetName+' '*4)
+            item.setFont(self.itemFont)
+            item.setEditable(False)
+            self.dataModelInBevelSetTreeView.appendRow(item)
+            row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
+
+        map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(options.TREEVIEWHEADERS)))
 
 
     def startBevel(self):
@@ -119,6 +139,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             num, bevelSets = utils.numBevelSet()
             if 0 == num:
                 utils.createBevelSet()
+                self.updateBevelSetTreeView()
             else:
                 self.statusbar.showMessage('"{0}" is already in bevel set "{1}"'.format(options.drawOverredeAttributes['mesh'], bevelSets))
         else:
@@ -130,11 +151,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def addEdgesIntoBevelSet(self):
         if not utils.isSelectionModechanged():
-            num, bevelSets = utils.numBevelSet()
-            if 0 == num:
-                print('add')
-            else:
-                self.statusbar.showMessage('"{0}" is already in bevel set "{1}"'.format(options.drawOverredeAttributes['mesh'], bevelSets))
+            utils.addEdgesIntoBevelSet('MWBevelSet1')
+            self.updateBevelSetTreeView()
         else:
             self._restore()
             self.statusbar.showMessage(

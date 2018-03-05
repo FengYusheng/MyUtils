@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import copy
+
 import pymel.core as pm
 
 import utils
@@ -7,9 +9,9 @@ import options
 
 
 
-def MWBevelOption(bevelSetName, bevelOption):
+def MWBevelOption(MWBevelSetName, bevelOption):
     value = ''
-    polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
+    polyBevel3Node = [i for i in pm.ls(type='polyBevel3') if i.name().startswith(MWBevelSetName+'_Bevel')]
     if len(polyBevel3Node):
         if 'Fraction' == bevelOption:
             value = polyBevel3Node[0].fraction.get()
@@ -23,12 +25,28 @@ def MWBevelOption(bevelSetName, bevelOption):
             value = polyBevel3Node[0].miterAlong.get()
         elif 'Chamfer' == bevelOption:
             value = polyBevel3Node[0].chamfer.get()
+        # else:
+        #     print('TODO:')
 
     return value
 
 
 
-def setMWBevelOption(bevelSetName, bevelOption, value):
+def getBevelOptionsFromBevelSet(MWBevelSetName):
+    bevelOptions = copy.copy(options.bevelOptions)
+    MWBevelNode = [i for i in pm.ls(type='polyBevel3') if i.name().startswith(MWBevelSetName+'_Bevel_')]
+    if len(MWBevelNode):
+        bevelOptions['fraction'] = MWBevelNode[0].fraction.get()
+        bevelOptions['segments'] = MWBevelNode[0].segments.get()
+        bevelOptions['mitering'] = MWBevelNode[0].mitering.get()
+        bevelOptions['miterAlong'] = MWBevelNode[0].miterAlong.get()
+        bevelOptions['chamfer'] = MWBevelNode[0].chamfer.get()
+
+    return bevelOptions
+
+
+
+def setMWBevelOption(MWBevelSetName, bevelOption, value):
     polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
     if len(polyBevel3Node):
         if 'Fraction' == bevelOption:
@@ -61,12 +79,6 @@ def bevelMembers(bevelSetName):
         polyBevel3Node = pm.ls('MWBevel_'+_bevelSetName, type='polyBevel3')
 
     return polyBevel3Info
-
-
-
-def getInputComponent(bevelNodeName):
-    bevelNode = pm.ls(bevelNodeName, type='polyBevel3')
-    print bevelNode[0].inputComponents.get()
 
 
 
@@ -117,6 +129,7 @@ def bevelSelectedEdges(*args, **kwargs):
     mesh = pm.ls(mesh,type='mesh')
     edges = [mesh[0].e[i] for i in edgeIndices]
     0 == len(MWBevelNode) or pm.delete(MWBevelNode)
+    pm.select(cl=True) # Clear the active selection list in case both intermediate and origin mesh are selected.
     MWBevelNode = pm.polyBevel3(
         edges,
         fraction=bevelOptions['fraction'],
@@ -143,5 +156,4 @@ def bevelSelectedEdges(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    getInputComponent('polyBevel1')
-    getInputComponent('polyBevel2')
+    getBevelOptionsFromBevelSet('MWBevelSet1')

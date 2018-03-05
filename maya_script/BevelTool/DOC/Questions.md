@@ -43,7 +43,9 @@ for anything in the application that allows the user to set its color.
 4. Edit undo list.
 
 5. **persistent node**, this kind of node stays in the Maya session after a `file > new`.
-Ex: itemFilter and selectionListOperator nodes. 
+Ex: itemFilter and selectionListOperator nodes.
+
+6. Maya environment variables, `getenv`.
 
 ## Private work
 1. Reverse link list: reverse the bevel nodes of a mesh in Maya.
