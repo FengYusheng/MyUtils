@@ -11,7 +11,7 @@ import options
 
 def MWBevelOption(MWBevelSetName, bevelOption):
     value = ''
-    polyBevel3Node = [i for i in pm.ls(type='polyBevel3') if i.name().startswith(MWBevelSetName+'_Bevel')]
+    polyBevel3Node = [i for i in pm.ls(type='polyBevel3') if i.name().startswith(MWBevelSetName+'_Bevel_')]
     if len(polyBevel3Node):
         if 'Fraction' == bevelOption:
             value = polyBevel3Node[0].fraction.get()
@@ -127,31 +127,33 @@ def bevelSelectedEdges(*args, **kwargs):
     MWBevelName = MWBevelSetName + '_Bevel_' + mesh
     MWBevelNode = pm.ls(MWBevelName, type='polyBevel3')
     mesh = pm.ls(mesh,type='mesh')
-    edges = [mesh[0].e[i] for i in edgeIndices]
+    edges = list(set([mesh[0].e[i] for i in edgeIndices]))
     0 == len(MWBevelNode) or pm.delete(MWBevelNode)
     pm.select(cl=True) # Clear the active selection list in case both intermediate and origin mesh are selected.
-    MWBevelNode = pm.polyBevel3(
-        edges,
-        fraction=bevelOptions['fraction'],
-        offsetAsFraction=bevelOptions['offsetAsFraction'],
-        autoFit=bevelOptions['autoFit'],
-        depth=bevelOptions['depth'],
-        mitering=bevelOptions['mitering'],
-        miterAlong=bevelOptions['miterAlong'],
-        chamfer=bevelOptions['chamfer'],
-        segments=bevelOptions['segments'],
-        worldSpace=bevelOptions['worldSpace'],
-        smoothingAngle=bevelOptions['smoothingAngle'],
-        subdivideNgons=bevelOptions['subdivideNgons'],
-        mergeVertices=bevelOptions['mergeVertices'],
-        mergeVertexTolerance=bevelOptions['mergeVertexTolerance'],
-        miteringAngle=bevelOptions['miteringAngle'],
-        angleTolerance=bevelOptions['angleTolerance'],
-        forceParallel=bevelOptions['forceParallel'],
-        ch=bevelOptions['ch']
-    )
 
-    MWBevelNode[0].rename(MWBevelName)
+    if len(edges):
+        MWBevelNode = pm.polyBevel3(
+            edges,
+            fraction=bevelOptions['fraction'],
+            offsetAsFraction=bevelOptions['offsetAsFraction'],
+            autoFit=bevelOptions['autoFit'],
+            depth=bevelOptions['depth'],
+            mitering=bevelOptions['mitering'],
+            miterAlong=bevelOptions['miterAlong'],
+            chamfer=bevelOptions['chamfer'],
+            segments=bevelOptions['segments'],
+            worldSpace=bevelOptions['worldSpace'],
+            smoothingAngle=bevelOptions['smoothingAngle'],
+            subdivideNgons=bevelOptions['subdivideNgons'],
+            mergeVertices=bevelOptions['mergeVertices'],
+            mergeVertexTolerance=bevelOptions['mergeVertexTolerance'],
+            miteringAngle=bevelOptions['miteringAngle'],
+            angleTolerance=bevelOptions['angleTolerance'],
+            forceParallel=bevelOptions['forceParallel'],
+            ch=bevelOptions['ch']
+        )
+
+        MWBevelNode[0].rename(MWBevelName)
 
 
 

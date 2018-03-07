@@ -71,12 +71,12 @@ class UnlockBevelSet(object):
 
     def __enter__(self):
         bevelSetNode = pm.ls(self.bevelSetName, type='objectSet')
-        not len(bevelSetNode) or pm.lockNode(bevelSetNode, lock=False)
+        len(bevelSetNode) > 0 and pm.lockNode(bevelSetNode, lock=False)
 
 
     def __exit__(self, type, value, trackback):
         bevelSetNode = pm.ls(self.bevelSetName, type='objectSet')
-        not len(bevelSetNode) or pm.lockNode(bevelSetNode, lock=True)
+        len(bevelSetNode) > 0 and pm.lockNode(bevelSetNode, lock=True)
 
 
 
@@ -94,10 +94,10 @@ def switchSelectionModeToEdge(item):
     else:
         pm.selectType(alc=False)
         pm.selectType(edge=True)
-        not pm.selectMode(q=True, preset=True) or pm.hilite(item)
+        pm.selectMode(q=True, preset=True) and pm.hilite(item)
 
     try:
-        not pm.mel.eval('exists dR_selTypeChanged') or pm.mel.eval('dR_selTypeChanged("edge")')
+        pm.mel.eval('exists dR_selTypeChanged') and pm.mel.eval('dR_selTypeChanged("edge")')
     except pm.MelError:
         pass
 
@@ -139,28 +139,12 @@ def isBevelSetBeveled(bevelSetName):
 
 
 
-def removeMembersFromBevelSet(bevelSetName, edges=None):
-    edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
-    bevelSetNode = pm.ls(bevelSetName, type='objectSet')
-    if len(bevelSetNode) and (edges is not None):
-        edges = [e for e in edges if e in bevelSetNode[0]]
-        with UnlockBevelSet(bevelSetName):
-            not len(edges) or bevelSetNode[0].removeMembers(edges)
-
-
-
 def clearBevelSet(bevelSetName):
     bevelNode = pm.ls(bevelSetName, type='objectSet')
     members = bevelSetMembers(bevelSetName)
     members = pm.filterExpand(members, sm=32, ex=True) if len(members) else []
     with UnlockBevelSet(bevelSetName):
-        not (len(members) and len(bevelNode)) or bevelNode[0].removeMembers(members)
-
-
-
-def selectedEdgeindices(edges=[]):
-    edges = edges if edges else pm.filterExpand(sm=32, ex=True)
-    return [int(e.name().partition('[')[2].partition(']')[0]) for e in pm.ls(edges, flatten=True)]
+        len(members) and len(bevelNode) and bevelNode[0].removeMembers(members)
 
 
 
@@ -208,25 +192,7 @@ def deletePolyBevelNodeInBevelSet(bevelSetName):
     # NOTE: Why does it delete the empty objectSet at the same time?
     # If you find something wierd, clean up the maya folder YOUR DOCUMENT\maya\VERSION\.
     polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
-    not len(polyBevel3Node) or pm.delete(polyBevel3Node)
-
-
-
-def deleteBevelSet(bevelSetName):
-    _bevelSetName = bevelSetName
-    deleteBevelNodeStack = []
-    num = int(bevelSetName.rpartition('_')[2])
-    meshName = bevelSetName.rpartition('MWBevelSet_')[0]
-    bevelSetNode = pm.ls(bevelSetName, type='objectSet')
-    while len(bevelSetNode):
-        with UnlockBevelSet(_bevelSetName):
-            len(bevelSetMembers(_bevelSetName)) or deleteBevelNodeStack.append(_bevelSetName)
-            pm.delete(bevelSetNode)
-            num += 1
-            _bevelSetName = meshName + 'MWBevelSet_' + str(num)
-            bevelSetNode = pm.ls(_bevelSetName, type='objectSet')
-
-    map(lambda name:deletePolyBevelNodeInBevelSet(name), deleteBevelNodeStack[::-1]) # Delete polyBevel3 node in reversed order.
+    len(polyBevel3Node) > 0 and pm.delete(polyBevel3Node)
 
 
 
@@ -330,12 +296,7 @@ def finishBevel():
 
 def lockBevelSet(bevelSetName, isLocked=True):
     bevelSet = pm.ls(bevelSetName, type='objectSet')
-    not len(bevelSet) or pm.lockNode(bevelSet, lock=isLocked)
-
-
-
-def enableUndo(enable=True):
-    pm.undoInfo(state=enable)
+    len(bevelSet) and pm.lockNode(bevelSet, lock=isLocked)
 
 
 
@@ -413,7 +374,7 @@ def activeBevel():
     editingMeshTrans = ''
     transforms = pm.ls(dag=True, os=True, transforms=True)
     hasSelection = len(transforms) > 0
-    not hasSelection or displayIOMesh(transforms[-1], 'Start to MW bevel.')
+    hasSelection and displayIOMesh(transforms[-1], 'Start to MW bevel.')
     return hasSelection
 
 
@@ -504,7 +465,7 @@ def _addMembersIntoBevelSet(bevelSetName, edges=None):
         for objectSet in objectSetsContainingEdges:
             objectSet = pm.ls(objectSet, type='objectSet')[0]
             intersection = MWBevelSet[0].getIntersection(objectSet)
-            not len(intersection) or objectSet.removeMembers(intersection)
+            len(intersection) > 0 and objectSet.removeMembers(intersection)
 
 
 
@@ -520,7 +481,7 @@ def addEdgesIntoBevelSet(MWBevelSetName, edges=None):
         edges += [e.name() for e in bevelSetMembers(MWBevelSetName) if e.name().rpartition('.e')[0] == mesh]
         indices = [int(e.rpartition('[')[2].rpartition(']')[0]) for e in edges]
         bevelOptions = bevelTool.getBevelOptionsFromBevelSet(MWBevelSetName)
-        with MayaUndoChuck('Add edges into {0}.'.format(MWBevelSetName)):
+        with MayaUndoChuck('Add edges {0} into {1}.'.format(edges, MWBevelSetName)):
             pm.lockNode(MWBevelSet[0], lock=False)
             bevelTool.bevelSelectedEdges(*(indices, options.drawOverredeAttributes['mesh'], MWBevelSetName), **bevelOptions)
 
@@ -537,6 +498,50 @@ def addEdgesIntoBevelSet(MWBevelSetName, edges=None):
             pm.lockNode(MWBevelSet[0], lock=True)
 
     return isBevel
+
+
+
+def removeEdgesFromBevelSet(edges=None):
+    edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
+    mesh = options.drawOverredeAttributes['ioMesh'] if options.drawOverredeAttributes['ioMesh'] != ' ' else options.drawOverredeAttributes['mesh']
+    meshTrans = pm.ls(mesh, type='mesh')[0].getTransform()
+    _, MWBevelSetName = numBevelSet()
+
+    if len(MWBevelSetName) and (edges is not None):
+        membersIndices = set([int(e.name().rpartition('[')[2].rpartition(']')[0]) for e in bevelSetMembers(MWBevelSetName[0]) if e.name().rpartition('.e')[0] == mesh])
+        selectedIndices = set([int(e.name().rpartition('[')[2].rpartition(']')[0]) for e in pm.ls(edges, flatten=True)])
+        membersIndices.difference_update(selectedIndices)
+        indices = list(membersIndices)
+        bevelOptions = bevelTool.getBevelOptionsFromBevelSet(MWBevelSetName[0])
+        MWBevelSet = pm.ls(MWBevelSetName[0], type='objectSet')
+
+        with MayaUndoChuck('Remove edges {0} from {1}'.format(edges, MWBevelSetName[0])):
+            pm.lockNode(MWBevelSet[0], lock=False)
+            bevelTool.bevelSelectedEdges(*(indices, options.drawOverredeAttributes['mesh'], MWBevelSetName[0]), **bevelOptions)
+
+            if options.drawOverredeAttributes['ioMesh'] == ' ':
+                disconnectFromMWBevelSet(MWBevelSetName[0], options.drawOverredeAttributes['mesh'])
+            else:
+                disconnectFromMWBevelSet(MWBevelSetName[0], options.drawOverredeAttributes['ioMesh'])
+
+            displayIOMesh(meshTrans)
+            mesh = options.drawOverredeAttributes['ioMesh'] if options.drawOverredeAttributes['ioMesh'] != ' ' else options.drawOverredeAttributes['mesh']
+            mesh = pm.ls(mesh, type='mesh')
+            edges = [mesh[0].e[i] for i in indices]
+            _addMembersIntoBevelSet(MWBevelSetName[0], edges)
+            pm.lockNode(MWBevelSet[0], lock=True)
+
+
+
+def deleteBevelSet(MWBevelSetName):
+    MWBevelSet = pm.ls(MWBevelSetName, type='objectSet')
+    if len(MWBevelSet):
+        MWBevelNodes = [i for i in pm.ls(type='polyBevel3') if i.name().startswith(MWBevelSetName+'_Bevel_')]
+        with MayaUndoChuck('Delete {0}.'.format(MWBevelSetName)):
+            len(MWBevelNodes) > 0 and pm.delete(MWBevelNodes)
+            pm.lockNode(MWBevelSet, lock=False)
+            restoreDrawOverrideAttributes()
+            pm.delete(MWBevelSet)
 
 
 

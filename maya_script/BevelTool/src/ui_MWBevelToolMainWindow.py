@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
+# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Fri Mar  2 14:07:54 2018
+# Created: Wed Mar 07 16:30:55 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,7 +30,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 940, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 940, 21))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
@@ -60,9 +60,6 @@ class Ui_MWBevelToolMainWindow(object):
         self.startButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
         self.startButton.setObjectName("startButton")
         self.verticalLayout.addWidget(self.startButton)
-        self.completeButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
-        self.completeButton.setObjectName("completeButton")
-        self.verticalLayout.addWidget(self.completeButton)
         self.createBevelSetButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
         self.createBevelSetButton.setObjectName("createBevelSetButton")
         self.verticalLayout.addWidget(self.createBevelSetButton)
@@ -98,7 +95,6 @@ class Ui_MWBevelToolMainWindow(object):
         self.controlPanelDock.setWindowTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Control Panel", None, -1))
         self.bevelSetLabel.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Bevel Set</span></p></body></html>", None, -1))
         self.startButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Start", None, -1))
-        self.completeButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Complete", None, -1))
         self.createBevelSetButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "New", None, -1))
         self.addButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Add", None, -1))
         self.removeButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Remove", None, -1))

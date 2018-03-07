@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from collections import defaultdict
+from collections import (defaultdict, OrderedDict)
 
 """
 polyBevel3 -fraction 0.5 -offsetAsFraction 1 -autoFit 1 -depth 1 -mitering 0
@@ -68,15 +68,20 @@ MITERING = ('Auto', 'Uniform', 'Patch', 'Radial', 'None')
 MITERALONG = ('Auto', 'Center', 'Edge', 'Hard Edge')
 CHAMFER = ('off', 'on')
 
-# TODO: OrderDict
-TREEVIEWHEADERS = {
-    'Bevel Set'   : 0,
-    'Fraction'    : 1,
-    'Segments'    : 2,
-    'Mitering'    : 3,
-    'Miter Along' : 4,
-    'Chamfer'     : 5
-}
+TREEVIEWHEADERS = OrderedDict(
+    sorted(
+        {
+            'Bevel Set'   : 0,
+            'Fraction'    : 1,
+            'Segments'    : 2,
+            'Mitering'    : 3,
+            'Miter Along' : 4,
+            'Chamfer'     : 5
+        }.items(),
+
+        key = lambda t : t[1]
+    )
+)
 
 
 drawOverredeAttributes = defaultdict(lambda: ' ')

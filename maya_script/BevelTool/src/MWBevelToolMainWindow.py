@@ -19,9 +19,11 @@ import maya.api.OpenMaya as om # Python api 2.0
 
 import options
 import utils
+import bevelTool
 import ui_MWBevelToolMainWindow
 reload(options)
 reload(utils)
+reload(bevelTool)
 reload(ui_MWBevelToolMainWindow)
 
 
@@ -49,16 +51,18 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
         self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
         self.bevelSetTreeView.setSelectionModel(self.selectionModelInBevelSetTreeView)
-        self.completeButton.setEnabled(False)
+        self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
+        self.bevelSetTreeView.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.bevelSetTreeView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.createBevelSetButton.setEnabled(False)
         self.addButton.setEnabled(False)
         self.removeButton.setEnabled(False)
-        self.deleteButton.setEnabled(False)
 
         self.startButton.clicked.connect(self.startBevel)
-        self.completeButton.clicked.connect(self.completeBevel)
         self.createBevelSetButton.clicked.connect(self.createBevelSet)
         self.addButton.clicked.connect(self.addEdgesIntoBevelSet)
+        self.removeButton.clicked.connect(self.removeEdgesFromBevelSet)
+        self.deleteButton.clicked.connect(self.deleteBevelSet)
         self.displayDrawOverrideAttrAction.triggered.connect(self.displayDrawOverrideAttr)
 
         self.updateBevelSetTreeView()
@@ -70,19 +74,22 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         QLabel.mousePressEvent(self.bevelSetLabel, event)
 
 
-    def _restore(self):
-        utils.restoreDrawOverrideAttributes()
+    def _mousePressEventInBevelSetTreeView(self, event):
+        self.selectionModelInBevelSetTreeView.clearSelection()
+        super(QTreeView, self.bevelSetTreeView).mousePressEvent(event)
+
+
+    def _restore(self, operation):
+        utils.restoreDrawOverrideAttributes(operation)
         self.startButton.setEnabled(True)
-        self.completeButton.setEnabled(False)
         self.createBevelSetButton.setEnabled(False)
         self.addButton.setEnabled(False)
         self.removeButton.setEnabled(False)
-        self.deleteButton.setEnabled(False)
         self.statusbar.clearMessage()
 
 
     def _activeSelectionListchangedCallback(self, clientData=None):
-        not utils.isActiveSelectionListChanged() or self._restore()
+        utils.isActiveSelectionListChanged() and self._restore('Restore because active selection list is changed.')
 
 
     def showEvent(self, event):
@@ -111,27 +118,52 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.dataModelInBevelSetTreeView.appendRow(item)
             row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
 
+            value = bevelTool.MWBevelOption(MWBevelSetName, 'Fraction')
+            item = QStandardItem(str(value))
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Fraction'], item)
+
+            value = bevelTool.MWBevelOption(MWBevelSetName, 'Segments')
+            item = QStandardItem(str(value))
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Segments'], item)
+
+            value = bevelTool.MWBevelOption(MWBevelSetName, 'Mitering')
+            item = QStandardItem(options.MITERING[value])
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Mitering'], item)
+
+            value = bevelTool.MWBevelOption(MWBevelSetName, 'Miter Along')
+            item = QStandardItem(options.MITERALONG[value])
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Miter Along'], item)
+
+            value = bevelTool.MWBevelOption(MWBevelSetName, 'Chamfer')
+            item = QStandardItem(options.CHAMFER[value])
+            item.setFont(self.itemFont)
+            self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Chamfer'], item)
+
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(options.TREEVIEWHEADERS)))
+
+
+    def _validateConditionForFunc(self, func):
+        '''
+        1. Active selection list is changed.
+        2. Selection mode is changed.
+        3. The mesh has been in another bevel set.
+        '''
+        utils.isActiveSelectionListChanged()
+        utils.isSelectionModechanged()
+        utils.numBevelSet()
 
 
     def startBevel(self):
         if utils.activeBevel():
             self.startButton.setEnabled(False)
-            self.completeButton.setEnabled(True)
             self.createBevelSetButton.setEnabled(True)
             self.addButton.setEnabled(True)
             self.removeButton.setEnabled(True)
-            self.deleteButton.setEnabled(True)
             self.statusbar.showMessage('Start to Bevel "{0}"'.format(options.drawOverredeAttributes['mesh']))
-
-
-    def completeBevel(self):
-        self.startButton.setEnabled(True)
-        self.completeButton.setEnabled(False)
-        self.createBevelSetButton.setEnabled(False)
-        self.addButton.setEnabled(False)
-        self.removeButton.setEnabled(False)
-        self.deleteButton.setEnabled(False)
 
 
     def createBevelSet(self):
@@ -143,21 +175,38 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             else:
                 self.statusbar.showMessage('"{0}" is already in bevel set "{1}"'.format(options.drawOverredeAttributes['mesh'], bevelSets))
         else:
-            self._restore()
+            self._restore('Restore because selection mode is changed.')
             self.statusbar.showMessage(
                 'MW Bevel Tool only works in edge seletion mode, click "Start" button to edit the selected object.'
                 )
 
 
     def addEdgesIntoBevelSet(self):
-        if not utils.isSelectionModechanged():
-            utils.addEdgesIntoBevelSet('MWBevelSet1')
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            MWBevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+
+            # TODO: if self._checkActiveSelectionList(utils.addEdgesIntoBevelSet)
+            if not utils.isSelectionModechanged():
+                utils.addEdgesIntoBevelSet(MWBevelSetName)
+                self.updateBevelSetTreeView()
+            else:
+                self._restore('Restore because selection mode is changed.')
+                self.statusbar.showMessage(
+                    'MW Bevel Tool only works in edge seletion mode, click "Start" button to edit the selected object.'
+                    )
+
+
+    def removeEdgesFromBevelSet(self):
+        utils.removeEdgesFromBevelSet()
+
+
+    def deleteBevelSet(self):
+        if self.selectionModelInBevelSetTreeView.hasSelection():
+            index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
+            MWBevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
+            utils.deleteBevelSet(MWBevelSetName)
             self.updateBevelSetTreeView()
-        else:
-            self._restore()
-            self.statusbar.showMessage(
-                'MW Bevel Tool only works in edge seletion mode, click "Start" button to edit the selected object.'
-                )
 
 
     def displayDrawOverrideAttr(self):

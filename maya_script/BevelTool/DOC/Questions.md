@@ -47,5 +47,7 @@ Ex: itemFilter and selectionListOperator nodes.
 
 6. Maya environment variables, `getenv`.
 
+7. Sets in pymel.
+
 ## Private work
 1. Reverse link list: reverse the bevel nodes of a mesh in Maya.
