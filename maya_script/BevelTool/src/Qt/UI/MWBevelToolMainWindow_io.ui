@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>940</width>
+    <width>935</width>
     <height>817</height>
    </rect>
   </property>
@@ -46,7 +46,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>940</width>
+     <width>935</width>
      <height>21</height>
     </rect>
    </property>
@@ -54,7 +54,9 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="displayDrawOverrideAttrAction"/>
+    <addaction name="moveAction"/>
+    <addaction name="maintainAction"/>
+    <addaction name="chooseAction"/>
    </widget>
    <widget class="QMenu" name="viewMenu">
     <property name="title">
@@ -161,6 +163,48 @@
   <action name="displayDrawOverrideAttrAction">
    <property name="text">
     <string>Display DrawOverrideAttributes</string>
+   </property>
+  </action>
+  <action name="actionCreate_a_Bevel_Set">
+   <property name="text">
+    <string>Create a Bevel Set</string>
+   </property>
+  </action>
+  <action name="actionMove_Edges_into_New_Bevel_Set">
+   <property name="text">
+    <string>Move Edges into New Bevel Set</string>
+   </property>
+  </action>
+  <action name="actionCreate">
+   <property name="text">
+    <string>Create</string>
+   </property>
+  </action>
+  <action name="moveAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Move Edges into Target Bevel Set</string>
+   </property>
+  </action>
+  <action name="maintainAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Maintain Present Status</string>
+   </property>
+  </action>
+  <action name="chooseAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Let User Choose</string>
    </property>
   </action>
  </widget>

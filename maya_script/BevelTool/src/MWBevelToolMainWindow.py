@@ -21,10 +21,12 @@ import options
 import utils
 import bevelTool
 import ui_MWBevelToolMainWindow
+import ui_MWChooseDialog
 reload(options)
 reload(utils)
 reload(bevelTool)
 reload(ui_MWBevelToolMainWindow)
+reload(ui_MWChooseDialog)
 
 
 
@@ -33,6 +35,41 @@ def getMayaWindow():
     ptr = apiUI.MQtUtil.mainWindow()
     if ptr is not None:
         return wrapInstance(long(ptr), QWidget)
+
+
+
+class MWChooseDialog(QDialog, ui_MWChooseDialog.Ui_MWChooseDialog):
+    def __init__(self, parent, *args):
+        super(MWChooseDialog, self).__init__(parent)
+        self.parent = parent
+        self.args = args
+        self.mesh = options.drawOverredeAttributes['mesh']
+
+        self.setupUi(self)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.args[0] == 'createBevelSet' and self.textEdit.setHtml(
+            "<b>{0} is already in {1}. Do you want to move it into a new bevel set?<b/>"\
+            .format(self.mesh, self.args[1])
+        )
+
+        self.args[0] == 'addEdgesIntoBevelSet' and self.textEdit.setHtml(
+            "<b>{0} is already in {1}, Do you want to move it into {2}?</b>"\
+            .format(self.mesh, self.args[1], self.args[2])
+        )
+
+        self.yesButton.clicked.connect(self.move)
+        self.noButton.clicked.connect(self.maintain)
+        self.remeberCheckBox.stateChanged.connect(lambda : self.remeberCheckBox.isChecked() or self.parent.chooseAction.setChecked(True))
+
+
+    def move(self):
+        self.remeberCheckBox.isChecked() and self.parent.moveAction.setChecked(True)
+        self.accept()
+
+
+    def maintain(self):
+        self.remeberCheckBox.isChecked() and self.parent.maintainAction.setChecked(True)
+        self.accept()
 
 
 
@@ -57,13 +94,16 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.createBevelSetButton.setEnabled(False)
         self.addButton.setEnabled(False)
         self.removeButton.setEnabled(False)
+        self.bevelSetActionGroup = QActionGroup(self)
+        self.bevelSetActionGroup.addAction(self.moveAction)
+        self.bevelSetActionGroup.addAction(self.maintainAction)
+        self.bevelSetActionGroup.addAction(self.chooseAction)
 
         self.startButton.clicked.connect(self.startBevel)
         self.createBevelSetButton.clicked.connect(self.createBevelSet)
         self.addButton.clicked.connect(self.addEdgesIntoBevelSet)
         self.removeButton.clicked.connect(self.removeEdgesFromBevelSet)
         self.deleteButton.clicked.connect(self.deleteBevelSet)
-        self.displayDrawOverrideAttrAction.triggered.connect(self.displayDrawOverrideAttr)
 
         self.updateBevelSetTreeView()
 
@@ -146,15 +186,35 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(options.TREEVIEWHEADERS)))
 
 
-    def _validateConditionForFunc(self, func):
+    def _run(self, func, *args):
         '''
         1. Active selection list is changed.
         2. Selection mode is changed.
         3. The mesh has been in another bevel set.
         '''
-        utils.isActiveSelectionListChanged()
-        utils.isSelectionModechanged()
-        utils.numBevelSet()
+        success = True
+        mesh = options.drawOverredeAttributes['mesh']
+        num, MWBevelSetName = utils.numBevelSet()
+        if utils.isActiveSelectionListChanged():
+            self.statusbar.showMessage('Active selection list is changed.')
+            success = False
+        elif utils.isSelectionModeChanged():
+            self.statusbar.showMessage('Selection mode is changed.')
+            self._restore('Selecton mode is changed.')
+            success = False
+        elif func.__name__ == 'createBevelSet' and num > 0:
+            self.statusbar.showMessage('{0} is already in {1}'.format(mesh, MWBevelSetName[0]))
+            MWChooseDialog(self, 'createBevelSet', MWBevelSetName[0]).exec_()
+            success = False
+        elif func.__name__ == 'addEdgesIntoBevelSet' and args[0] != MWBevelSetName[0]:
+            self.statusbar.showMessage('{0} is already in {1}'.format(mesh, MWBevelSetName[0]))
+            MWChooseDialog(self, 'addEdgesIntoBevelSet', MWBevelSetName[0], args[0]).exec_()
+            success = False
+        else:
+            func(*args)
+            self.statusbar.clearMessage()
+
+        return success
 
 
     def startBevel(self):
@@ -167,38 +227,18 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def createBevelSet(self):
-        if not utils.isSelectionModechanged():
-            num, bevelSets = utils.numBevelSet()
-            if 0 == num:
-                utils.createBevelSet()
-                self.updateBevelSetTreeView()
-            else:
-                self.statusbar.showMessage('"{0}" is already in bevel set "{1}"'.format(options.drawOverredeAttributes['mesh'], bevelSets))
-        else:
-            self._restore('Restore because selection mode is changed.')
-            self.statusbar.showMessage(
-                'MW Bevel Tool only works in edge seletion mode, click "Start" button to edit the selected object.'
-                )
+        self._run(utils.createBevelSet) and self.updateBevelSetTreeView()
 
 
     def addEdgesIntoBevelSet(self):
         if self.selectionModelInBevelSetTreeView.hasSelection():
             index = self.selectionModelInBevelSetTreeView.selectedRows()[0]
             MWBevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
-
-            # TODO: if self._checkActiveSelectionList(utils.addEdgesIntoBevelSet)
-            if not utils.isSelectionModechanged():
-                utils.addEdgesIntoBevelSet(MWBevelSetName)
-                self.updateBevelSetTreeView()
-            else:
-                self._restore('Restore because selection mode is changed.')
-                self.statusbar.showMessage(
-                    'MW Bevel Tool only works in edge seletion mode, click "Start" button to edit the selected object.'
-                    )
+            self._run(utils.addEdgesIntoBevelSet, MWBevelSetName)
 
 
     def removeEdgesFromBevelSet(self):
-        utils.removeEdgesFromBevelSet()
+        self._run(utils.removeEdgesFromBevelSet) and self.updateBevelSetTreeView()
 
 
     def deleteBevelSet(self):
@@ -207,10 +247,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             MWBevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             utils.deleteBevelSet(MWBevelSetName)
             self.updateBevelSetTreeView()
-
-
-    def displayDrawOverrideAttr(self):
-        print(options.drawOverredeAttributes)
 
 
 

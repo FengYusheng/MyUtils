@@ -46,6 +46,12 @@ def loadBevelToolUI():
         compileUi(source, f, False, 4, False)
 
 
+    destination = bevelToolDir + '/src/ui_MWChooseDialog.py'
+    source = bevelToolDir + '/src/Qt/UI/MWChooseDialog.ui'
+    with open(destination, 'w') as f:
+        compileUi(source, f, False, 4, False)
+
+
 
 if __name__ == '__main__':
     loadBevelToolUI()

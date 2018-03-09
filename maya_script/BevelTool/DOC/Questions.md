@@ -26,6 +26,10 @@ Are these handlers static methods?
              QStyledItemDelegate.paint(self, painter, option, index)`
 
 
+## Qt role
+item role, menu role
+
+
 ## Python
 
 ### `Super()`

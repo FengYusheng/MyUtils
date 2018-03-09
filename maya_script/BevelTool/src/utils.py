@@ -282,7 +282,7 @@ def isActiveSelectionListChanged():
 
 
 
-def isSelectionModechanged():
+def isSelectionModeChanged():
     return not (len(pm.ls(hilite=True)) > 0 and pm.selectType(q=True, edge=True))
 
 
@@ -496,8 +496,6 @@ def addEdgesIntoBevelSet(MWBevelSetName, edges=None):
             edges = [mesh[0].e[i] for i in indices]
             _addMembersIntoBevelSet(MWBevelSetName, edges)
             pm.lockNode(MWBevelSet[0], lock=True)
-
-    return isBevel
 
 
 

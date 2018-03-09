@@ -25,8 +25,6 @@ def MWBevelOption(MWBevelSetName, bevelOption):
             value = polyBevel3Node[0].miterAlong.get()
         elif 'Chamfer' == bevelOption:
             value = polyBevel3Node[0].chamfer.get()
-        # else:
-        #     print('TODO:')
 
     return value
 

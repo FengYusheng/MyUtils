@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Wed Mar 07 16:30:55 2018
+# Created: Fri Mar 09 16:47:28 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MWBevelToolMainWindow(object):
     def setupUi(self, MWBevelToolMainWindow):
         MWBevelToolMainWindow.setObjectName("MWBevelToolMainWindow")
-        MWBevelToolMainWindow.resize(940, 817)
+        MWBevelToolMainWindow.resize(935, 817)
         self.centralwidget = QtWidgets.QWidget(MWBevelToolMainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -30,7 +30,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 940, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 21))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
@@ -81,7 +81,25 @@ class Ui_MWBevelToolMainWindow(object):
         self.finishBevelAction.setObjectName("finishBevelAction")
         self.displayDrawOverrideAttrAction = QtWidgets.QAction(MWBevelToolMainWindow)
         self.displayDrawOverrideAttrAction.setObjectName("displayDrawOverrideAttrAction")
-        self.editMenu.addAction(self.displayDrawOverrideAttrAction)
+        self.actionCreate_a_Bevel_Set = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.actionCreate_a_Bevel_Set.setObjectName("actionCreate_a_Bevel_Set")
+        self.actionMove_Edges_into_New_Bevel_Set = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.actionMove_Edges_into_New_Bevel_Set.setObjectName("actionMove_Edges_into_New_Bevel_Set")
+        self.actionCreate = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.actionCreate.setObjectName("actionCreate")
+        self.moveAction = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.moveAction.setCheckable(True)
+        self.moveAction.setObjectName("moveAction")
+        self.maintainAction = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.maintainAction.setCheckable(True)
+        self.maintainAction.setObjectName("maintainAction")
+        self.chooseAction = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.chooseAction.setCheckable(True)
+        self.chooseAction.setChecked(True)
+        self.chooseAction.setObjectName("chooseAction")
+        self.editMenu.addAction(self.moveAction)
+        self.editMenu.addAction(self.maintainAction)
+        self.editMenu.addAction(self.chooseAction)
         self.menubar.addAction(self.editMenu.menuAction())
         self.menubar.addAction(self.viewMenu.menuAction())
 
@@ -101,4 +119,10 @@ class Ui_MWBevelToolMainWindow(object):
         self.deleteButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Delete", None, -1))
         self.finishBevelAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Finish Bevel", None, -1))
         self.displayDrawOverrideAttrAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Display DrawOverrideAttributes", None, -1))
+        self.actionCreate_a_Bevel_Set.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Create a Bevel Set", None, -1))
+        self.actionMove_Edges_into_New_Bevel_Set.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Move Edges into New Bevel Set", None, -1))
+        self.actionCreate.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Create", None, -1))
+        self.moveAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Move Edges into Target Bevel Set", None, -1))
+        self.maintainAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Maintain Present Status", None, -1))
+        self.chooseAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Let User Choose", None, -1))
 
