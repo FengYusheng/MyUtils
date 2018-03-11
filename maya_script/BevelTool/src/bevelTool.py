@@ -121,12 +121,13 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
 
 def bevelSelectedEdges(*args, **kwargs):
     edgeIndices, mesh, MWBevelSetName = args
+    edgeIndices = list(set(edgeIndices))
     bevelOptions = kwargs
     MWBevelName = MWBevelSetName + '_Bevel_' + mesh
-    MWBevelNode = pm.ls(MWBevelName, type='polyBevel3')
+    MWBevelNode = list(set([i for i in pm.listConnections(mesh, type='polyBevel3') if i.name().startswith('MWBevelSet')]))
     mesh = pm.ls(mesh,type='mesh')
-    edges = list(set([mesh[0].e[i] for i in edgeIndices]))
-    0 == len(MWBevelNode) or pm.delete(MWBevelNode)
+    edges = list([mesh[0].e[i] for i in edgeIndices])
+    len(MWBevelNode) > 0 and pm.delete(MWBevelNode)
     pm.select(cl=True) # Clear the active selection list in case both intermediate and origin mesh are selected.
 
     if len(edges):

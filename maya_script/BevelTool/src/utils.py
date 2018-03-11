@@ -119,6 +119,7 @@ def flattenEdges(edges):
 
 
 def MWBevelSets():
+    # TODO: Delete empty bevel sets.
     return [i.name() for i in pm.ls(type='objectSet') if i.name().startswith('MWBevelSet')]
 
 
@@ -475,11 +476,10 @@ def addEdgesIntoBevelSet(MWBevelSetName, edges=None):
     MWBevelSet = pm.ls(MWBevelSetName, type='objectSet')
     edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
     _, bevelSetName = numBevelSet()
-    isBevel = edges is not None and (len(bevelSetName) == 0 or (len(bevelSetName) > 0 and MWBevelSetName == bevelSetName[0]))
 
-    if isBevel:
+    if edges is not None:
         edges += [e.name() for e in bevelSetMembers(MWBevelSetName) if e.name().rpartition('.e')[0] == mesh]
-        indices = [int(e.rpartition('[')[2].rpartition(']')[0]) for e in edges]
+        indices = [int(e.rpartition('[')[2].rpartition(']')[0]) for e in pm.ls(edges, flatten=True)]
         bevelOptions = bevelTool.getBevelOptionsFromBevelSet(MWBevelSetName)
         with MayaUndoChuck('Add edges {0} into {1}.'.format(edges, MWBevelSetName)):
             pm.lockNode(MWBevelSet[0], lock=False)
@@ -516,7 +516,6 @@ def removeEdgesFromBevelSet(edges=None):
         with MayaUndoChuck('Remove edges {0} from {1}'.format(edges, MWBevelSetName[0])):
             pm.lockNode(MWBevelSet[0], lock=False)
             bevelTool.bevelSelectedEdges(*(indices, options.drawOverredeAttributes['mesh'], MWBevelSetName[0]), **bevelOptions)
-
             if options.drawOverredeAttributes['ioMesh'] == ' ':
                 disconnectFromMWBevelSet(MWBevelSetName[0], options.drawOverredeAttributes['mesh'])
             else:
@@ -526,8 +525,11 @@ def removeEdgesFromBevelSet(edges=None):
             mesh = options.drawOverredeAttributes['ioMesh'] if options.drawOverredeAttributes['ioMesh'] != ' ' else options.drawOverredeAttributes['mesh']
             mesh = pm.ls(mesh, type='mesh')
             edges = [mesh[0].e[i] for i in indices]
-            _addMembersIntoBevelSet(MWBevelSetName[0], edges)
-            pm.lockNode(MWBevelSet[0], lock=True)
+            if len(edges):
+                _addMembersIntoBevelSet(MWBevelSetName[0], edges)
+                pm.lockNode(MWBevelSet[0], lock=True)
+            else:
+                print(pm.lockNode(MWBevelSet[0], q=True, lock=True))
 
 
 
@@ -562,19 +564,32 @@ def createBevelSet(edges=None):
         with MayaUndoChuck('Create a MW bevel set.'):
             pm.select(cl=True)
             MWBevelSet = pm.sets(name='MWBevelSet#')
+            print(pm.lockNode(MWBevelSet, q=True, lock=True))
             MWBevelPartition = createPartition(MWBevelSet)
             MWBevelSetName = MWBevelSet.name()
             bevelTool.bevelSelectedEdges(*(edgeIndices, options.drawOverredeAttributes['mesh'], MWBevelSetName), **copy.copy(options.bevelOptions))
-
+            print(pm.lockNode(MWBevelSet, q=True, lock=True))
             # TODO: Maybe moving the following codes to bevelSelectedEdges function is better.
             if options.drawOverredeAttributes['ioMesh'] == ' ':
                 disconnectFromMWBevelSet(MWBevelSetName, options.drawOverredeAttributes['mesh'])
             else:
                 disconnectFromMWBevelSet(MWBevelSetName, options.drawOverredeAttributes['ioMesh'])
-
+            print(pm.lockNode(MWBevelSet, q=True, lock=True)) # The bevel set is locked here?
             displayIOMesh(meshTrans)
             _addMembersIntoBevelSet(MWBevelSetName, edges)
             pm.lockNode(MWBevelSet, lock=True)
+
+
+
+def force(oldMWBevelSetName, newMWBevelSetName=None, edges=None, *args):
+    mesh = options.drawOverredeAttributes['ioMesh'] if options.drawOverredeAttributes['ioMesh'] != ' ' else options.drawOverredeAttributes['mesh']
+    edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
+    members = [e.name() for e in bevelSetMembers(oldMWBevelSetName) if e.name().rpartition('.e')[0] == mesh]
+    edges = members + edges if edges is not None else members
+    newMWBevelSetName is None and createBevelSet(edges)
+    newMWBevelSetName is not None and addEdgesIntoBevelSet(newMWBevelSetName, edges)
+
+    len(bevelSetMembers(oldMWBevelSetName)) == 0 and deleteBevelSet(oldMWBevelSetName)
 
 
 
