@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Fri Mar 09 16:47:28 2018
+# Created: Mon Mar 12 17:26:29 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,9 +57,6 @@ class Ui_MWBevelToolMainWindow(object):
         self.bevelSetGroupBox.setObjectName("bevelSetGroupBox")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.bevelSetGroupBox)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.startButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
-        self.startButton.setObjectName("startButton")
-        self.verticalLayout.addWidget(self.startButton)
         self.createBevelSetButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
         self.createBevelSetButton.setObjectName("createBevelSetButton")
         self.verticalLayout.addWidget(self.createBevelSetButton)
@@ -97,6 +94,10 @@ class Ui_MWBevelToolMainWindow(object):
         self.chooseAction.setCheckable(True)
         self.chooseAction.setChecked(True)
         self.chooseAction.setObjectName("chooseAction")
+        self.displayOverrideAction = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.displayOverrideAction.setObjectName("displayOverrideAction")
+        self.editMenu.addAction(self.displayOverrideAction)
+        self.editMenu.addSeparator()
         self.editMenu.addAction(self.moveAction)
         self.editMenu.addAction(self.maintainAction)
         self.editMenu.addAction(self.chooseAction)
@@ -112,7 +113,6 @@ class Ui_MWBevelToolMainWindow(object):
         self.viewMenu.setTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "View", None, -1))
         self.controlPanelDock.setWindowTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Control Panel", None, -1))
         self.bevelSetLabel.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Bevel Set</span></p></body></html>", None, -1))
-        self.startButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Start", None, -1))
         self.createBevelSetButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "New", None, -1))
         self.addButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Add", None, -1))
         self.removeButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Remove", None, -1))
@@ -125,4 +125,5 @@ class Ui_MWBevelToolMainWindow(object):
         self.moveAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Move Edges into Target Bevel Set", None, -1))
         self.maintainAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Maintain Present Status", None, -1))
         self.chooseAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Let User Choose", None, -1))
+        self.displayOverrideAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Draw Override", None, -1))
 

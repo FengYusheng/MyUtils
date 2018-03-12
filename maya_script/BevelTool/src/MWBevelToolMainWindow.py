@@ -99,13 +99,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetActionGroup.addAction(self.maintainAction)
         self.bevelSetActionGroup.addAction(self.chooseAction)
 
-        self.startButton.clicked.connect(self.startBevel)
         self.createBevelSetButton.clicked.connect(self.createBevelSet)
         self.addButton.clicked.connect(self.addEdgesIntoBevelSet)
         self.removeButton.clicked.connect(self.removeEdgesFromBevelSet)
         self.deleteButton.clicked.connect(self.deleteBevelSet)
+        self.displayOverrideAction.triggered.connect(self.displayOverrideAttributes)
 
         self.updateBevelSetTreeView()
+        # TODO: Validate the Maya scene: 1. turn construction history on
 
 
     def _mousePressEventInBevelSetLable(self, event):
@@ -121,7 +122,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def _restore(self, operation=None):
         utils.restoreDrawOverrideAttributes(operation)
-        self.startButton.setEnabled(True)
         self.createBevelSetButton.setEnabled(False)
         self.addButton.setEnabled(False)
         self.removeButton.setEnabled(False)
@@ -129,7 +129,20 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def _activeSelectionListchangedCallback(self, clientData=None):
-        utils.isActiveSelectionListChanged() and self._restore('Restore because active selection list is changed.')
+        '''
+        When a user select a mesh:
+            1. Delete the construction history if the mesh has no intermediate.
+            2. Display the intermediate if the intermediate exists.
+            3. Restore the drawOverredeAttributes when another mesh is selected.
+        '''
+        if utils.isSelectionModeEdge() and utils.isActiveSelectionListChanged():
+            utils.activeBevel()
+            self.createBevelSetButton.setEnabled(True)
+            self.addButton.setEnabled(True)
+            self.removeButton.setEnabled(True)
+        # elif not utils.isActiveSelectionListChanged():
+        #     self._restore('{0} selection type is not edge now.'.format(options.drawOverredeAttributes['mesh']))
+
 
 
     def showEvent(self, event):
@@ -237,15 +250,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         return success
 
 
-    def startBevel(self):
-        if utils.activeBevel():
-            self.startButton.setEnabled(False)
-            self.createBevelSetButton.setEnabled(True)
-            self.addButton.setEnabled(True)
-            self.removeButton.setEnabled(True)
-            self.statusbar.showMessage('Start to Bevel "{0}"'.format(options.drawOverredeAttributes['mesh']))
-
-
     def createBevelSet(self):
         self._run(utils.createBevelSet) and self.updateBevelSetTreeView()
 
@@ -267,6 +271,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             MWBevelSetName = self.dataModelInBevelSetTreeView.itemFromIndex(index).text().strip()
             utils.deleteBevelSet(MWBevelSetName)
             self.updateBevelSetTreeView()
+
+
+    def displayOverrideAttributes(self):
+        print(options.drawOverredeAttributes)
 
 
 

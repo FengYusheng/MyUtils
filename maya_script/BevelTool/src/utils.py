@@ -277,9 +277,9 @@ def setSmoothingAngle(angle):
 
 
 def isActiveSelectionListChanged():
-    edges = pm.filterExpand(sm=32, ex=True)
-    mesh = getMeshObject(edges) if edges is not None else pm.ls(dag=True, os=True, type='mesh', ni=True) # original mesh
-    return len(mesh) > 0 and (options.drawOverredeAttributes['mesh'] != ' ' or options.drawOverredeAttributes['ioMesh'] != ' ') and mesh[0].name() not in (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
+    mesh = pm.ls(dag=True, hilite=True, type='mesh', ni=True)
+    mesh = pm.ls(dag=True, os=True, type='mesh', ni=True) if len(mesh) == 0 else mesh
+    return len(mesh) > 0 and mesh[0].name() != options.drawOverredeAttributes['mesh'] and mesh[0].name() != options.drawOverredeAttributes['ioMesh']
 
 
 
@@ -288,10 +288,8 @@ def isSelectionModeChanged():
 
 
 
-def finishBevel():
-    for bevelSet in MWBevelSets():
-        lockBevelSet(bevelSet.name(), False)
-        pm.delete(bevelSet)
+def isSelectionModeEdge():
+    return len(pm.ls(hilite=True)) > 0 and pm.selectType(q=True, edge=True)
 
 
 
@@ -306,7 +304,7 @@ def saveDrawOverrideAttributes(originMesh):
     options.drawOverredeAttributes['originMesh overrideEnabled'] = originMesh.overrideEnabled.get()
     options.drawOverredeAttributes['originMesh overrideDisplayType'] = originMesh.overrideDisplayType.get()
 
-    ioMesh = pm.ls(dag=True, os=True, io=True)
+    ioMesh = pm.ls(dag=True, hilite=True, io=True)
     if len(ioMesh):
         options.drawOverredeAttributes['ioMesh queue'] = [s.name() for s in ioMesh]
         options.drawOverredeAttributes['ioMesh'] = ioMesh[-1].name()
@@ -353,16 +351,18 @@ def displayIOMesh(meshTrans, operation=None):
             ioMesh[-1].overrideEnabled.set(True)
             ioMesh[-1].overrideDisplayType.set(0) # Normal.
             ioMesh[-1].overrideTexturing.set(False)
-            pm.select(ioMesh[-1], r=True)
+            pm.select(ioMesh[-1], r=True) # Select!! _activeSelectionListchangedCallback
             switchSelectionModeToEdge(ioMesh[-1])
         else:
             switchSelectionModeToEdge(meshTrans)
 
     restoreDrawOverrideAttributes()
+
     originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
-    pm.select(meshTrans, r=True) # I can't select the intermediate object if I select the origin mesh directly hear.
-    ioMesh = pm.ls(dag=True, os=True, io=True)
+    ioMesh = pm.ls(dag=True, hilite=True, io=True)
+    len(ioMesh) == 0 and pm.delete(meshTrans, ch=True)
     saveDrawOverrideAttributes(originMesh[0])
+
     if operation is not None:
         with MayaUndoChuck(operation):
             _displayIOMeshe(originMesh, ioMesh)
@@ -372,10 +372,9 @@ def displayIOMesh(meshTrans, operation=None):
 
 
 def activeBevel():
-    editingMeshTrans = ''
-    transforms = pm.ls(dag=True, os=True, transforms=True)
+    transforms = pm.ls(dag=True, hilite=True, transforms=True)
     hasSelection = len(transforms) > 0
-    hasSelection and displayIOMesh(transforms[-1], 'Start to MW bevel.')
+    hasSelection and displayIOMesh(transforms[-1], 'Start to bevel {0}.'.format(transforms[-1].name()))
     return hasSelection
 
 
@@ -564,17 +563,17 @@ def createBevelSet(edges=None):
         with MayaUndoChuck('Create a MW bevel set.'):
             pm.select(cl=True)
             MWBevelSet = pm.sets(name='MWBevelSet#')
-            print(pm.lockNode(MWBevelSet, q=True, lock=True))
             MWBevelPartition = createPartition(MWBevelSet)
             MWBevelSetName = MWBevelSet.name()
             bevelTool.bevelSelectedEdges(*(edgeIndices, options.drawOverredeAttributes['mesh'], MWBevelSetName), **copy.copy(options.bevelOptions))
-            print(pm.lockNode(MWBevelSet, q=True, lock=True))
-            # TODO: Maybe moving the following codes to bevelSelectedEdges function is better.
+
+            # The objectSet is locked automatically when it connects to nothing.
+            # You can add members into a locked objectSet.
             if options.drawOverredeAttributes['ioMesh'] == ' ':
                 disconnectFromMWBevelSet(MWBevelSetName, options.drawOverredeAttributes['mesh'])
             else:
                 disconnectFromMWBevelSet(MWBevelSetName, options.drawOverredeAttributes['ioMesh'])
-            print(pm.lockNode(MWBevelSet, q=True, lock=True)) # The bevel set is locked here?
+
             displayIOMesh(meshTrans)
             _addMembersIntoBevelSet(MWBevelSetName, edges)
             pm.lockNode(MWBevelSet, lock=True)

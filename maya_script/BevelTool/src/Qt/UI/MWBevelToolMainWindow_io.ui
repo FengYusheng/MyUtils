@@ -54,6 +54,8 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="displayOverrideAction"/>
+    <addaction name="separator"/>
     <addaction name="moveAction"/>
     <addaction name="maintainAction"/>
     <addaction name="chooseAction"/>
@@ -101,13 +103,6 @@
         <bool>true</bool>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QPushButton" name="startButton">
-          <property name="text">
-           <string>Start</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QPushButton" name="createBevelSetButton">
           <property name="text">
@@ -205,6 +200,11 @@
    </property>
    <property name="text">
     <string>Let User Choose</string>
+   </property>
+  </action>
+  <action name="displayOverrideAction">
+   <property name="text">
+    <string>Draw Override</string>
    </property>
   </action>
  </widget>

@@ -53,5 +53,7 @@ Ex: itemFilter and selectionListOperator nodes.
 
 7. Sets in pymel.
 
+8. Expression Editor
+
 ## Private work
 1. Reverse link list: reverse the bevel nodes of a mesh in Maya.

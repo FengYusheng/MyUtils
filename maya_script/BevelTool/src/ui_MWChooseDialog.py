@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWChooseDialog.ui'
 #
-# Created: Fri Mar 09 16:47:28 2018
+# Created: Mon Mar 12 17:26:29 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,6 +25,9 @@ class Ui_MWChooseDialog(object):
         self.remeberCheckBox.setObjectName("remeberCheckBox")
         self.horizontalLayout.addWidget(self.remeberCheckBox)
         self.yesButton = QtWidgets.QPushButton(MWChooseDialog)
+        self.yesButton.setAutoDefault(False)
+        self.yesButton.setDefault(True)
+        self.yesButton.setFlat(False)
         self.yesButton.setObjectName("yesButton")
         self.horizontalLayout.addWidget(self.yesButton)
         self.noButton = QtWidgets.QPushButton(MWChooseDialog)
