@@ -289,7 +289,7 @@ def isSelectionModeChanged():
 
 
 def isSelectionModeEdge():
-    return len(pm.ls(hilite=True)) > 0 and pm.selectType(q=True, edge=True)
+    return len(pm.ls(dag=True, hilite=True, type='mesh', ni=True)) > 0 and pm.selectType(q=True, edge=True)
 
 
 

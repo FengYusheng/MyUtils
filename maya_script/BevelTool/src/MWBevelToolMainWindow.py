@@ -135,13 +135,20 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             2. Display the intermediate if the intermediate exists.
             3. Restore the drawOverredeAttributes when another mesh is selected.
         '''
+        print('Mode: {0}'.format(utils.isSelectionModeEdge()))
+        print('List: {0}'.format(utils.isActiveSelectionListChanged()))
         if utils.isSelectionModeEdge() and utils.isActiveSelectionListChanged():
+            # Active seleciton list is changed and selection type is edge.
             utils.activeBevel()
             self.createBevelSetButton.setEnabled(True)
             self.addButton.setEnabled(True)
             self.removeButton.setEnabled(True)
-        # elif not utils.isActiveSelectionListChanged():
-        #     self._restore('{0} selection type is not edge now.'.format(options.drawOverredeAttributes['mesh']))
+        elif utils.isActiveSelectionListChanged():
+            # Don't switch the select type of the selected mesh. Select another mesh directly.
+            self._restore('{0} selection type is not edge now.'.format(options.drawOverredeAttributes['mesh']))
+        else:
+            # Don't select another mesh. Jush switch the select type.
+            pass
 
 
 
