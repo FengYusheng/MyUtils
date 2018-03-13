@@ -276,11 +276,10 @@ def setSmoothingAngle(angle):
 
 
 
-def isActiveSelectionListChanged():
+def isIndrawOverredeAttributes():
     mesh = pm.ls(dag=True, hilite=True, type='mesh', ni=True)
     mesh = pm.ls(dag=True, os=True, type='mesh', ni=True) if len(mesh) == 0 else mesh
-    return len(mesh) > 0 and mesh[0].name() != options.drawOverredeAttributes['mesh'] and mesh[0].name() != options.drawOverredeAttributes['ioMesh']
-
+    return len(mesh) > 0 and (mesh[0].name() == options.drawOverredeAttributes['mesh'] or mesh[0].name() == options.drawOverredeAttributes['ioMesh'])
 
 
 def isSelectionModeChanged():
@@ -288,7 +287,7 @@ def isSelectionModeChanged():
 
 
 
-def isSelectionModeEdge():
+def isSelectionTypeEdge():
     return len(pm.ls(dag=True, hilite=True, type='mesh', ni=True)) > 0 and pm.selectType(q=True, edge=True)
 
 
@@ -351,8 +350,13 @@ def displayIOMesh(meshTrans, operation=None):
             ioMesh[-1].overrideEnabled.set(True)
             ioMesh[-1].overrideDisplayType.set(0) # Normal.
             ioMesh[-1].overrideTexturing.set(False)
-            pm.select(ioMesh[-1], r=True) # Select!! _activeSelectionListchangedCallback
+
+            # pm.select will call the _activeSelectionListchangedCallback. In case the callback
+            # disturb this function, assign False to options.drawOverredeAttributes['restore'].
+            options.drawOverredeAttributes['restore'] = False
+            pm.select(ioMesh[-1], r=True)
             switchSelectionModeToEdge(ioMesh[-1])
+            options.drawOverredeAttributes['restore'] = True
         else:
             switchSelectionModeToEdge(meshTrans)
 
@@ -593,4 +597,4 @@ def force(oldMWBevelSetName, newMWBevelSetName=None, edges=None, *args):
 
 
 if __name__ == '__main__':
-    addEdgesIntoBevelSet('MWBevelSet1')
+    createBevelSet()

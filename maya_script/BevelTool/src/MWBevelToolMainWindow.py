@@ -125,30 +125,31 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.createBevelSetButton.setEnabled(False)
         self.addButton.setEnabled(False)
         self.removeButton.setEnabled(False)
-        self.statusbar.clearMessage()
+        # self.statusbar.clearMessage()
 
 
     def _activeSelectionListchangedCallback(self, clientData=None):
         '''
-        When a user select a mesh:
-            1. Delete the construction history if the mesh has no intermediate.
-            2. Display the intermediate if the intermediate exists.
-            3. Restore the drawOverredeAttributes when another mesh is selected.
+        In drawOverredeAttributes Dict   Selection Type is Edge                  Description                                         Operation
+               False                            True                      Select a new mesh and its selection type is edge.           Active.
+               False                            False                     Select a new mesh but its selection type isn't edge.        Restore.
+               True                             True                             -                                                Prepare to bevel mesh.
+               True                             False                     Switch the selection type of the mesh beveling.         Just disable buttons.
         '''
-        print('Mode: {0}'.format(utils.isSelectionModeEdge()))
-        print('List: {0}'.format(utils.isActiveSelectionListChanged()))
-        if utils.isSelectionModeEdge() and utils.isActiveSelectionListChanged():
-            # Active seleciton list is changed and selection type is edge.
+        if (not utils.isIndrawOverredeAttributes()) and utils.isSelectionTypeEdge():
             utils.activeBevel()
             self.createBevelSetButton.setEnabled(True)
             self.addButton.setEnabled(True)
             self.removeButton.setEnabled(True)
-        elif utils.isActiveSelectionListChanged():
-            # Don't switch the select type of the selected mesh. Select another mesh directly.
-            self._restore('{0} selection type is not edge now.'.format(options.drawOverredeAttributes['mesh']))
-        else:
-            # Don't select another mesh. Jush switch the select type.
-            pass
+            self.statusbar.showMessage('Prepare to bevel {0}'.format(options.drawOverredeAttributes['mesh']))
+        elif (not utils.isIndrawOverredeAttributes()) and (not utils.isSelectionTypeEdge()):
+            self.statusbar.showMessage('Restore {0} when you select another object'.format(options.drawOverredeAttributes['mesh']))
+            self._restore('Restore {0} when you select another object'.format(options.drawOverredeAttributes['mesh']))
+        elif utils.isIndrawOverredeAttributes() and utils.isSelectionTypeEdge():
+            self.statusbar.showMessage('Prepare to bevel {0}'.format(options.drawOverredeAttributes['mesh']))
+        elif utils.isIndrawOverredeAttributes() and (not utils.isSelectionTypeEdge()):
+            self.statusbar.showMessage("{0} isn't in edge selection type.".format(options.drawOverredeAttributes['mesh']))
+            options.drawOverredeAttributes['restore'] == True and self._restore("Restore {0} when it isn't in edge selection type.")
 
 
 
@@ -220,11 +221,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         if options.drawOverredeAttributes['mesh'] == ' ':
             self._restore()
             success = False
-        elif utils.isActiveSelectionListChanged():
-            self.statusbar.showMessage('Active selection list is changed.')
-            # self._restore('Active selection list is changed.')
-            success = False
-        elif utils.isSelectionModeChanged():
+        elif not utils.isSelectionTypeEdge():
             self.statusbar.showMessage('Selection mode is changed.')
             self._restore('Selecton mode is changed.')
             success = False
@@ -252,7 +249,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             success and utils.force(MWBevelSetName[0], args[0])
         else:
             func(*args)
-            self.statusbar.clearMessage()
 
         return success
 
