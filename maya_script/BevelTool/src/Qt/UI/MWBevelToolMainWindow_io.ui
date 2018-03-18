@@ -47,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>935</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="editMenu">
@@ -105,6 +105,9 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QPushButton" name="createBevelSetButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>New</string>
           </property>
@@ -112,6 +115,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="addButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Add</string>
           </property>
@@ -119,6 +125,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="removeButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Remove</string>
           </property>

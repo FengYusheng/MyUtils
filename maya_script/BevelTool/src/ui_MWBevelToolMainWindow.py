@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Mon Mar 12 17:26:29 2018
+# Created: Sat Mar 17 09:04:48 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,7 +30,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 23))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
@@ -58,12 +58,15 @@ class Ui_MWBevelToolMainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.bevelSetGroupBox)
         self.verticalLayout.setObjectName("verticalLayout")
         self.createBevelSetButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
+        self.createBevelSetButton.setEnabled(False)
         self.createBevelSetButton.setObjectName("createBevelSetButton")
         self.verticalLayout.addWidget(self.createBevelSetButton)
         self.addButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
+        self.addButton.setEnabled(False)
         self.addButton.setObjectName("addButton")
         self.verticalLayout.addWidget(self.addButton)
         self.removeButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
+        self.removeButton.setEnabled(False)
         self.removeButton.setObjectName("removeButton")
         self.verticalLayout.addWidget(self.removeButton)
         self.deleteButton = QtWidgets.QPushButton(self.bevelSetGroupBox)
