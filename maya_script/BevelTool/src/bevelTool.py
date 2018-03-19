@@ -1,11 +1,26 @@
 # -*- coding: utf-8 -*-
 import copy
+import functools
 
 import pymel.core as pm
 
 import utils
 reload(utils)
 import options
+
+
+
+def disableActiveSelectionListCallbackDecorator():
+    def decorate(func):
+        @functools.wraps(func)
+        def decorator(*args, **kwargs):
+            options.runActiveSelecitonListCallback = False
+            func(*args, **kwargs)
+            options.runActiveSelecitonListCallback = True
+
+        return decorator
+    return decorate
+
 
 
 
@@ -45,18 +60,17 @@ def getBevelOptionsFromBevelSet(MWBevelSetName):
 
 
 def setMWBevelOption(MWBevelSetName, bevelOption, value):
-    polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
-    if len(polyBevel3Node):
+    for MWBevelNode in (i for i in pm.ls(type='polyBevel3') if i.name().startswith(MWBevelSetName+'_Bevel_')):
         if 'Fraction' == bevelOption:
-            polyBevel3Node[0].fraction.set(value)
+            MWBevelNode.fraction.set(value)
         elif 'Segments' == bevelOption:
-            polyBevel3Node[0].segments.set(value)
+            MWBevelNode.segments.set(value)
         elif 'Mitering' == bevelOption:
-            polyBevel3Node[0].mitering.set(value)
+            MWBevelNode.mitering.set(value)
         elif 'Miter Along' == bevelOption:
-            polyBevel3Node[0].miterAlong.set(value)
+            MWBevelNode.miterAlong.set(value)
         elif 'Chamfer' == bevelOption:
-            polyBevel3Node[0].chamfer.set(value)
+            MWBevelNode.chamfer.set(value)
 
 
 
@@ -118,7 +132,7 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
         utils.lockBevelSet(bevelSet, True)
 
 
-
+@disableActiveSelectionListCallbackDecorator()
 def bevelSelectedEdges(*args, **kwargs):
     edgeIndices, mesh, MWBevelSetName = args
     edgeIndices = list(set(edgeIndices))
@@ -128,6 +142,7 @@ def bevelSelectedEdges(*args, **kwargs):
     mesh = pm.ls(mesh,type='mesh')
     edges = list([mesh[0].e[i] for i in edgeIndices])
     len(MWBevelNode) > 0 and pm.delete(MWBevelNode)
+
     pm.select(cl=True) # Clear the active selection list in case both intermediate and origin mesh are selected.
 
     if len(edges):
@@ -153,8 +168,3 @@ def bevelSelectedEdges(*args, **kwargs):
         )
 
         MWBevelNode[0].rename(MWBevelName)
-
-
-
-if __name__ == '__main__':
-    getBevelOptionsFromBevelSet('MWBevelSet1')
