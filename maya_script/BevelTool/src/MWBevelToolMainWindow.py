@@ -73,6 +73,150 @@ class MWChooseDialog(QDialog, ui_MWChooseDialog.Ui_MWChooseDialog):
 
 
 
+class ControlDelegate(QStyledItemDelegate):
+    def __init__(self, parent):
+        super(ControlDelegate, self).__init__(parent)
+        self.parent = parent
+        self.col = 0
+        self.row = 0
+        self.model = None
+        self.editor = None
+        self.isLeftButton = False
+        self.initialPos = None
+        self.editorValue = None
+        self.MWBevelSetName = None
+
+
+    def _mousePressEventInDelegate(self event):
+        self.initialPos = (event.x(), event.y())
+        self.isLeftButton = True is event.button() & Qt.LeftButton else False
+        super(type(self.editor), self.editor).mousePressEvent(event)
+
+
+    def _mouseMoveEventInDelegate(self, event):
+        if self.isLeftButton:
+            posDelta = event.x() - self.initialPos[0]
+
+            if options.TREEVIEWHEADERS['Fraction'] == self.col:
+                valuePerPixel = 0.001
+                valueStep = 2
+                newValue = posDelta * valuePerPixel * valueStep + self.editorValue
+                if newValue > 1.0:
+                    newValue = 1.0
+                elif newValue < 0.0:
+                    newValue = 0.0
+
+                bevelTool.setMWBevelOption(self.MWBevelSetName, 'Fraction', newValue)
+                self.editor.setText(str(newValue))
+
+            elif options.TREEVIEWHEADERS['Segments'] == self.col:
+                valuePerPixel = 0.05
+                newValue = int(posDelta * valuePerPixel + self.editorValue)
+                if newValue > 12:
+                    newValue = 12
+                elif newValue < 1:
+                    newValue = 1
+
+                bevelTool.setMWBevelOption(self.MWBevelSetName, 'Segments', newValue)
+                self.editor.setText(str(newValue))
+
+        super(type(self.editor), self.editor).mouseMoveEvent(event)
+
+
+    def _mouseReleaseEventInDelegate(self, event):
+        self.isLeftButton = False
+        super(type(self.editor), self.editor).mouseReleaseEvent(event)
+
+
+    def _setMitering(self):
+        value = self.editor.currentIndex()
+        
+
+
+    def createEditor(self, parent, option, index):
+        col = index.column()
+        row = index.row()
+        editor = None
+
+        if options.TREEVIEWHEADERS['Fraction'] == col \
+            or options.TREEVIEWHEADERS['Segments'] == col:
+
+            editor = QLineEdit(parent)
+
+        elif options.TREEVIEWHEADERS['Mitering'] == col:
+            editor = QComboBox(parent)
+            editor.addItems(options.MITERING)
+
+        elif options.TREEVIEWHEADERS['Miter Along'] == col:
+            editor = QComboBox(parent)
+            editor.addItems(options.MITERALONG)
+
+        elif options.TREEVIEWHEADERS['Chamfer'] == col:
+            editor = QComboBox(parent)
+            editor.addItems(options.CHAMFER)
+
+        return editor
+
+
+    def setEditorData(self, editor, index):
+        col = index.column()
+        if options.TREEVIEWHEADERS['Fraction'] == col:
+            data = index.model().data(index, Qt.EditRole)
+            editor.setText(data)
+
+        elif options.TREEVIEWHEADERS['Segments'] == col:
+            data = index.model().data(index, Qt.EditRole)
+            editor.setText(data)
+
+        elif options.TREEVIEWHEADERS['Mitering'] == col:
+            pass
+
+        elif options.TREEVIEWHEADERS['Miter Along'] == col:
+            pass
+
+        elif options.TREEVIEWHEADERS['Chamfer'] == col:
+            pass
+
+
+    def setModelData(self, editor, model, index):
+        col = index.column()
+        if options.TREEVIEWHEADERS['Fraction'] == col:
+            value = round(float(editor.text()), 3)
+
+            if value > 1.0:
+                value = 1.0
+            elif value < 0.0:
+                value = 0.0
+
+        elif options.TREEVIEWHEADERS['Segments'] == col:
+            value = int(editor.text())
+
+            if value > 12:
+                value = 12
+            elif value < 1:
+                value = 1
+
+        elif options.TREEVIEWHEADERS['Mitering'] == col:
+            value = editor.currentIndex()
+            value = options.MITERING[value]
+
+        elif options.TREEVIEWHEADERS['Miter Along'] == col:
+            value = editor.currentIndex()
+            value = options.MITERALONG[value]
+
+        elif options.TREEVIEWHEADERS['Chamfer'] == col:
+            value = editor.currentIndex()
+            value = options.CHAMFER[value]
+
+        model.setData(index, str(value), Qt.EditRole)
+
+
+    def updateEditorGeometry(self, editor, option, index):
+        option.rect.setHeight(option.rect.height()*1.4)
+        editor.setGeometry(option.rect)
+
+
+
 class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelToolMainWindow):
     def __init__(self, parent=None):
         super(MWBevelToolMainWindow, self).__init__(parent)
@@ -91,9 +235,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
         self.bevelSetTreeView.setSelectionMode(QAbstractItemView.SingleSelection)
         self.bevelSetTreeView.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.createBevelSetButton.setEnabled(False)
-        self.addButton.setEnabled(False)
-        self.removeButton.setEnabled(False)
+        self.controlDelegate = ControlDelegate(self)
+        self.bevelSetTreeView.setItemDelegate(self.controlDelegate)
         self.bevelSetActionGroup = QActionGroup(self)
         self.bevelSetActionGroup.addAction(self.moveAction)
         self.bevelSetActionGroup.addAction(self.maintainAction)
@@ -129,6 +272,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def _activeSelectionListchangedCallback(self, clientData=None):
+<<<<<<< HEAD
         '''
         In drawOverredeAttributes Dict   Selection Type is Edge                  Description                                         Operation
                False                            True                      Select a new mesh and its selection type is edge.           Active.
@@ -151,6 +295,47 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.statusbar.showMessage("{0} isn't in edge selection type.".format(options.drawOverredeAttributes['mesh']))
             options.drawOverredeAttributes['restore'] == True and self._restore("Restore {0} when it isn't in edge selection type.")
 
+=======
+        """
+        The Mesh is in drawOverredeAttributes dict.       Selection Type is edge.                  Description.                            Operation
+             False                                             True                  Select a new mesh, its seleciton type is edge.          Active.
+
+             False                                             False                 Select a new mesh, but its selection type isn't         Restore.
+                                                                                     edge.
+
+             True                                              True                  The artist can bevel this mesh now.                     Bevel.
+
+             True                                              False                 The artis switches the selection type of the            Restore.
+                                                                                     mesh beveling directly.
+        """
+        def _runCallback():
+            if (not utils.isInDrawOverrideAttributesDict()) and utils.isSelectionTypeEdge():
+                utils.activeBevel()
+                self.createBevelSetButton.setEnabled(True)
+                self.addButton.setEnabled(True)
+                self.removeButton.setEnabled(True)
+                self.statusbar.showMessage('Edit "{0}"'.format(options.drawOverredeAttributes['mesh']))
+
+            elif (not utils.isInDrawOverrideAttributesDict()) and (not utils.isSelectionTypeEdge()):
+                utils.restoreDrawOverrideAttributes('Select a new mesh')
+                self.createBevelSetButton.setEnabled(False)
+                self.addButton.setEnabled(False)
+                self.removeButton.setEnabled(False)
+                self.statusbar.clearMessage()
+
+            elif utils.isInDrawOverrideAttributesDict() and utils.isSelectionTypeEdge():
+                self.statusbar.showMessage('Edit "{0}"'.format(options.drawOverredeAttributes['mesh']))
+
+            elif utils.isInDrawOverrideAttributesDict() and (not utils.isSelectionTypeEdge()):
+                utils.restoreDrawOverrideAttributes("Selection type isn't edge.")
+                self.createBevelSetButton.setEnabled(False)
+                self.addButton.setEnabled(False)
+                self.removeButton.setEnabled(False)
+                self.statusbar.clearMessage()
+
+        options.runActiveSelecitonListCallback and _runCallback()
+        options.runActiveSelecitonListCallback = True
+>>>>>>> 9b609a59bd8a63740b2229933c162657989c1b3a
 
 
     def showEvent(self, event):
@@ -219,11 +404,16 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         mesh = options.drawOverredeAttributes['mesh']
         num, MWBevelSetName = utils.numBevelSet()
         if options.drawOverredeAttributes['mesh'] == ' ':
-            self._restore()
             success = False
+<<<<<<< HEAD
         elif not utils.isSelectionTypeEdge():
             self.statusbar.showMessage('Selection mode is changed.')
             self._restore('Selecton mode is changed.')
+=======
+        elif not utils.isInDrawOverrideAttributesDict():
+            success = False
+        elif not utils.isSelectionTypeEdge():
+>>>>>>> 9b609a59bd8a63740b2229933c162657989c1b3a
             success = False
         elif func.__name__ == 'createBevelSet' and num > 0:
             self.statusbar.showMessage('{0} is already in {1}'.format(mesh, MWBevelSetName[0]))

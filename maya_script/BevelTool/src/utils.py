@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
 import copy
+import functools
 
 import pymel.core as pm
 import maya.api.OpenMaya as om # Python api 2.0
@@ -276,10 +277,18 @@ def setSmoothingAngle(angle):
 
 
 
+<<<<<<< HEAD
 def isIndrawOverredeAttributes():
     mesh = pm.ls(dag=True, hilite=True, type='mesh', ni=True)
     mesh = pm.ls(dag=True, os=True, type='mesh', ni=True) if len(mesh) == 0 else mesh
     return len(mesh) > 0 and (mesh[0].name() == options.drawOverredeAttributes['mesh'] or mesh[0].name() == options.drawOverredeAttributes['ioMesh'])
+=======
+def isInDrawOverrideAttributesDict():
+    mesh = pm.ls(dag=True, hilite=True, type='mesh', ni=True)
+    mesh = pm.ls(dag=True, os=True, type='mesh', ni=True) if len(mesh) == 0 else mesh
+    return len(mesh) > 0 and mesh[0].name() in (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
+
+>>>>>>> 9b609a59bd8a63740b2229933c162657989c1b3a
 
 
 def isSelectionModeChanged():
@@ -295,6 +304,18 @@ def isSelectionTypeEdge():
 def lockBevelSet(bevelSetName, isLocked=True):
     bevelSet = pm.ls(bevelSetName, type='objectSet')
     len(bevelSet) and pm.lockNode(bevelSet, lock=isLocked)
+
+
+
+def runActiveSelectionListCallbackDecorator(flag=True):
+    def decorate(func):
+        @functools.wraps(func)
+        def decorator(*args, **kwargs):
+            options.runActiveSelecitonListCallback = flag
+            func(*args, **kwargs)
+
+        return decorator
+    return decorate
 
 
 
@@ -314,7 +335,7 @@ def saveDrawOverrideAttributes(originMesh):
 
 
 def restoreDrawOverrideAttributes(operation=None):
-    def _restore(ioMesh, mesh):
+    def _restore():
         if len(ioMesh):
             ioMesh[0].overrideTexturing.set(options.drawOverredeAttributes['ioMesh overrideTexturing'])
             ioMesh[0].overrideDisplayType.set(options.drawOverredeAttributes['ioMesh overrideDisplayType'])
@@ -329,31 +350,45 @@ def restoreDrawOverrideAttributes(operation=None):
     mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
 
     if operation is None:
-        _restore(ioMesh, mesh)
+        _restore()
     else:
         with MayaUndoChuck(operation):
-            _restore(ioMesh, mesh)
+            _restore()
 
     options.drawOverredeAttributes.clear()
 
 
 
+@runActiveSelectionListCallbackDecorator(False)
 def displayIOMesh(meshTrans, operation=None):
-    def _displayIOMeshe(originMesh, ioMesh):
+    def _displayIOMesh():
         if len(ioMesh):
             originMesh[0].overrideEnabled.get() or originMesh[0].overrideEnabled.set(True)
-            originMesh[0].overrideDisplayType.set(2) # Reference.
-            pm.displaySmoothness(divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3) # displaySmoothness isn't undoable.
+
+            # Reference.
+            originMesh[0].overrideDisplayType.set(2)
+
+            # displaySmoothness isn't undoable.
+            pm.displaySmoothness(divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3)
 
             # Edit the latest intermediate object attributes.
             ioMesh[-1].intermediateObject.set(False)
             ioMesh[-1].overrideEnabled.set(True)
-            ioMesh[-1].overrideDisplayType.set(0) # Normal.
+
+            # Normal.
+            ioMesh[-1].overrideDisplayType.set(0)
+
             ioMesh[-1].overrideTexturing.set(False)
+<<<<<<< HEAD
 
             # pm.select will call the _activeSelectionListchangedCallback. In case the callback
             # disturb this function, assign False to options.drawOverredeAttributes['restore'].
             options.drawOverredeAttributes['restore'] = False
+=======
+            ioMesh[-1].allowTopologyMod.set(False)
+
+            # Select!! _activeSelectionListchangedCallback
+>>>>>>> 9b609a59bd8a63740b2229933c162657989c1b3a
             pm.select(ioMesh[-1], r=True)
             switchSelectionModeToEdge(ioMesh[-1])
             options.drawOverredeAttributes['restore'] = True
@@ -369,9 +404,9 @@ def displayIOMesh(meshTrans, operation=None):
 
     if operation is not None:
         with MayaUndoChuck(operation):
-            _displayIOMeshe(originMesh, ioMesh)
+            _displayIOMesh()
     else:
-        _displayIOMeshe(originMesh, ioMesh)
+        _displayIOMesh()
 
 
 
@@ -528,11 +563,8 @@ def removeEdgesFromBevelSet(edges=None):
             mesh = options.drawOverredeAttributes['ioMesh'] if options.drawOverredeAttributes['ioMesh'] != ' ' else options.drawOverredeAttributes['mesh']
             mesh = pm.ls(mesh, type='mesh')
             edges = [mesh[0].e[i] for i in indices]
-            if len(edges):
-                _addMembersIntoBevelSet(MWBevelSetName[0], edges)
-                pm.lockNode(MWBevelSet[0], lock=True)
-            else:
-                print(pm.lockNode(MWBevelSet[0], q=True, lock=True))
+            _addMembersIntoBevelSet(MWBevelSetName[0], edges)
+            pm.lockNode(MWBevelSet[0], lock=True)
 
 
 
@@ -548,6 +580,7 @@ def deleteBevelSet(MWBevelSetName):
 
 
 
+@runActiveSelectionListCallbackDecorator(False)
 def createBevelSet(edges=None):
     '''
     :Reference:
@@ -570,8 +603,9 @@ def createBevelSet(edges=None):
             MWBevelPartition = createPartition(MWBevelSet)
             MWBevelSetName = MWBevelSet.name()
             bevelTool.bevelSelectedEdges(*(edgeIndices, options.drawOverredeAttributes['mesh'], MWBevelSetName), **copy.copy(options.bevelOptions))
+            pm.createNode('polyBevel3', name=MWBevelSetName+'_Bevel_Node', shared=True, skipSelect=True)
 
-            # The objectSet is locked automatically when it connects to nothing.
+            # The objectSet is locked automatically when it has no connection.
             # You can add members into a locked objectSet.
             if options.drawOverredeAttributes['ioMesh'] == ' ':
                 disconnectFromMWBevelSet(MWBevelSetName, options.drawOverredeAttributes['mesh'])
@@ -592,9 +626,23 @@ def force(oldMWBevelSetName, newMWBevelSetName=None, edges=None, *args):
     newMWBevelSetName is None and createBevelSet(edges)
     newMWBevelSetName is not None and addEdgesIntoBevelSet(newMWBevelSetName, edges)
 
-    len(bevelSetMembers(oldMWBevelSetName)) == 0 and deleteBevelSet(oldMWBevelSetName)
+    # len(bevelSetMembers(oldMWBevelSetName)) == 0 and deleteBevelSet(oldMWBevelSetName)
 
+
+@runActiveSelectionListCallbackDecorator(flag=False)
+def test():
+    print(options.runActiveSelecitonListCallback)
+
+
+
+def createBevelNode():
+    a = pm.createNode('polyBevel3', n='test_Bevel')
+    print(a)
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     createBevelSet()
+=======
+    createBevelNode()
+>>>>>>> 9b609a59bd8a63740b2229933c162657989c1b3a

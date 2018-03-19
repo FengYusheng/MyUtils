@@ -85,3 +85,5 @@ TREEVIEWHEADERS = OrderedDict(
 
 
 drawOverredeAttributes = defaultdict(lambda: ' ')
+
+runActiveSelecitonListCallback = True
