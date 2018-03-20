@@ -100,7 +100,7 @@ class ControlDelegate(QStyledItemDelegate):
             if options.TREEVIEWHEADERS['Fraction'] == self.col:
                 valuePerPixel = 0.001
                 valueStep = 2
-                newValue = posDelta * valuePerPixel * valueStep + self.editorValue
+                newValue = posDelta * valuePerPixel * valueStep + self.oldValue
                 if newValue > 1.0:
                     newValue = 1.0
                 elif newValue < 0.0:
@@ -111,7 +111,7 @@ class ControlDelegate(QStyledItemDelegate):
 
             elif options.TREEVIEWHEADERS['Segments'] == self.col:
                 valuePerPixel = 0.05
-                newValue = int(posDelta * valuePerPixel + self.editorValue)
+                newValue = int(posDelta * valuePerPixel + self.oldValue)
                 if newValue > 12:
                     newValue = 12
                 elif newValue < 1:

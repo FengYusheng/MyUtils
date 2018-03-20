@@ -290,7 +290,7 @@ def isSelectionModeChanged():
 
 
 def isSelectionTypeEdge():
-    return len(pm.ls(dag=True, hilite=True, type='mesh', ni=True)) > 0 and pm.selectType(q=True, edge=True)
+    return len(pm.ls(dag=True, hilite=True, type='mesh')) > 0 and pm.selectType(q=True, edge=True)
 
 
 
@@ -325,6 +325,7 @@ def saveDrawOverrideAttributes(originMesh):
         options.drawOverredeAttributes['ioMesh overrideEnabled'] = ioMesh[-1].overrideEnabled.get()
         options.drawOverredeAttributes['ioMesh overrideDisplayType'] = ioMesh[-1].overrideDisplayType.get()
         options.drawOverredeAttributes['ioMesh overrideTexturing'] = ioMesh[-1].overrideTexturing.get()
+        options.drawOverredeAttributes['ioMesh allowTopologyMod'] = ioMesh[-1].allowTopologyMod.get()
 
 
 
@@ -334,6 +335,7 @@ def restoreDrawOverrideAttributes(operation=None):
             ioMesh[0].overrideTexturing.set(options.drawOverredeAttributes['ioMesh overrideTexturing'])
             ioMesh[0].overrideDisplayType.set(options.drawOverredeAttributes['ioMesh overrideDisplayType'])
             ioMesh[0].overrideEnabled.set(options.drawOverredeAttributes['ioMesh overrideEnabled'])
+            ioMesh[0].allowTopologyMod.set(options.drawOverredeAttributes['ioMesh allowTopologyMod'])
             ioMesh[0].intermediateObject.set(True)
 
         if len(mesh):
@@ -348,8 +350,7 @@ def restoreDrawOverrideAttributes(operation=None):
     else:
         with MayaUndoChuck(operation):
             _restore()
-    print(ioMesh)
-    len(ioMesh) > 0 and pm.select(mesh[0], r=True)
+
     options.drawOverredeAttributes.clear()
 
 
@@ -380,6 +381,7 @@ def displayIOMesh(meshTrans, operation=None):
         else:
             switchSelectionModeToEdge(meshTrans)
 
+    # pm.hilite(meshTrans, u=True)
     restoreDrawOverrideAttributes()
 
     originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
@@ -592,7 +594,7 @@ def createBevelSet(edges=None):
             pm.createNode('polyBevel3', name=MWBevelSetName+'_Bevel_Node', shared=True, skipSelect=True)
 
             # The objectSet is locked automatically when it has no connection.
-            # You can add members into a locked objectSet.
+            # You can still add members into it.
             if options.drawOverredeAttributes['ioMesh'] == ' ':
                 disconnectFromMWBevelSet(MWBevelSetName, options.drawOverredeAttributes['mesh'])
             else:
