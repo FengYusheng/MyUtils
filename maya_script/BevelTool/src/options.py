@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from collections import (defaultdict, OrderedDict)
+from collections import (defaultdict, OrderedDict, deque)
 
 """
 polyBevel3 -fraction 0.5 -offsetAsFraction 1 -autoFit 1 -depth 1 -mitering 0
@@ -86,4 +86,4 @@ TREEVIEWHEADERS = OrderedDict(
 
 drawOverredeAttributes = defaultdict(lambda: ' ')
 
-runActiveSelecitonListCallback = True
+disableSelectionCallback = deque()

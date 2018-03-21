@@ -269,8 +269,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.bevelSetLabel.mousePressEvent = self._mousePressEventInBevelSetLable
-        self.viewMenu.addAction(self.controlPanelDock.toggleViewAction())
+        self.viewMenu.addAction(self.bevelSetDock.toggleViewAction())
+        self.viewMenu.addAction(self.selectionConstraintDock.toggleViewAction())
         self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
         self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
         self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
@@ -284,6 +284,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetActionGroup.addAction(self.moveAction)
         self.bevelSetActionGroup.addAction(self.maintainAction)
         self.bevelSetActionGroup.addAction(self.chooseAction)
+        self.bevelSetLabel.setVisible(False)
+        self.selectionLabel.setVisible(False)
 
         self.createBevelSetButton.clicked.connect(self.createBevelSet)
         self.addButton.clicked.connect(self.addEdgesIntoBevelSet)
@@ -293,12 +295,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         self.updateBevelSetTreeView()
         # TODO: Validate the Maya scene: 1. turn construction history on
-
-
-    def _mousePressEventInBevelSetLable(self, event):
-        isVisible = not self.bevelSetGroupBox.isVisible()
-        self.bevelSetGroupBox.setVisible(isVisible)
-        QLabel.mousePressEvent(self.bevelSetLabel, event)
 
 
     def _mousePressEventInBevelSetTreeView(self, event):
@@ -344,7 +340,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.removeButton.setEnabled(False)
                 self.statusbar.clearMessage()
 
-        options.runActiveSelecitonListCallback and _runCallback()
+        len(options.disableSelectionCallback) == 0 and _runCallback()
 
 
     def showEvent(self, event):
@@ -402,12 +398,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def _run(self, func, *args):
-        '''
-        1. drawOverredeAttributes is empty.
-        2. Active selection list is changed.
-        3. Selection mode is changed.
-        4. The mesh has been in another bevel set.
-        '''
         success = True
         force = QDialog.Rejected
         mesh = options.drawOverredeAttributes['mesh']
@@ -478,8 +468,17 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.updateBevelSetTreeView()
 
 
+    def selectHardEdges(self):
+        print('Select hard edges.')
+
+
+    def selectSoftEdges(self):
+        print('Select soft edges.')
+
+
     def displayOverrideAttributes(self):
         print(options.drawOverredeAttributes)
+        print('Disable callback: {0}'.format(options.disableSelectionCallback))
 
 
 

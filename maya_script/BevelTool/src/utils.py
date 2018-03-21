@@ -304,9 +304,9 @@ def disableActiveSelectionListCallbackDecorator():
     def decorate(func):
         @functools.wraps(func)
         def decorator(*args, **kwargs):
-            options.runActiveSelecitonListCallback = False
+            options.disableSelectionCallback.append(func.__name__)
             func(*args, **kwargs)
-            options.runActiveSelecitonListCallback = True
+            options.disableSelectionCallback.pop()
 
         return decorator
     return decorate
@@ -329,6 +329,7 @@ def saveDrawOverrideAttributes(originMesh):
 
 
 
+@disableActiveSelectionListCallbackDecorator()
 def restoreDrawOverrideAttributes(operation=None):
     def _restore():
         if len(ioMesh):
@@ -381,12 +382,17 @@ def displayIOMesh(meshTrans, operation=None):
         else:
             switchSelectionModeToEdge(meshTrans)
 
-    # pm.hilite(meshTrans, u=True)
+    def _deleteHistory():
+        modifiers = [i for i in pm.listConnections(originMesh[0], type='polyModifier') if not isinstance(i, pm.nt.PolyBevel3)]
+        (len(modifiers) > 0 or len(pm.ls(dag=True, hilite=True, io=True)) == 0) and pm.delete(meshTrans, ch=True)
+
     restoreDrawOverrideAttributes()
 
     originMesh = pm.listRelatives(meshTrans, shapes=True, ni=True)
+
+    _deleteHistory()
+
     ioMesh = pm.ls(dag=True, hilite=True, io=True)
-    len(ioMesh) == 0 and pm.delete(meshTrans, ch=True)
     saveDrawOverrideAttributes(originMesh[0])
 
     if operation is not None:
