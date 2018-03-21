@@ -316,6 +316,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                                                                                      mesh beveling directly.
         """
         def _runCallback():
+            # TODO: self.statusbar.showMessage("IN {0}. EDGE {1}".format(utils.isInDrawOverrideAttributesDict(), utils.isSelectionTypeEdge()))
+            print("IN: {0}".format(utils.isInDrawOverrideAttributesDict()))
+            print("EDGE: {0}".format(utils.isSelectionTypeEdge()))
             if (not utils.isInDrawOverrideAttributesDict()) and utils.isSelectionTypeEdge():
                 utils.activeBevel()
                 self.createBevelSetButton.setEnabled(True)

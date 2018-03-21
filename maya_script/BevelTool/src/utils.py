@@ -342,6 +342,10 @@ def restoreDrawOverrideAttributes(operation=None):
         if len(mesh):
             mesh[0].overrideDisplayType.set(options.drawOverredeAttributes['originMesh overrideDisplayType'])
             mesh[0].overrideEnabled.set(options.drawOverredeAttributes['originMesh overrideEnabled'])
+            pm.select(cl=True)
+
+        # pm.selectType(alc=False)
+        # len(mesh) > 0 and pm.select(cl=True)
 
     ioMesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
     mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
