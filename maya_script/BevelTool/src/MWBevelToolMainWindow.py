@@ -317,8 +317,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         """
         def _runCallback():
             # TODO: self.statusbar.showMessage("IN {0}. EDGE {1}".format(utils.isInDrawOverrideAttributesDict(), utils.isSelectionTypeEdge()))
-            print("IN: {0}".format(utils.isInDrawOverrideAttributesDict()))
-            print("EDGE: {0}".format(utils.isSelectionTypeEdge()))
+            # print("IN: {0}".format(utils.isInDrawOverrideAttributesDict()))
+            # print("EDGE: {0}".format(utils.isSelectionTypeEdge()))
             if (not utils.isInDrawOverrideAttributesDict()) and utils.isSelectionTypeEdge():
                 utils.activeBevel()
                 self.createBevelSetButton.setEnabled(True)
@@ -346,8 +346,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         len(options.disableSelectionCallback) == 0 and _runCallback()
 
 
+    def _selectionTypeChangedCallback(self, clientData=None):
+        len(options.disableSelectionCallback) == 0 and  utils.isSelectionTypeVertexFace()
+
+
     def showEvent(self, event):
         cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MEventMessage.addEventCallback('SelectTypeChanged', self._selectionTypeChangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         super(MWBevelToolMainWindow, self).showEvent(event)
 

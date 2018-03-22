@@ -87,3 +87,5 @@ TREEVIEWHEADERS = OrderedDict(
 drawOverredeAttributes = defaultdict(lambda: ' ')
 
 disableSelectionCallback = deque()
+
+isVertexFace = deque()

@@ -81,6 +81,50 @@ class UnlockBevelSet(object):
 
 
 
+def isSelectionTypeVertexFace():
+    if pm.selectType(q=True, pvf=True):
+        options.isVertexFace.append(True)
+    elif len(options.isVertexFace) > 0:
+        opti.isVertexFace.pop()
+
+
+
+def switchSelectionTypeToVf(item):
+    pm.mel.eval('HideManipulators')
+    if pm.selectMode(q=True, object=True):
+        pm.selectType(ocm=True, alc=False)
+        pm.selectType(ocm=True, pvf=True)
+        pm.selectType(pvf=True)
+        pm.hilite(item)
+    else:
+        pm.selectType(alc=False)
+        pm.selectType(pvf=True)
+        pm.selectMode(q=True, preset=True) and pm.hilite(item)
+
+    try:
+        pm.mel.eval('exists dR_selTypeChanged') and pm.mel.eval('dR_selTypeChanged("edge")')
+    except pm.MelError:
+        pass
+
+
+
+def fixVertexFaceDecorator(func):
+    """
+    The display of intermdiate is defective if the selection type of selection type is vertex face.
+    """
+    @functools.wraps(func)
+    def _decorator(item):
+        func(item)
+
+        if options.isVertexFace:
+            switchSelectionTypeToVf(item)
+            func(item)
+
+    return _decorator
+
+
+
+@fixVertexFaceDecorator
 def switchSelectionModeToEdge(item):
     '''
     :Reference:
@@ -337,15 +381,18 @@ def restoreDrawOverrideAttributes(operation=None):
             ioMesh[0].overrideDisplayType.set(options.drawOverredeAttributes['ioMesh overrideDisplayType'])
             ioMesh[0].overrideEnabled.set(options.drawOverredeAttributes['ioMesh overrideEnabled'])
             ioMesh[0].allowTopologyMod.set(options.drawOverredeAttributes['ioMesh allowTopologyMod'])
+
+            # The selected components of the intermediate are still in active selection list
+            # when you turn the intermediate flag on. Clearing active selection list seems good.
             ioMesh[0].intermediateObject.set(True)
 
         if len(mesh):
             mesh[0].overrideDisplayType.set(options.drawOverredeAttributes['originMesh overrideDisplayType'])
             mesh[0].overrideEnabled.set(options.drawOverredeAttributes['originMesh overrideEnabled'])
-            pm.select(cl=True)
 
-        # pm.selectType(alc=False)
-        # len(mesh) > 0 and pm.select(cl=True)
+            # The selected components of the intermediate are still in active selection list
+            # when you turn the intermediate flag on. So clear active selection list here.
+            pm.select(cl=True)
 
     ioMesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
     mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
@@ -626,10 +673,6 @@ def force(oldMWBevelSetName, newMWBevelSetName=None, edges=None, *args):
 
 
 
-def createBevelNode():
-    a = pm.createNode('polyBevel3', n='test_Bevel')
-    print(a)
-
-
 if __name__ == '__main__':
-    createBevelNode()
+    for i in om.MEventMessage.getEventNames():
+        print(i)
