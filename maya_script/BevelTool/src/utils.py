@@ -82,10 +82,8 @@ class UnlockBevelSet(object):
 
 
 def isSelectionTypeVertexFace():
-    if pm.selectType(q=True, pvf=True):
-        options.isVertexFace.append(True)
-    elif len(options.isVertexFace) > 0:
-        opti.isVertexFace.pop()
+    if options.isVertexFace == False:
+        options.isVertexFace = pm.selectType(q=True, pvf=True)
 
 
 
@@ -108,23 +106,6 @@ def switchSelectionTypeToVf(item):
 
 
 
-def fixVertexFaceDecorator(func):
-    """
-    The display of intermdiate is defective if the selection type of selection type is vertex face.
-    """
-    @functools.wraps(func)
-    def _decorator(item):
-        func(item)
-
-        if options.isVertexFace:
-            switchSelectionTypeToVf(item)
-            func(item)
-
-    return _decorator
-
-
-
-@fixVertexFaceDecorator
 def switchSelectionModeToEdge(item):
     '''
     :Reference:
@@ -348,12 +329,43 @@ def disableActiveSelectionListCallbackDecorator():
     def decorate(func):
         @functools.wraps(func)
         def decorator(*args, **kwargs):
-            options.disableSelectionCallback.append(func.__name__)
+            options.disableCallback.append(func.__name__)
             func(*args, **kwargs)
-            options.disableSelectionCallback.pop()
+            # print(options.isVertexFace)
+            if options.isVertexFace \
+             and options.drawOverredeAttributes['ioMesh'] != ' ' \
+             and options.drawOverredeAttributes['ioMesh overrideEnabled']:
+
+             # The display of intermdiate is defective if the selection type of origin mesh is vertex face.
+             switchSelectionTypeToVf(options.drawOverredeAttributes['ioMesh'])
+             switchSelectionModeToEdge(options.drawOverredeAttributes['ioMesh'])
+             options.isVertexFace = False
+
+            options.disableCallback.pop()
 
         return decorator
     return decorate
+
+
+
+def fixVertexFaceDecorator(func):
+    """
+    The display of intermdiate is defective if the selection type of origin mesh is vertex face.
+    """
+    @functools.wraps(func)
+    def _decorator(*args, **kwargs):
+        options.disableEventCallback.append(func.__name__)
+
+        func(*args, **kwargs)
+
+        if options.isVertexFace and options.drawOverredeAttributes['ioMesh'] != ' ':
+            switchSelectionTypeToVf(options.drawOverredeAttributes['ioMesh'])
+            switchSelectionModeToEdge(options.drawOverredeAttributes['ioMesh'])
+            options.isVertexFace = False
+
+        options.disableEventCallback.pop()
+
+    return _decorator
 
 
 

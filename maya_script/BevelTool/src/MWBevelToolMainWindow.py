@@ -312,8 +312,11 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
              True                                              True                  The artist can bevel this mesh now.                     Bevel.
 
-             True                                              False                 The artis switches the selection type of the            Restore.
-                                                                                     mesh beveling directly.
+             True                                              False                 The artist switches the selection type of the            Restore.
+                                                                                     mesh beveling directly. Handling this case in
+                                                                                     _selectionTypeChangedCallback or
+                                                                                     _selectionModeChangedCallback seems better
+                                                                                     because active selection list isn't changed.
         """
         def _runCallback():
             # TODO: self.statusbar.showMessage("IN {0}. EDGE {1}".format(utils.isInDrawOverrideAttributesDict(), utils.isSelectionTypeEdge()))
@@ -343,17 +346,40 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.removeButton.setEnabled(False)
                 self.statusbar.clearMessage()
 
-        len(options.disableSelectionCallback) == 0 and _runCallback()
+        len(options.disableCallback) == 0 and _runCallback()
 
 
     def _selectionTypeChangedCallback(self, clientData=None):
-        len(options.disableSelectionCallback) == 0 and  utils.isSelectionTypeVertexFace()
+        def _runCallback():
+            utils.isSelectionTypeVertexFace()
+
+            if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
+                utils.restoreDrawOverrideAttributes("Selection type isn't edge.")
+                self.createBevelSetButton.setEnabled(False)
+                self.addButton.setEnabled(False)
+                self.removeButton.setEnabled(False)
+                self.statusbar.clearMessage()
+
+        print('_selectionTypeChangedCallback')
+        # len(options.disableCallback) == 0 and _runCallback()
+
+
+    def _selectionModeChangedCallback(self, clientData=None):
+        print('_selectionModeChangedCallback')
+
+
+    def _selectionChangedCallback(self, clientData=None):
+        print('_selectionChangedCallback')
 
 
     def showEvent(self, event):
         cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MEventMessage.addEventCallback('SelectTypeChanged', self._selectionTypeChangedCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MEventMessage.addEventCallback('SelectModeChanged', self._selectionModeChangedCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+        cb = om.MEventMessage.addEventCallback('SelectionChanged', self._selectionChangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         super(MWBevelToolMainWindow, self).showEvent(event)
 
@@ -487,7 +513,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def displayOverrideAttributes(self):
         print(options.drawOverredeAttributes)
-        print('Disable callback: {0}'.format(options.disableSelectionCallback))
+        print(options.isVertexFace)
+        print(options.disableCallback)
 
 
 
