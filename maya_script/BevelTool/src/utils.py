@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from collections import defaultdict
+from collections import Counter
 import copy
 import functools
 
@@ -82,8 +82,13 @@ class UnlockBevelSet(object):
 
 
 def isSelectionTypeVertexFace():
-    if options.isVertexFace == False:
-        options.isVertexFace = pm.selectType(q=True, pvf=True)
+    mesh = pm.ls(hilite=True, dag=True, ni=True, type='mesh')
+    ret = len(mesh) > 0 and pm.selectType(q=True, pvf=True)
+    if ret:
+        for m in mesh:
+            options.isVertexFace += Counter({m.name() : 1})
+
+    return ret
 
 
 
@@ -279,9 +284,9 @@ def selectSoftEdges():
 
 
 def setSmoothingAngle(angle):
-    meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
+    meshTrans = [i for i in pm.ls(dag=True, os=True, ni=True, transforms=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
     if not len(meshTrans):
-        edges = [e for e in pm.ls(sl=True, noIntermediate=True) if isinstance(e, pm.MeshEdge)]
+        edges = [e for e in pm.ls(os=True, no=True) if isinstance(e, pm.MeshEdge)]
         meshTrans = getMeshObject(edges) if len(edges) else []
 
     if len(meshTrans) == 1:
@@ -291,7 +296,7 @@ def setSmoothingAngle(angle):
 
         # TODO: Delete the polySoftEdge nodes?
         polySoftEdgeNodes = list(set([i for i in pm.listConnections(meshObject, type='polySoftEdge')]) - set(MWPolySoftEdgeNodes))
-        not len(polySoftEdgeNodes) or pm.delete(polySoftEdgeNodes)
+        len(polySoftEdgeNodes) == 0 or pm.delete(polySoftEdgeNodes)
 
         if len(MWPolySoftEdgeNodes):
             MWPolySoftEdgeNodes[0].setAngle(angle)
@@ -331,41 +336,9 @@ def disableActiveSelectionListCallbackDecorator():
         def decorator(*args, **kwargs):
             options.disableCallback.append(func.__name__)
             func(*args, **kwargs)
-            # print(options.isVertexFace)
-            if options.isVertexFace \
-             and options.drawOverredeAttributes['ioMesh'] != ' ' \
-             and options.drawOverredeAttributes['ioMesh overrideEnabled']:
-
-             # The display of intermdiate is defective if the selection type of origin mesh is vertex face.
-             switchSelectionTypeToVf(options.drawOverredeAttributes['ioMesh'])
-             switchSelectionModeToEdge(options.drawOverredeAttributes['ioMesh'])
-             options.isVertexFace = False
-
             options.disableCallback.pop()
-
         return decorator
     return decorate
-
-
-
-def fixVertexFaceDecorator(func):
-    """
-    The display of intermdiate is defective if the selection type of origin mesh is vertex face.
-    """
-    @functools.wraps(func)
-    def _decorator(*args, **kwargs):
-        options.disableEventCallback.append(func.__name__)
-
-        func(*args, **kwargs)
-
-        if options.isVertexFace and options.drawOverredeAttributes['ioMesh'] != ' ':
-            switchSelectionTypeToVf(options.drawOverredeAttributes['ioMesh'])
-            switchSelectionModeToEdge(options.drawOverredeAttributes['ioMesh'])
-            options.isVertexFace = False
-
-        options.disableEventCallback.pop()
-
-    return _decorator
 
 
 
@@ -442,6 +415,13 @@ def displayIOMesh(meshTrans, operation=None):
 
             pm.select(ioMesh[-1], r=True)
             switchSelectionModeToEdge(ioMesh[-1])
+
+            # The display of intermediate is defective if the selection type of origin mesh is vertex face
+            # _origin = options.drawOverredeAttributes['mesh']
+            # if options.isVertexFace[_origin] > 0:
+            #     switchSelectionTypeToVf(options.drawOverredeAttributes['ioMesh'])
+            #     switchSelectionModeToEdge(options.drawOverredeAttributes['ioMesh'])
+            #     del options.isVertexFace[_origin]
         else:
             switchSelectionModeToEdge(meshTrans)
 
@@ -686,5 +666,5 @@ def force(oldMWBevelSetName, newMWBevelSetName=None, edges=None, *args):
 
 
 if __name__ == '__main__':
-    for i in om.MEventMessage.getEventNames():
-        print(i)
+    switchSelectionTypeToVf('polySurfaceShape1')
+    switchSelectionModeToEdge('polySurfaceShape1')

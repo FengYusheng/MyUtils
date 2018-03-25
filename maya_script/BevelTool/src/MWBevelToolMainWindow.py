@@ -292,6 +292,11 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.removeButton.clicked.connect(self.removeEdgesFromBevelSet)
         self.deleteButton.clicked.connect(self.deleteBevelSet)
         self.displayOverrideAction.triggered.connect(self.displayOverrideAttributes)
+        self.smoothingAngleCheckBox.stateChanged.connect(self.toggleSmoothingAngle)
+        self.selectSoftEdgesButton.clicked.connect(self.selectSoftEdges)
+        self.selectHardEdgesButton.clicked.connect(self.selectHardEdges)
+        self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
+        self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
 
         self.updateBevelSetTreeView()
         # TODO: Validate the Maya scene: 1. turn construction history on
@@ -302,7 +307,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         super(QTreeView, self.bevelSetTreeView).mousePressEvent(event)
 
 
-    def _activeSelectionListchangedCallback(self, clientData=None):
+    def _selectionChangedCallback(self, clientData=None):
         """
         The Mesh is in drawOverredeAttributes dict.       Selection Type is edge.                  Description.                            Operation
              False                                             True                  Select a new mesh, its seleciton type is edge.          Active.
@@ -317,6 +322,17 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                                                                                      _selectionTypeChangedCallback or
                                                                                      _selectionModeChangedCallback seems better
                                                                                      because active selection list isn't changed.
+
+        Problem 1: In Maya 2017, model message activeSelectionListChanged isn't be triggered when you just switch the selection type. But in Maya 2018
+        this problem doesn't happen.
+
+        Problem 2: This callback isn't triggered if you just click right button to switch selection type rather than select the mesh first.
+
+        Solve problem 2 : select members.
+
+        Sovel problem 1 : replace MModelMessage callback as MEventMessage.
+
+        TODO: add log
         """
         def _runCallback():
             # TODO: self.statusbar.showMessage("IN {0}. EDGE {1}".format(utils.isInDrawOverrideAttributesDict(), utils.isSelectionTypeEdge()))
@@ -350,36 +366,17 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def _selectionTypeChangedCallback(self, clientData=None):
-        def _runCallback():
-            utils.isSelectionTypeVertexFace()
-
-            if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
-                utils.restoreDrawOverrideAttributes("Selection type isn't edge.")
-                self.createBevelSetButton.setEnabled(False)
-                self.addButton.setEnabled(False)
-                self.removeButton.setEnabled(False)
-                self.statusbar.clearMessage()
-
-        print('_selectionTypeChangedCallback')
-        # len(options.disableCallback) == 0 and _runCallback()
-
-
-    def _selectionModeChangedCallback(self, clientData=None):
-        print('_selectionModeChangedCallback')
-
-
-    def _selectionChangedCallback(self, clientData=None):
-        print('_selectionChangedCallback')
+        """
+        Problem 3: This callback isn't be triggered when you switch selection type from compenont to object.
+        But _selectionChangedCallback is triggered instead.
+        """
+        options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
 
 
     def showEvent(self, event):
-        cb = om.MModelMessage.addCallback(om.MModelMessage.kActiveListModified, self._activeSelectionListchangedCallback, None)
+        cb = om.MEventMessage.addEventCallback('SelectionChanged', self._selectionChangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         cb = om.MEventMessage.addEventCallback('SelectTypeChanged', self._selectionTypeChangedCallback, None)
-        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
-        cb = om.MEventMessage.addEventCallback('SelectModeChanged', self._selectionModeChangedCallback, None)
-        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
-        cb = om.MEventMessage.addEventCallback('SelectionChanged', self._selectionChangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
         super(MWBevelToolMainWindow, self).showEvent(event)
 
@@ -504,11 +501,33 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def selectHardEdges(self):
-        print('Select hard edges.')
+        angle = self.smoothingAngleSpinBox.value()
+        self.smoothingAngleCheckBox.isChecked() and utils.setSmoothingAngle(angle)
 
 
     def selectSoftEdges(self):
-        print('Select soft edges.')
+        angle = self.smoothingAngleSpinBox.value()
+        self.smoothingAngleCheckBox.isChecked() and utils.setSmoothingAngle(angle)
+
+
+    def toggleSmoothingAngle(self, state):
+        if Qt.Checked == state:
+            self.smoothingAngleSlider.setEnabled(True)
+            self.smoothingAngleSpinBox.setEnabled(True)
+        else:
+            self.smoothingAngleSlider.setEnabled(False)
+            self.smoothingAngleSpinBox.setEnabled(False)
+
+
+    def smoothingAngleFromSliderToSpinBox(self, value):
+        v = round((value/10000.0), 4)
+        self.smoothingAngleSpinBox.value() == v or self.smoothingAngleSpinBox.setValue(v)
+
+
+
+    def smoothingAngleFromSpinBoxToSlider(self, value):
+        v = value * 10000
+        self.smoothingAngleSlider.value() == v or self.smoothingAngleSlider.setValue(v)
 
 
     def displayOverrideAttributes(self):
