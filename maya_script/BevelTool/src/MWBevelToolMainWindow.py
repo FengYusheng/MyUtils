@@ -276,8 +276,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
         self.bevelSetTreeView.setSelectionModel(self.selectionModelInBevelSetTreeView)
         self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
-        self.bevelSetTreeView.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.bevelSetTreeView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.controlDelegate = ControlDelegate(self)
         self.bevelSetTreeView.setItemDelegate(self.controlDelegate)
         self.bevelSetActionGroup = QActionGroup(self)
@@ -330,7 +328,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         Solve problem 2 : select members.
 
-        Sovel problem 1 : replace MModelMessage callback as MEventMessage.
+        Sovel problem 1 : Check the status of options.drawOverredeAttributes and selection type after _runCallback.
 
         TODO: add log
         """
@@ -363,6 +361,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.statusbar.clearMessage()
 
         len(options.disableCallback) == 0 and _runCallback()
+        # print('selction changed')
 
 
     def _selectionTypeChangedCallback(self, clientData=None):
@@ -371,8 +370,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         But _selectionChangedCallback is triggered instead.
         """
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
-        if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
-            print('hh')
+        # if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
+        #     print('hh')
+        # print('type changed')
 
 
 

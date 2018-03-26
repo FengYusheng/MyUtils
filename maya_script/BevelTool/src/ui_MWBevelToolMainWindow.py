@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Wed Mar 21 15:22:34 2018
+# Created: Mon Mar 26 22:55:54 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,22 +15,25 @@ class Ui_MWBevelToolMainWindow(object):
         MWBevelToolMainWindow.resize(935, 817)
         self.centralwidget = QtWidgets.QWidget(MWBevelToolMainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
-        self.splitter = QtWidgets.QSplitter(self.centralwidget)
-        self.splitter.setOrientation(QtCore.Qt.Vertical)
-        self.splitter.setObjectName("splitter")
-        self.bevelSetTreeView = QtWidgets.QTreeView(self.splitter)
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.selectionTreeView = QtWidgets.QTreeView(self.centralwidget)
+        self.selectionTreeView.setMinimumSize(QtCore.QSize(0, 128))
+        self.selectionTreeView.setMaximumSize(QtCore.QSize(16777215, 128))
+        self.selectionTreeView.setObjectName("selectionTreeView")
+        self.verticalLayout_5.addWidget(self.selectionTreeView)
+        self.bevelSetTreeView = QtWidgets.QTreeView(self.centralwidget)
+        self.bevelSetTreeView.setMinimumSize(QtCore.QSize(0, 251))
         self.bevelSetTreeView.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.bevelSetTreeView.setTextElideMode(QtCore.Qt.ElideNone)
         self.bevelSetTreeView.setIndentation(0)
         self.bevelSetTreeView.setWordWrap(False)
         self.bevelSetTreeView.setObjectName("bevelSetTreeView")
         self.bevelSetTreeView.header().setMinimumSectionSize(50)
-        self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
+        self.verticalLayout_5.addWidget(self.bevelSetTreeView)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 23))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
