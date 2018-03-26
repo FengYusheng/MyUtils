@@ -111,26 +111,36 @@ def switchSelectionTypeToVf(item):
 
 
 
-def switchSelectionModeToEdge(item):
+def switchSelectionTypeToEdge(item):
     '''
     :Reference:
         doMenuComponentSelection in C:/Program Files/Autodesk/Maya2017/scripts/others/dagMenuProc.mel
     '''
-    pm.mel.eval('HideManipulators')
-    if pm.selectMode(q=True, object=True):
-        pm.selectType(ocm=True, alc=False)
-        pm.selectType(ocm=True, edge=True)
-        pm.selectType(edge=True)
-        pm.hilite(item)
-    else:
-        pm.selectType(alc=False)
-        pm.selectType(edge=True)
-        pm.selectMode(q=True, preset=True) and pm.hilite(item)
+    def _switchSelectionTypeToEdge():
+        pm.mel.eval('HideManipulators')
+        if pm.selectMode(q=True, object=True):
+            pm.selectType(ocm=True, alc=False)
+            pm.selectType(ocm=True, edge=True)
+            pm.selectType(edge=True)
+            pm.hilite(item)
+        else:
+            pm.selectType(alc=False)
+            pm.selectType(edge=True)
+            pm.selectMode(q=True, preset=True) and pm.hilite(item)
 
-    try:
-        pm.mel.eval('exists dR_selTypeChanged') and pm.mel.eval('dR_selTypeChanged("edge")')
-    except pm.MelError:
-        pass
+        try:
+            pm.mel.eval('exists dR_selTypeChanged') and pm.mel.eval('dR_selTypeChanged("edge")')
+        except pm.MelError:
+            pass
+
+    name = item.name() if not isinstance(item, str) else item
+    if pm.mel.eval('exists doMenuComponentSelection'):
+        try:
+            pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(name))
+        except pm.MelError:
+            pass
+    else:
+        _switchSelectionTypeToEdge(item)
 
 
 
@@ -144,19 +154,8 @@ def numBevelSet():
 
 
 
-def flattenEdges(edges):
-    return pm.ls(edges, flatten=True)
-
-
-
 def MWBevelSets():
-    # TODO: Delete empty bevel sets.
     return [i.name() for i in pm.ls(type='objectSet') if i.name().startswith('MWBevelSet')]
-
-
-
-def MWBevelSetExists(bevelSetName):
-    return len(pm.ls(bevelSetName, type='objectSet'))
 
 
 
@@ -198,11 +197,11 @@ def getMeshObject(edges=[]):
 
 
 
-def disconnectFromMWBevelSet(bevelSetName, meshTransform):
-    bevelSet = pm.ls(bevelSetName, type='objectSet')
+def disconnectFromMWBevelSet(MWBevelSetName, meshTransform):
+    bevelSet = pm.ls(MWBevelSetName, type='objectSet')
     meshTransformNode = pm.ls(meshTransform)
     if len(bevelSet) and len(meshTransformNode):
-        with UnlockBevelSet(bevelSetName):
+        with UnlockBevelSet(MWBevelSetName):
             meshNode = meshTransformNode[0].getShape() if isinstance(meshTransformNode[0], pm.nt.Transform) else meshTransformNode[0]
             meshAttr = None
             bevelSetAttr = bevelSet[0].name() + '.memberWireframeColor'
@@ -220,102 +219,10 @@ def disconnectFromMWBevelSet(bevelSetName, meshTransform):
 
 
 
-def deletePolyBevelNodeInBevelSet(bevelSetName):
-    # NOTE: Why does it delete the empty objectSet at the same time?
-    # If you find something wierd, clean up the maya folder YOUR DOCUMENT\maya\VERSION\.
-    polyBevel3Node = pm.ls('MWBevel_'+bevelSetName, type='polyBevel3')
-    len(polyBevel3Node) > 0 and pm.delete(polyBevel3Node)
-
-
-
-def selectMembersInBevelSet(bevelSetName):
-    # TODO: Undo select?
-    members = bevelSetMembers(bevelSetName)
-    if len(members):
-        meshNode = pm.ls(members[0].name().partition('.')[0], type='mesh')
-        pm.select(meshNode, r=True)
-        switchSelectionModeToEdge(meshNode[0])
-        pm.select(members, r=True)
-
-
-
-def selectHardEdges():
-    meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
-    if not len(meshTrans):
-        edges = [e for e in pm.ls(sl=True, noIntermediate=True) if isinstance(e, pm.MeshEdge)]
-        meshTrans = getMeshObject(edges) if len(edges) else []
-
-    if len(meshTrans):
-        # Switch selection mode to edge.
-        if pm.mel.eval('exists doMenuComponentSelection'):
-            try:
-                pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(meshTrans[0].name()))
-            except pm.MelError:
-                pass
-        else:
-            switchSelectionModeToEdge(meshTrans[0])
-
-        pm.select(meshTrans[0].e, r=True)
-        pm.polySelectConstraint(disable=True, m=2, t=0x8000, sm=1)
-        pm.polySelectConstraint(disable=True)
-
-
-
-def selectSoftEdges():
-    meshTrans = [i for i in pm.ls(dag=True, sl=True, noIntermediate=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
-    if not len(meshTrans):
-        edges = [e for e in pm.ls(sl=True, noIntermediate=True) if isinstance(e, pm.MeshEdge)]
-        meshTrans = getMeshObject(edges) if len(edges) else []
-
-    if len(meshTrans):
-        # Switch selection mode to edge.
-        if pm.mel.eval('exists doMenuComponentSelection'):
-            try:
-                pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(meshTrans[0].name()))
-            except pm.MelError:
-                pass
-        else:
-            switchSelectionModeToEdge(meshTrans[0])
-
-        pm.select(meshTrans[0].e, r=True)
-        pm.polySelectConstraint(disable=True, m=2, t=0x8000, sm=2)
-        pm.polySelectConstraint(disable=True)
-
-
-
-def setSmoothingAngle(angle):
-    meshTrans = [i for i in pm.ls(dag=True, os=True, ni=True, transforms=True) if hasattr(i, 'getShape') and isinstance(i.getShape(), pm.nt.Mesh)]
-    if not len(meshTrans):
-        edges = [e for e in pm.ls(os=True, no=True) if isinstance(e, pm.MeshEdge)]
-        meshTrans = getMeshObject(edges) if len(edges) else []
-
-    if len(meshTrans) == 1:
-        meshObject = meshTrans[0].getShape() if isinstance(meshTrans[0], pm.nt.Transform) else meshTrans[0]
-        polySoftEdgeName = 'MWPolySoftEdge_' + meshObject.name()
-        MWPolySoftEdgeNodes = [i for i in pm.listConnections(meshObject, type='polySoftEdge') if i.name().startswith('MWPolySoftEdge_')]
-
-        # TODO: Delete the polySoftEdge nodes?
-        polySoftEdgeNodes = list(set([i for i in pm.listConnections(meshObject, type='polySoftEdge')]) - set(MWPolySoftEdgeNodes))
-        len(polySoftEdgeNodes) == 0 or pm.delete(polySoftEdgeNodes)
-
-        if len(MWPolySoftEdgeNodes):
-            MWPolySoftEdgeNodes[0].setAngle(angle)
-        else:
-            pm.polySoftEdge(a=angle)[0].setName(polySoftEdgeName)
-    else:
-        pm.warning('Select one mesh transform object.')
-
-
-
 def isInDrawOverrideAttributesDict():
     mesh = pm.ls(dag=True, hilite=True, type='mesh', ni=True)
     mesh = pm.ls(dag=True, os=True, type='mesh', ni=True) if len(mesh) == 0 else mesh
     return len(mesh) > 0 and mesh[0].name() in (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
-
-
-
-def isSelectionModeChanged():
-    return not (len(pm.ls(hilite=True)) > 0 and pm.selectType(q=True, edge=True))
 
 
 
@@ -335,8 +242,9 @@ def disableActiveSelectionListCallbackDecorator():
         @functools.wraps(func)
         def decorator(*args, **kwargs):
             options.disableCallback.append(func.__name__)
-            func(*args, **kwargs)
+            ret = func(*args, **kwargs)
             options.disableCallback.pop()
+            return ret
         return decorator
     return decorate
 
@@ -414,16 +322,16 @@ def displayIOMesh(meshTrans, operation=None):
             ioMesh[-1].allowTopologyMod.set(False)
 
             pm.select(ioMesh[-1], r=True)
-            switchSelectionModeToEdge(ioMesh[-1])
+            switchSelectionTypeToEdge(ioMesh[-1])
 
             # The display of intermediate is defective if the selection type of origin mesh is vertex face
             # _origin = options.drawOverredeAttributes['mesh']
             # if options.isVertexFace[_origin] > 0:
             #     switchSelectionTypeToVf(options.drawOverredeAttributes['ioMesh'])
-            #     switchSelectionModeToEdge(options.drawOverredeAttributes['ioMesh'])
+            #     switchSelectionTypeToEdge(options.drawOverredeAttributes['ioMesh'])
             #     del options.isVertexFace[_origin]
         else:
-            switchSelectionModeToEdge(meshTrans)
+            switchSelectionTypeToEdge(meshTrans)
 
     def _deleteHistory():
         modifiers = [i for i in pm.listConnections(originMesh[0], type='polyModifier') if not isinstance(i, pm.nt.PolyBevel3)]
@@ -665,6 +573,94 @@ def force(oldMWBevelSetName, newMWBevelSetName=None, edges=None, *args):
 
 
 
+def selectMembersInBevelSet(bevelSetName):
+    # TODO: Undo select?
+    members = bevelSetMembers(bevelSetName)
+    if len(members):
+        meshNode = pm.ls(members[0].name().partition('.')[0], type='mesh')
+        pm.select(meshNode, r=True)
+        switchSelectionTypeToEdge(meshNode[0])
+        pm.select(members, r=True)
+
+
+
+@disableActiveSelectionListCallbackDecorator()
+def selectHardEdges():
+    mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
+    mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
+    if len(mesh) == 1:
+        switchSelectionTypeToEdge(mesh[0].getTransform())
+        activeBevel()
+
+        if options.drawOverredeAttributes['ioMesh'] != ' ':
+            mesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
+        else:
+            mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
+
+        pm.select(mesh[0].e, r=True)
+        pm.polySelectConstraint(disable=True, m=2, t=0x8000, sm=1)
+        pm.polySelectConstraint(disable=True)
+    else:
+        pm.warning('Select an object per time.')
+
+    return len(mesh)
+
+
+
+@disableActiveSelectionListCallbackDecorator()
+def selectSoftEdges():
+    mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
+    mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
+    if len(mesh) == 1:
+        switchSelectionTypeToEdge(mesh[0].getTransform())
+        activeBevel()
+
+        if options.drawOverredeAttributes['ioMesh'] != ' ':
+            mesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
+        else:
+            mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
+
+        pm.select(mesh[0].e, r=True)
+        pm.polySelectConstraint(disable=True, m=2, t=0x8000, sm=2)
+        pm.polySelectConstraint(disable=True)
+    else:
+        pm.warning('Select an object per time.')
+
+    return len(mesh)
+
+
+
+@disableActiveSelectionListCallbackDecorator()
+def setSmoothingAngle(angle):
+    if options.drawOverredeAttributes['mesh'] == ' ':
+        mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
+    else:
+        mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
+        restoreDrawOverrideAttributes()
+
+    if len(mesh) == 1:
+        polySoftEdgeName = 'MWPolySoftEdge_' + mesh[0].name()
+        MWPolySoftEdgeNodes = [i for i in pm.listConnections(mesh[0], type='polySoftEdge') if i.name().startswith('MWPolySoftEdge_')]
+
+        # Delete the polySoftEdge nodes?
+        polySoftEdgeNodes = list(set([i for i in pm.listConnections(mesh[0], type='polySoftEdge')]) - set(MWPolySoftEdgeNodes))
+        len(polySoftEdgeNodes) == 0 or pm.delete(polySoftEdgeNodes)
+
+        pm.select(mesh[0].getTransform(), r=True)
+
+        if len(MWPolySoftEdgeNodes):
+            MWPolySoftEdgeNodes[0].setAngle(angle)
+        else:
+            pm.polySoftEdge(a=angle)[0].setName(polySoftEdgeName)
+
+        # Delete construction history because the origin mesh is changed.
+        pm.delete(mesh[0].getTransform(), ch=True)
+
+    else:
+        pm.warning('Select an object per time.')
+
+
+
 if __name__ == '__main__':
     switchSelectionTypeToVf('polySurfaceShape1')
-    switchSelectionModeToEdge('polySurfaceShape1')
+    switchSelectionTypeToEdge('polySurfaceShape1')

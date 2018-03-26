@@ -371,6 +371,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         But _selectionChangedCallback is triggered instead.
         """
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
+        if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
+            print('hh')
+
 
 
     def showEvent(self, event):
@@ -503,11 +506,25 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
     def selectHardEdges(self):
         angle = self.smoothingAngleSpinBox.value()
         self.smoothingAngleCheckBox.isChecked() and utils.setSmoothingAngle(angle)
+        if utils.selectHardEdges() == 1:
+            self.createBevelSetButton.setEnabled(True)
+            self.addButton.setEnabled(True)
+            self.removeButton.setEnabled(True)
+            self.statusbar.showMessage('Edit {0}.'.format(options.drawOverredeAttributes['mesh']))
+        else:
+            self.statusbar.showMessage('Select an object per time.')
 
 
     def selectSoftEdges(self):
         angle = self.smoothingAngleSpinBox.value()
         self.smoothingAngleCheckBox.isChecked() and utils.setSmoothingAngle(angle)
+        if utils.selectSoftEdges() == 1:
+            self.createBevelSetButton.setEnabled(True)
+            self.addButton.setEnabled(True)
+            self.removeButton.setEnabled(True)
+            self.statusbar.showMessage('Edit {0}'.format(options.drawOverredeAttributes['mesh']))
+        else:
+            self.statusbar.showMessage('Select an object per time.')
 
 
     def toggleSmoothingAngle(self, state):
