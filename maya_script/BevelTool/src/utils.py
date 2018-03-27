@@ -140,7 +140,7 @@ def switchSelectionTypeToEdge(item):
         except pm.MelError:
             pass
     else:
-        _switchSelectionTypeToEdge(item)
+        _switchSelectionTypeToEdge()
 
 
 
@@ -220,6 +220,10 @@ def disconnectFromMWBevelSet(MWBevelSetName, meshTransform):
 
 
 def isInDrawOverrideAttributesDict():
+    """
+    Problem: more than one objects are in edge selection type.
+    Solve: unhilite the other objects?
+    """
     mesh = pm.ls(dag=True, hilite=True, type='mesh', ni=True)
     mesh = pm.ls(dag=True, os=True, type='mesh', ni=True) if len(mesh) == 0 else mesh
     return len(mesh) > 0 and mesh[0].name() in (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
@@ -241,9 +245,9 @@ def disableActiveSelectionListCallbackDecorator():
     def decorate(func):
         @functools.wraps(func)
         def decorator(*args, **kwargs):
-            options.disableCallback.append(func.__name__)
+            options.disableIntermediate.append(func.__name__)
             ret = func(*args, **kwargs)
-            options.disableCallback.pop()
+            options.disableIntermediate.pop()
             return ret
         return decorator
     return decorate
@@ -661,6 +665,14 @@ def setSmoothingAngle(angle):
 
 
 
+def selectedMWBevelSets():
+    mesh = pm.ls(dag=True, os=True, io=True, type='mesh')
+    mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
+    MWBevelSets = [s for m in mesh for s in pm.listSets(object=m.name()) if s.startswith('MWBevelSet')] if len(mesh) else []
+    return MWBevelSets, len(mesh)
+
+
+
+
 if __name__ == '__main__':
-    switchSelectionTypeToVf('polySurfaceShape1')
-    switchSelectionTypeToEdge('polySurfaceShape1')
+    selectedMWBevelSets()

@@ -266,6 +266,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.registeredMayaCallbacks = []
         self.headerFont = QFont('OldEnglish', 10, QFont.Bold)
         self.itemFont = QFont('OldEnglish', 10)
+        self.highlightBrush = QBrush(Qt.GlobalColor.darkMagenta)
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
@@ -284,6 +285,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetActionGroup.addAction(self.chooseAction)
         self.bevelSetLabel.setVisible(False)
         self.selectionLabel.setVisible(False)
+        self.selectionTreeView.setVisible(False)
 
         self.createBevelSetButton.clicked.connect(self.createBevelSet)
         self.addButton.clicked.connect(self.addEdgesIntoBevelSet)
@@ -332,7 +334,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         TODO: add log
         """
-        def _runCallback():
+        def _activeIntermdiate():
             # TODO: self.statusbar.showMessage("IN {0}. EDGE {1}".format(utils.isInDrawOverrideAttributesDict(), utils.isSelectionTypeEdge()))
             # print("IN: {0}".format(utils.isInDrawOverrideAttributesDict()))
             # print("EDGE: {0}".format(utils.isSelectionTypeEdge()))
@@ -360,7 +362,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.removeButton.setEnabled(False)
                 self.statusbar.clearMessage()
 
-        len(options.disableCallback) == 0 and _runCallback()
+        len(options.disableIntermediate) == 0 and _activeIntermdiate()
+
+        self.updateBevelSetTreeView()
         # print('selction changed')
 
 
@@ -375,12 +379,73 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         # print('type changed')
 
 
+    def _beforeSceneUpdateCallback(self, clientData=None):
+        self.setEnabled(False)
+
+
+    def _sceneUpdateCallback(self, clientDate=None):
+        self.setEnabled(True)
+        self.updateBevelSetTreeView()
+
 
     def showEvent(self, event):
         cb = om.MEventMessage.addEventCallback('SelectionChanged', self._selectionChangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
         cb = om.MEventMessage.addEventCallback('SelectTypeChanged', self._selectionTypeChangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeNew, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterNew, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeImport, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterImport, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeOpen, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterOpen, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeRemoveReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterRemoveReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeImportReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterImportReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeLoadReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterLoadReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeUnloadReference, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kAfterUnloadReference, self._sceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kMayaExiting, self._beforeSceneUpdateCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
         super(MWBevelToolMainWindow, self).showEvent(event)
 
 
@@ -392,6 +457,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def updateBevelSetTreeView(self):
         self.dataModelInBevelSetTreeView.clear()
+        selectedMWBevelSets = utils.selectedMWBevelSets()[0]
+
         for header, col in options.TREEVIEWHEADERS.items():
             item = QStandardItem(header)
             item.setFont(self.headerFont)
@@ -401,6 +468,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             item = QStandardItem(MWBevelSetName+' '*4)
             item.setFont(self.itemFont)
             item.setEditable(False)
+            MWBevelSetName in selectedMWBevelSets and item.setBackground(self.highlightBrush)
             self.dataModelInBevelSetTreeView.appendRow(item)
             row = self.dataModelInBevelSetTreeView.indexFromItem(item).row()
 
@@ -550,7 +618,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
     def displayOverrideAttributes(self):
         print(options.drawOverredeAttributes)
         print(options.isVertexFace)
-        print(options.disableCallback)
+        print(options.disableIntermediate)
 
 
 
