@@ -272,6 +272,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.viewMenu.addAction(self.bevelSetDock.toggleViewAction())
         self.viewMenu.addAction(self.selectionConstraintDock.toggleViewAction())
+        self.viewMenu.addAction(self.bevelToolbar.toggleViewAction())
+        self.viewMenu.addAction(self.selectionToolbar.toggleViewAction())
         self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
         self.bevelSetTreeView.setModel(self.dataModelInBevelSetTreeView)
         self.selectionModelInBevelSetTreeView = QItemSelectionModel(self.dataModelInBevelSetTreeView, self.bevelSetTreeView)
@@ -283,6 +285,21 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetActionGroup.addAction(self.moveAction)
         self.bevelSetActionGroup.addAction(self.maintainAction)
         self.bevelSetActionGroup.addAction(self.chooseAction)
+        self.newAction.setIcon(QIcon(':/newLayerSelected.png'))
+        self.addAction.setIcon(QIcon(':/addProxy.png'))
+        self.removeAction.setIcon(QIcon(':/removeReference.png'))
+        self.deleteAction.setIcon(QIcon(':/deletePreset_100.png'))
+        self.bevelToolbar.addAction(self.newAction)
+        self.bevelToolbar.addAction(self.addAction)
+        self.bevelToolbar.addAction(self.removeAction)
+        self.bevelToolbar.addAction(self.deleteAction)
+        self.selectHardEdgeAction.setIcon(QIcon(':/polyHardEdge.png'))
+        self.selectSoftEdgeAction.setIcon(QIcon(':/polySoftEdge.png'))
+        self.selectionToolbar.addAction(self.selectHardEdgeAction)
+        self.selectionToolbar.addAction(self.selectSoftEdgeAction)
+        self.selectionToolbar.addWidget(self.smoothingAngleCheckBox)
+        self.selectionToolbar.addWidget(self.smoothingAngleSpinBox)
+        self.selectionToolbar.addWidget(self.smoothingAngleSlider)
         self.bevelSetLabel.setVisible(False)
         self.selectionLabel.setVisible(False)
         self.selectionTreeView.setVisible(False)
@@ -295,6 +312,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.smoothingAngleCheckBox.stateChanged.connect(self.toggleSmoothingAngle)
         self.selectSoftEdgesButton.clicked.connect(self.selectSoftEdges)
         self.selectHardEdgesButton.clicked.connect(self.selectHardEdges)
+
+        self.newAction.triggered.connect(self.createBevelSet)
+        self.addAction.triggered.connect(self.addEdgesIntoBevelSet)
+        self.removeAction.triggered.connect(self.removeEdgesFromBevelSet)
+        self.deleteAction.triggered.connect(self.deleteBevelSet)
+        self.selectHardEdgeAction.triggered.connect(self.selectHardEdges)
+        self.selectSoftEdgeAction.triggered.connect(self.selectSoftEdges)
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
 
@@ -343,6 +367,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.createBevelSetButton.setEnabled(True)
                 self.addButton.setEnabled(True)
                 self.removeButton.setEnabled(True)
+                self.newAction.setEnabled(True)
+                self.addAction.setEnabled(True)
+                self.removeAction.setEnabled(True)
                 self.statusbar.showMessage('Edit "{0}"'.format(options.drawOverredeAttributes['mesh']))
 
             elif (not utils.isInDrawOverrideAttributesDict()) and (not utils.isSelectionTypeEdge()):
@@ -350,6 +377,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.createBevelSetButton.setEnabled(False)
                 self.addButton.setEnabled(False)
                 self.removeButton.setEnabled(False)
+                self.newAction.setEnabled(False)
+                self.addAction.setEnabled(False)
+                self.removeAction.setEnabled(False)
                 self.statusbar.clearMessage()
 
             elif utils.isInDrawOverrideAttributesDict() and utils.isSelectionTypeEdge():
@@ -360,6 +390,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.createBevelSetButton.setEnabled(False)
                 self.addButton.setEnabled(False)
                 self.removeButton.setEnabled(False)
+                self.newAction.setEnabled(False)
+                self.addAction.setEnabled(False)
+                self.removeAction.setEnabled(False)
                 self.statusbar.clearMessage()
 
         len(options.disableIntermediate) == 0 and _activeIntermdiate()
@@ -372,10 +405,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         """
         Problem 3: This callback isn't be triggered when you switch selection type from compenont to object.
         But _selectionChangedCallback is triggered instead.
+
+        Problme 4: An object is in edge selection type. This callback isn't triggered when you select another object directly.
         """
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
-        # if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
-        #     print('hh')
         # print('type changed')
 
 
@@ -578,6 +611,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.createBevelSetButton.setEnabled(True)
             self.addButton.setEnabled(True)
             self.removeButton.setEnabled(True)
+            self.newAction.setEnabled(True)
+            self.addAction.setEnabled(True)
+            self.removeAction.setEnabled(True)
             self.statusbar.showMessage('Edit {0}.'.format(options.drawOverredeAttributes['mesh']))
         else:
             self.statusbar.showMessage('Select an object per time.')
@@ -590,6 +626,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.createBevelSetButton.setEnabled(True)
             self.addButton.setEnabled(True)
             self.removeButton.setEnabled(True)
+            self.newAction.setEnabled(True)
+            self.addAction.setEnabled(True)
+            self.removeAction.setEnabled(True)
             self.statusbar.showMessage('Edit {0}'.format(options.drawOverredeAttributes['mesh']))
         else:
             self.statusbar.showMessage('Select an object per time.')

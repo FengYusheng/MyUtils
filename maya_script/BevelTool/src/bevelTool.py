@@ -14,9 +14,9 @@ def disableActiveSelectionListCallbackDecorator():
     def decorate(func):
         @functools.wraps(func)
         def decorator(*args, **kwargs):
-            options.disableCallback.append(func.__name__)
+            options.disableIntermediate.append(func.__name__)
             func(*args, **kwargs)
-            options.disableCallback.pop()
+            options.disableIntermediate.pop()
 
         return decorator
     return decorate

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>935</width>
-    <height>817</height>
+    <height>821</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,7 +64,7 @@
      <x>0</x>
      <y>0</y>
      <width>935</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="editMenu">
@@ -76,14 +76,27 @@
     <addaction name="moveAction"/>
     <addaction name="maintainAction"/>
     <addaction name="chooseAction"/>
+    <addaction name="separator"/>
+    <addaction name="newAction"/>
+    <addaction name="addAction"/>
+    <addaction name="removeAction"/>
+    <addaction name="deleteAction"/>
    </widget>
    <widget class="QMenu" name="viewMenu">
     <property name="title">
      <string>View</string>
     </property>
    </widget>
+   <widget class="QMenu" name="selectionMenu">
+    <property name="title">
+     <string>Selection</string>
+    </property>
+    <addaction name="selectHardEdgeAction"/>
+    <addaction name="selectSoftEdgeAction"/>
+   </widget>
    <addaction name="editMenu"/>
    <addaction name="viewMenu"/>
+   <addaction name="selectionMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="bevelSetDock">
@@ -285,6 +298,40 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="bevelToolbar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="selectionToolbar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
   <action name="finishBevelAction">
    <property name="text">
     <string>Finish Bevel</string>
@@ -338,8 +385,51 @@
    </property>
   </action>
   <action name="displayOverrideAction">
+   <property name="icon">
+    <iconset theme="&quot;:/commandButton.png&quot;">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
    <property name="text">
     <string>Draw Override</string>
+   </property>
+  </action>
+  <action name="newAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="addAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Add</string>
+   </property>
+  </action>
+  <action name="removeAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Remove</string>
+   </property>
+  </action>
+  <action name="deleteAction">
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </action>
+  <action name="selectHardEdgeAction">
+   <property name="text">
+    <string>Select Hard Edge</string>
+   </property>
+  </action>
+  <action name="selectSoftEdgeAction">
+   <property name="text">
+    <string>Select Soft Edge</string>
    </property>
   </action>
  </widget>
