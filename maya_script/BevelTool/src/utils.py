@@ -241,7 +241,7 @@ def lockBevelSet(bevelSetName, isLocked=True):
 
 
 
-def disableActiveSelectionListCallbackDecorator():
+def disableSelectionEventCallback():
     def decorate(func):
         @functools.wraps(func)
         def decorator(*args, **kwargs):
@@ -270,7 +270,7 @@ def saveDrawOverrideAttributes(originMesh):
 
 
 
-@disableActiveSelectionListCallbackDecorator()
+@disableSelectionEventCallback()
 def restoreDrawOverrideAttributes(operation=None):
     def _restore():
         if len(ioMesh):
@@ -303,7 +303,7 @@ def restoreDrawOverrideAttributes(operation=None):
     options.drawOverredeAttributes.clear()
 
 
-@disableActiveSelectionListCallbackDecorator()
+@disableSelectionEventCallback()
 def displayIOMesh(meshTrans, operation=None):
     def _displayIOMesh():
         if len(ioMesh):
@@ -528,7 +528,7 @@ def deleteBevelSet(MWBevelSetName):
 
 
 
-@disableActiveSelectionListCallbackDecorator()
+@disableSelectionEventCallback()
 def createBevelSet(edges=None):
     '''
     :Reference:
@@ -577,18 +577,13 @@ def force(oldMWBevelSetName, newMWBevelSetName=None, edges=None, *args):
 
 
 
+@disableSelectionEventCallback()
 def selectMembersInBevelSet(bevelSetName):
-    # TODO: Undo select?
     members = bevelSetMembers(bevelSetName)
-    if len(members):
-        meshNode = pm.ls(members[0].name().partition('.')[0], type='mesh')
-        pm.select(meshNode, r=True)
-        switchSelectionTypeToEdge(meshNode[0])
-        pm.select(members, r=True)
 
 
 
-@disableActiveSelectionListCallbackDecorator()
+@disableSelectionEventCallback()
 def selectHardEdges():
     mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
@@ -611,7 +606,7 @@ def selectHardEdges():
 
 
 
-@disableActiveSelectionListCallbackDecorator()
+@disableSelectionEventCallback()
 def selectSoftEdges():
     mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
@@ -634,7 +629,7 @@ def selectSoftEdges():
 
 
 
-@disableActiveSelectionListCallbackDecorator()
+@disableSelectionEventCallback()
 def setSmoothingAngle(angle):
     if options.drawOverredeAttributes['mesh'] == ' ':
         mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
@@ -671,6 +666,26 @@ def selectedMWBevelSets():
     MWBevelSets = [s for m in mesh for s in pm.listSets(object=m.name()) if s.startswith('MWBevelSet')] if len(mesh) else []
     return MWBevelSets, len(mesh)
 
+
+
+@disableSelectionEventCallback()
+def delConstructionHistory():
+    """
+    Solve problem: modify the origin mesh shape when it's in edge selection type.
+
+    Delete the construction history if the origin mesh is modified.
+    """
+    if options.drawOverredeAttributes['mesh'] != ' ':
+        mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
+        modifiers = [i for i in pm.listConnections(mesh[0], type='polyModifier') if not i.name().startswith('MWBevelSet')]
+        edges = pm.filterExpand(sm=32, ex=True)
+
+        if len(modifiers):
+            with MayaUndoChuck('Delete ch when origin mesh is modified.'):
+                restoreDrawOverrideAttributes()
+                pm.delete(mesh[0].getTransform(), ch=True)
+                displayIOMesh(mesh[0].getTransform())
+                pm.select(edges, r=True)
 
 
 

@@ -80,6 +80,7 @@
     <addaction name="newAction"/>
     <addaction name="addAction"/>
     <addaction name="removeAction"/>
+    <addaction name="selectMemberAction"/>
     <addaction name="deleteAction"/>
    </widget>
    <widget class="QMenu" name="viewMenu">
@@ -300,7 +301,7 @@
   </widget>
   <widget class="QToolBar" name="bevelToolbar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Bevel Set</string>
    </property>
    <property name="movable">
     <bool>true</bool>
@@ -320,7 +321,7 @@
   </widget>
   <widget class="QToolBar" name="selectionToolbar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Selection</string>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -418,6 +419,9 @@
    </property>
   </action>
   <action name="deleteAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Delete</string>
    </property>
@@ -430,6 +434,14 @@
   <action name="selectSoftEdgeAction">
    <property name="text">
     <string>Select Soft Edge</string>
+   </property>
+  </action>
+  <action name="selectMemberAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Select Member</string>
    </property>
   </action>
  </widget>

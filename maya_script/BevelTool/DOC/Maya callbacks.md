@@ -41,3 +41,5 @@ must be called for all callbacks registered by a plug-in before that plug-in
  is unloaded.
 
 ## `OpenMaya.MObjectSetMessage`
+
+## `OpenMaya.MPolyMessage`

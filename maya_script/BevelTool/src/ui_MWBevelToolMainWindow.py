@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Thu Mar 29 18:10:00 2018
+# Created: Fri Mar 30 17:08:34 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -173,11 +173,15 @@ class Ui_MWBevelToolMainWindow(object):
         self.removeAction.setEnabled(False)
         self.removeAction.setObjectName("removeAction")
         self.deleteAction = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.deleteAction.setEnabled(False)
         self.deleteAction.setObjectName("deleteAction")
         self.selectHardEdgeAction = QtWidgets.QAction(MWBevelToolMainWindow)
         self.selectHardEdgeAction.setObjectName("selectHardEdgeAction")
         self.selectSoftEdgeAction = QtWidgets.QAction(MWBevelToolMainWindow)
         self.selectSoftEdgeAction.setObjectName("selectSoftEdgeAction")
+        self.selectMemberAction = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.selectMemberAction.setEnabled(False)
+        self.selectMemberAction.setObjectName("selectMemberAction")
         self.editMenu.addAction(self.displayOverrideAction)
         self.editMenu.addSeparator()
         self.editMenu.addAction(self.moveAction)
@@ -187,6 +191,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.editMenu.addAction(self.newAction)
         self.editMenu.addAction(self.addAction)
         self.editMenu.addAction(self.removeAction)
+        self.editMenu.addAction(self.selectMemberAction)
         self.editMenu.addAction(self.deleteAction)
         self.selectionMenu.addAction(self.selectHardEdgeAction)
         self.selectionMenu.addAction(self.selectSoftEdgeAction)
@@ -213,8 +218,8 @@ class Ui_MWBevelToolMainWindow(object):
         self.selectHardEdgesButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Hard Edges", None, -1))
         self.selectSoftEdgesButton.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Soft Edges", None, -1))
         self.smoothingAngleCheckBox.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Smoothing angle", None, -1))
-        self.bevelToolbar.setWindowTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "toolBar", None, -1))
-        self.selectionToolbar.setWindowTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "toolBar", None, -1))
+        self.bevelToolbar.setWindowTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Bevel Set", None, -1))
+        self.selectionToolbar.setWindowTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Selection", None, -1))
         self.finishBevelAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Finish Bevel", None, -1))
         self.displayDrawOverrideAttrAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Display DrawOverrideAttributes", None, -1))
         self.actionCreate_a_Bevel_Set.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Create a Bevel Set", None, -1))
@@ -230,4 +235,5 @@ class Ui_MWBevelToolMainWindow(object):
         self.deleteAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Delete", None, -1))
         self.selectHardEdgeAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Hard Edge", None, -1))
         self.selectSoftEdgeAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Soft Edge", None, -1))
+        self.selectMemberAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Member", None, -1))
 

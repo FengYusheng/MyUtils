@@ -286,12 +286,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetActionGroup.addAction(self.maintainAction)
         self.bevelSetActionGroup.addAction(self.chooseAction)
         self.newAction.setIcon(QIcon(':/newLayerSelected.png'))
-        self.addAction.setIcon(QIcon(':/addProxy.png'))
-        self.removeAction.setIcon(QIcon(':/removeReference.png'))
-        self.deleteAction.setIcon(QIcon(':/deletePreset_100.png'))
+        self.addAction.setIcon(QIcon(':/trackAdd.png'))
+        self.removeAction.setIcon(QIcon(':/trackRemove.png'))
+        self.selectMemberAction.setIcon(QIcon(':/subdivMirror.png'))
+        self.deleteAction.setIcon(QIcon(':/smallTrash.png'))
         self.bevelToolbar.addAction(self.newAction)
         self.bevelToolbar.addAction(self.addAction)
         self.bevelToolbar.addAction(self.removeAction)
+        self.bevelToolbar.addAction(self.selectMemberAction)
         self.bevelToolbar.addAction(self.deleteAction)
         self.selectHardEdgeAction.setIcon(QIcon(':/polyHardEdge.png'))
         self.selectSoftEdgeAction.setIcon(QIcon(':/polySoftEdge.png'))
@@ -300,6 +302,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectionToolbar.addWidget(self.smoothingAngleCheckBox)
         self.selectionToolbar.addWidget(self.smoothingAngleSpinBox)
         self.selectionToolbar.addWidget(self.smoothingAngleSlider)
+        self.bevelSetDock.setVisible(False)
+        self.selectionConstraintDock.setVisible(False)
         self.bevelSetLabel.setVisible(False)
         self.selectionLabel.setVisible(False)
         self.selectionTreeView.setVisible(False)
@@ -316,6 +320,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.newAction.triggered.connect(self.createBevelSet)
         self.addAction.triggered.connect(self.addEdgesIntoBevelSet)
         self.removeAction.triggered.connect(self.removeEdgesFromBevelSet)
+        self.selectMemberAction.triggered.connect(self.selectMembers)
         self.deleteAction.triggered.connect(self.deleteBevelSet)
         self.selectHardEdgeAction.triggered.connect(self.selectHardEdges)
         self.selectSoftEdgeAction.triggered.connect(self.selectSoftEdges)
@@ -575,6 +580,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             success and utils.force(MWBevelSetName[0], args[0])
 
         else:
+            utils.delConstructionHistory()
             func(*args)
             self.statusbar.clearMessage()
 
@@ -594,6 +600,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def removeEdgesFromBevelSet(self):
         self._run(utils.removeEdgesFromBevelSet) and self.updateBevelSetTreeView()
+
+
+    def selectMembers(self):
+        print('select members')
 
 
     def deleteBevelSet(self):

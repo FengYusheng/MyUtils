@@ -10,7 +10,7 @@ import options
 
 
 
-def disableActiveSelectionListCallbackDecorator():
+def disableSelectionEventCallback():
     def decorate(func):
         @functools.wraps(func)
         def decorator(*args, **kwargs):
@@ -132,7 +132,7 @@ def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
         utils.lockBevelSet(bevelSet, True)
 
 
-@disableActiveSelectionListCallbackDecorator()
+@disableSelectionEventCallback()
 def bevelSelectedEdges(*args, **kwargs):
     edgeIndices, mesh, MWBevelSetName = args
     edgeIndices = list(set(edgeIndices))
