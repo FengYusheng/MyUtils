@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
+# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Fri Mar 30 17:08:34 2018
+# Created: Sat Mar 31 08:48:25 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,7 +33,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.verticalLayout_5.addWidget(self.bevelSetTreeView)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 23))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
@@ -173,14 +173,14 @@ class Ui_MWBevelToolMainWindow(object):
         self.removeAction.setEnabled(False)
         self.removeAction.setObjectName("removeAction")
         self.deleteAction = QtWidgets.QAction(MWBevelToolMainWindow)
-        self.deleteAction.setEnabled(False)
+        self.deleteAction.setEnabled(True)
         self.deleteAction.setObjectName("deleteAction")
         self.selectHardEdgeAction = QtWidgets.QAction(MWBevelToolMainWindow)
         self.selectHardEdgeAction.setObjectName("selectHardEdgeAction")
         self.selectSoftEdgeAction = QtWidgets.QAction(MWBevelToolMainWindow)
         self.selectSoftEdgeAction.setObjectName("selectSoftEdgeAction")
         self.selectMemberAction = QtWidgets.QAction(MWBevelToolMainWindow)
-        self.selectMemberAction.setEnabled(False)
+        self.selectMemberAction.setEnabled(True)
         self.selectMemberAction.setObjectName("selectMemberAction")
         self.editMenu.addAction(self.displayOverrideAction)
         self.editMenu.addSeparator()

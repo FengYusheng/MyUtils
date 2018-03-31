@@ -513,26 +513,31 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             value = bevelTool.MWBevelOption(MWBevelSetName, 'Fraction')
             item = QStandardItem(str(value))
             item.setFont(self.itemFont)
+            MWBevelSetName in selectedMWBevelSets and item.setBackground(self.highlightBrush)
             self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Fraction'], item)
 
             value = bevelTool.MWBevelOption(MWBevelSetName, 'Segments')
             item = QStandardItem(str(value))
             item.setFont(self.itemFont)
+            MWBevelSetName in selectedMWBevelSets and item.setBackground(self.highlightBrush)
             self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Segments'], item)
 
             value = bevelTool.MWBevelOption(MWBevelSetName, 'Mitering')
             item = QStandardItem(options.MITERING[value])
             item.setFont(self.itemFont)
+            MWBevelSetName in selectedMWBevelSets and item.setBackground(self.highlightBrush)
             self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Mitering'], item)
 
             value = bevelTool.MWBevelOption(MWBevelSetName, 'Miter Along')
             item = QStandardItem(options.MITERALONG[value])
             item.setFont(self.itemFont)
+            MWBevelSetName in selectedMWBevelSets and item.setBackground(self.highlightBrush)
             self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Miter Along'], item)
 
             value = bevelTool.MWBevelOption(MWBevelSetName, 'Chamfer')
             item = QStandardItem(options.CHAMFER[value])
             item.setFont(self.itemFont)
+            MWBevelSetName in selectedMWBevelSets and item.setBackground(self.highlightBrush)
             self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Chamfer'], item)
 
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(options.TREEVIEWHEADERS)))
@@ -603,7 +608,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def selectMembers(self):
-        print('select members')
+        utils.selectMWBevelSetMembers()
 
 
     def deleteBevelSet(self):

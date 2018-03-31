@@ -338,7 +338,8 @@ def displayIOMesh(meshTrans, operation=None):
             switchSelectionTypeToEdge(meshTrans)
 
     def _deleteHistory():
-        modifiers = [i for i in pm.listConnections(originMesh[0], type='polyModifier') if not isinstance(i, pm.nt.PolyBevel3)]
+        # switch the selection type to edge, then call displayIOMesh. Or this function would delete ch.
+        modifiers = [i for i in pm.listConnections(originMesh[0], type='polyModifier') if not i.name().startswith('MWBevelSet')]
         (len(modifiers) > 0 or len(pm.ls(dag=True, hilite=True, io=True)) == 0) and pm.delete(meshTrans, ch=True)
 
     restoreDrawOverrideAttributes()
@@ -578,12 +579,6 @@ def force(oldMWBevelSetName, newMWBevelSetName=None, edges=None, *args):
 
 
 @disableSelectionEventCallback()
-def selectMembersInBevelSet(bevelSetName):
-    members = bevelSetMembers(bevelSetName)
-
-
-
-@disableSelectionEventCallback()
 def selectHardEdges():
     mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
@@ -664,7 +659,26 @@ def selectedMWBevelSets():
     mesh = pm.ls(dag=True, os=True, io=True, type='mesh')
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
     MWBevelSets = [s for m in mesh for s in pm.listSets(object=m.name()) if s.startswith('MWBevelSet')] if len(mesh) else []
-    return MWBevelSets, len(mesh)
+    return MWBevelSets, mesh
+
+
+
+def selectMWBevelSetMembers():
+    # TODO: Unhilite the mesh first?
+    mesh = pm.ls(dag=True, os=True, io=True, type='mesh')
+    mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
+    if len(mesh):
+        name = mesh[-1].name()
+        # A mesh belongs to only a bevel set.
+        MWBevelSets = [i for i in pm.listSets(object=name) if i.name().startswith('MWBevelSet')]
+        if len(MWBevelSets):
+            members = [i for i in bevelSetMembers(MWBevelSets[0].name()) if i.name().rpartition('.e')[0] == name]
+            if len(members):
+                with MayaUndoChuck('Select {0} edges in {1}'.format(name, MWBevelSets[0].name())):
+                    switchSelectionTypeToEdge(mesh[-1].getTransform())
+                    # switch the selection type to edge, then call displayIOMesh. Or problem happens
+                    displayIOMesh(mesh[-1].getTransform())
+                    pm.select(members, r=True)
 
 
 
