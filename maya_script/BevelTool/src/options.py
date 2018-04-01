@@ -76,7 +76,8 @@ TREEVIEWHEADERS = OrderedDict(
             'Segments'    : 2,
             'Mitering'    : 3,
             'Miter Along' : 4,
-            'Chamfer'     : 5
+            'Chamfer'     : 5,
+            'Members'     : 6
         }.items(),
 
         key = lambda t : t[1]

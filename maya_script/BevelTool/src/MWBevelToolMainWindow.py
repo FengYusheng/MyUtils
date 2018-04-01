@@ -20,11 +20,13 @@ import maya.api.OpenMaya as om # Python api 2.0
 import options
 import utils
 import bevelTool
+import repairmen
 import ui_MWBevelToolMainWindow
 import ui_MWChooseDialog
 reload(options)
 reload(utils)
 reload(bevelTool)
+reload(repairmen)
 reload(ui_MWBevelToolMainWindow)
 reload(ui_MWChooseDialog)
 
@@ -401,9 +403,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.statusbar.clearMessage()
 
         len(options.disableIntermediate) == 0 and _activeIntermdiate()
-
         self.updateBevelSetTreeView()
-        # print('selction changed')
+        print('selction changed')
 
 
     def _selectionTypeChangedCallback(self, clientData=None):
@@ -426,7 +427,18 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.updateBevelSetTreeView()
 
 
+    def _selectionPreferenceChangedCallback(self, clientData=None):
+        repairmen.repairProblem001()
+        self.newAction.setEnabled(False)
+        self.addAction.setEnabled(False)
+        self.removeAction.setEnabled(False)
+        self.deleteAction.setEnabled(False)
+
+
     def showEvent(self, event):
+        cb = om.MEventMessage.addEventCallback('SelectPreferenceChanged', self._selectionPreferenceChangedCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
         cb = om.MEventMessage.addEventCallback('SelectionChanged', self._selectionChangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
 
@@ -484,6 +496,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kMayaExiting, self._beforeSceneUpdateCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
 
+        utils.turnConstructionHistoryOn()
         super(MWBevelToolMainWindow, self).showEvent(event)
 
 
@@ -539,6 +552,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             item.setFont(self.itemFont)
             MWBevelSetName in selectedMWBevelSets and item.setBackground(self.highlightBrush)
             self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Chamfer'], item)
+
+            value = len(utils.bevelSetMembers(MWBevelSetName))
+            item = QStandardItem(str(value))
+            item.setFont(self.itemFont)
+            item.setEditable(False)
+            MWBevelSetName in selectedMWBevelSets and item.setBackground(self.highlightBrush)
+            self.dataModelInBevelSetTreeView.setItem(row, options.TREEVIEWHEADERS['Members'], item)
 
         map(lambda col:self.bevelSetTreeView.resizeColumnToContents(col), range(len(options.TREEVIEWHEADERS)))
 

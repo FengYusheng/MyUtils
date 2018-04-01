@@ -159,8 +159,8 @@ def MWBevelSets():
 
 
 
-def bevelSetMembers(bevelSetName):
-    bevelSetNode = pm.ls(bevelSetName, type='objectSet')
+def bevelSetMembers(MWBevelSetName):
+    bevelSetNode = pm.ls(MWBevelSetName, type='objectSet')
     return pm.ls(bevelSetNode[0].flattened(), flatten=True) if bevelSetNode else []
 
 
@@ -703,5 +703,12 @@ def delConstructionHistory():
 
 
 
+def turnConstructionHistoryOn():
+    pm.constructionHistory(q=True, tgl=True) or pm.constructionHistory(tgl=True)
+
+
+
 if __name__ == '__main__':
-    selectedMWBevelSets()
+    for i in om.MEventMessage.getEventNames():
+        if i.startswith('select') or i.startswith('Select'):
+            print(i)

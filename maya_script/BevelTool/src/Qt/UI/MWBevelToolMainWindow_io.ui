@@ -64,7 +64,7 @@
      <x>0</x>
      <y>0</y>
      <width>935</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="editMenu">
@@ -401,6 +401,15 @@
    <property name="text">
     <string>New</string>
    </property>
+   <property name="toolTip">
+    <string>Create a bevel along the selected edges and create a bevel set containing the edges.</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a bevel along the selected edges and create a bevel set containing the edges.</string>
+   </property>
+   <property name="whatsThis">
+    <string>Create a bevel along the selected edges and create an objectSet Create a bevel along the selected edges and create a bevel set containing the edges. the edges.</string>
+   </property>
   </action>
   <action name="addAction">
    <property name="enabled">
@@ -408,6 +417,15 @@
    </property>
    <property name="text">
     <string>Add</string>
+   </property>
+   <property name="toolTip">
+    <string>Add the selected into the selected bevel set and bevel the edges.</string>
+   </property>
+   <property name="statusTip">
+    <string>Add the selected into the selected bevel set and bevel the edges.</string>
+   </property>
+   <property name="whatsThis">
+    <string>Add the selected into the selected bevel set and bevel the edges.</string>
    </property>
   </action>
   <action name="removeAction">
@@ -417,6 +435,15 @@
    <property name="text">
     <string>Remove</string>
    </property>
+   <property name="toolTip">
+    <string>Remove the selected edges from a bevel set  and restore the edges.</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove the selected edges from a bevel set  and restore the edges.</string>
+   </property>
+   <property name="whatsThis">
+    <string>Remove the selected edges from a bevel set  and restore the edges.</string>
+   </property>
   </action>
   <action name="deleteAction">
    <property name="enabled">
@@ -425,15 +452,42 @@
    <property name="text">
     <string>Delete</string>
    </property>
+   <property name="toolTip">
+    <string>Delete the selected bevel set and restore its member edges</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete the selected bevel set and restore its member edges</string>
+   </property>
+   <property name="whatsThis">
+    <string>Delete the selected bevel set and restore its member edges</string>
+   </property>
   </action>
   <action name="selectHardEdgeAction">
    <property name="text">
     <string>Select Hard Edge</string>
    </property>
+   <property name="toolTip">
+    <string>Select hard edges based on face angle.</string>
+   </property>
+   <property name="statusTip">
+    <string>Select hard edges based on face angle.</string>
+   </property>
+   <property name="whatsThis">
+    <string>Select hard edges based on face angle.</string>
+   </property>
   </action>
   <action name="selectSoftEdgeAction">
    <property name="text">
     <string>Select Soft Edge</string>
+   </property>
+   <property name="toolTip">
+    <string>Select soft edges based on face angle.</string>
+   </property>
+   <property name="statusTip">
+    <string>Select soft edges based on face angle.</string>
+   </property>
+   <property name="whatsThis">
+    <string>Select soft edges based on face angle.</string>
    </property>
   </action>
   <action name="selectMemberAction">
@@ -442,6 +496,15 @@
    </property>
    <property name="text">
     <string>Select Member</string>
+   </property>
+   <property name="toolTip">
+    <string>Select the edges of the selected object contained by a bevel set.</string>
+   </property>
+   <property name="statusTip">
+    <string>Select the edges of the selected object contained by a bevel set.</string>
+   </property>
+   <property name="whatsThis">
+    <string>Select the edges of the selected object contained by a bevel set.</string>
    </property>
   </action>
  </widget>

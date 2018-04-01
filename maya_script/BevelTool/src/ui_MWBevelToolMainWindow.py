@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\develop\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
+# Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Sat Mar 31 08:48:25 2018
+# Created: Sun Apr 01 11:49:24 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,7 +33,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.verticalLayout_5.addWidget(self.bevelSetTreeView)
         MWBevelToolMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MWBevelToolMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 21))
         self.menubar.setObjectName("menubar")
         self.editMenu = QtWidgets.QMenu(self.menubar)
         self.editMenu.setObjectName("editMenu")
@@ -230,10 +230,31 @@ class Ui_MWBevelToolMainWindow(object):
         self.chooseAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Let User Choose", None, -1))
         self.displayOverrideAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Draw Override", None, -1))
         self.newAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "New", None, -1))
+        self.newAction.setToolTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Create a bevel along the selected edges and create a bevel set containing the edges.", None, -1))
+        self.newAction.setStatusTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Create a bevel along the selected edges and create a bevel set containing the edges.", None, -1))
+        self.newAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Create a bevel along the selected edges and create an objectSet Create a bevel along the selected edges and create a bevel set containing the edges. the edges.", None, -1))
         self.addAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Add", None, -1))
+        self.addAction.setToolTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Add the selected into the selected bevel set and bevel the edges.", None, -1))
+        self.addAction.setStatusTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Add the selected into the selected bevel set and bevel the edges.", None, -1))
+        self.addAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Add the selected into the selected bevel set and bevel the edges.", None, -1))
         self.removeAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Remove", None, -1))
+        self.removeAction.setToolTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Remove the selected edges from a bevel set  and restore the edges.", None, -1))
+        self.removeAction.setStatusTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Remove the selected edges from a bevel set  and restore the edges.", None, -1))
+        self.removeAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Remove the selected edges from a bevel set  and restore the edges.", None, -1))
         self.deleteAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Delete", None, -1))
+        self.deleteAction.setToolTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Delete the selected bevel set and restore its member edges", None, -1))
+        self.deleteAction.setStatusTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Delete the selected bevel set and restore its member edges", None, -1))
+        self.deleteAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Delete the selected bevel set and restore its member edges", None, -1))
         self.selectHardEdgeAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Hard Edge", None, -1))
+        self.selectHardEdgeAction.setToolTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select hard edges based on face angle.", None, -1))
+        self.selectHardEdgeAction.setStatusTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select hard edges based on face angle.", None, -1))
+        self.selectHardEdgeAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select hard edges based on face angle.", None, -1))
         self.selectSoftEdgeAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Soft Edge", None, -1))
+        self.selectSoftEdgeAction.setToolTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select soft edges based on face angle.", None, -1))
+        self.selectSoftEdgeAction.setStatusTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select soft edges based on face angle.", None, -1))
+        self.selectSoftEdgeAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select soft edges based on face angle.", None, -1))
         self.selectMemberAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select Member", None, -1))
+        self.selectMemberAction.setToolTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select the edges of the selected object contained by a bevel set.", None, -1))
+        self.selectMemberAction.setStatusTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select the edges of the selected object contained by a bevel set.", None, -1))
+        self.selectMemberAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Select the edges of the selected object contained by a bevel set.", None, -1))
 
