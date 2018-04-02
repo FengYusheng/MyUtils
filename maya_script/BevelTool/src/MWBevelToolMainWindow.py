@@ -330,7 +330,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
 
         self.updateBevelSetTreeView()
-        # TODO: Validate the Maya scene: 1. turn construction history on
 
 
     def _mousePressEventInBevelSetTreeView(self, event):
@@ -350,18 +349,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
              True                                              False                 The artist switches the selection type of the            Restore.
                                                                                      mesh beveling directly. Handling this case in
-                                                                                     _selectionTypeChangedCallback or
-                                                                                     _selectionModeChangedCallback seems better
+                                                                                     _selectionTypeChangedCallback seems better
                                                                                      because active selection list isn't changed.
-
-        Problem 1: In Maya 2017, model message activeSelectionListChanged isn't be triggered when you just switch the selection type. But in Maya 2018
-        this problem doesn't happen.
-
-        Problem 2: This callback isn't triggered if you just click right button to switch selection type rather than select the mesh first.
-
-        Solve problem 2 : select members.
-
-        Sovel problem 1 : Check the status of options.drawOverredeAttributes and selection type after _runCallback.
 
         TODO: add log
         """
@@ -404,17 +393,25 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         len(options.disableIntermediate) == 0 and _activeIntermdiate()
         self.updateBevelSetTreeView()
-        print('selction changed')
+        # print('selction changed')
 
 
     def _selectionTypeChangedCallback(self, clientData=None):
-        """
-        Problem 3: This callback isn't be triggered when you switch selection type from compenont to object.
-        But _selectionChangedCallback is triggered instead.
+        def _runCallback():
+            if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
+                #This restoration doesn't seem to appear in undo list.
+                utils.restoreDrawOverrideAttributes('type')
+                self.newAction.setEnabled(False)
+                self.addAction.setEnabled(False)
+                self.removeAction.setEnabled(False)
+            elif utils.isSelectionTypeEdge() and (not utils.isInDrawOverrideAttributesDict()):
+                utils.activeBevel()
+                self.newAction.setEnabled(True)
+                self.addAction.setEnabled(True)
+                self.removeAction.setEnabled(True)
 
-        Problme 4: An object is in edge selection type. This callback isn't triggered when you select another object directly.
-        """
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
+        len(options.disableIntermediate) == 0 and _runCallback()
         # print('type changed')
 
 
@@ -428,11 +425,12 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def _selectionPreferenceChangedCallback(self, clientData=None):
-        repairmen.repairProblem001()
-        self.newAction.setEnabled(False)
-        self.addAction.setEnabled(False)
-        self.removeAction.setEnabled(False)
-        self.deleteAction.setEnabled(False)
+        if options.drawOverredeAttributes['ioMesh'] != ' ' and not(utils.isSelectionTypeEdge()):
+            # This restoration doesn't seem to appear in undo list.
+            utils.restoreDrawOverrideAttributes()
+            self.newAction.setEnabled(False)
+            self.addAction.setEnabled(False)
+            self.removeAction.setEnabled(False)
 
 
     def showEvent(self, event):

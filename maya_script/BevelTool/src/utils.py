@@ -47,7 +47,6 @@ class HashableMobjectHandle(om.MObjectHandle):
 
 class MayaUndoChuck():
     """
-    :TODO: flush undo?
     :Reference:
         `MayaUndoChunk` in "C:\Program Files\Autodesk\Maya2017\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py"
     """
@@ -93,21 +92,31 @@ def isSelectionTypeVertexFace():
 
 
 def switchSelectionTypeToVf(item):
-    pm.mel.eval('HideManipulators')
-    if pm.selectMode(q=True, object=True):
-        pm.selectType(ocm=True, alc=False)
-        pm.selectType(ocm=True, pvf=True)
-        pm.selectType(pvf=True)
-        pm.hilite(item)
-    else:
-        pm.selectType(alc=False)
-        pm.selectType(pvf=True)
-        pm.selectMode(q=True, preset=True) and pm.hilite(item)
+    def _switchSelectionTypeToVf():
+        pm.mel.eval('HideManipulators')
+        if pm.selectMode(q=True, object=True):
+            pm.selectType(ocm=True, alc=False)
+            pm.selectType(ocm=True, pvf=True)
+            pm.selectType(pvf=True)
+            pm.hilite(item)
+        else:
+            pm.selectType(alc=False)
+            pm.selectType(pvf=True)
+            pm.selectMode(q=True, preset=True) and pm.hilite(item)
 
-    try:
-        pm.mel.eval('exists dR_selTypeChanged') and pm.mel.eval('dR_selTypeChanged("edge")')
-    except pm.MelError:
-        pass
+        try:
+            pm.mel.eval('exists dR_selTypeChanged') and pm.mel.eval('dR_selTypeChanged("edge")')
+        except pm.MelError:
+            pass
+
+    name = item.name() if not isinstance(item, str) else item
+    if pm.mel.eval('exists doMenuComponentSelection'):
+        try:
+            pm.mel.eval('doMenuComponentSelection("{0}", "pvf")'.format(name))
+        except pm.MelError:
+            pass
+    else:
+        _switchSelectionTypeToVf()
 
 
 
@@ -134,6 +143,11 @@ def switchSelectionTypeToEdge(item):
             pass
 
     name = item.name() if not isinstance(item, str) else item
+
+    if name == options.drawOverredeAttributes['ioMesh']:
+        pm.hilite(item, u=True)
+        switchSelectionTypeToVf(item)
+
     if pm.mel.eval('exists doMenuComponentSelection'):
         try:
             pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(name))
@@ -162,11 +176,6 @@ def MWBevelSets():
 def bevelSetMembers(MWBevelSetName):
     bevelSetNode = pm.ls(MWBevelSetName, type='objectSet')
     return pm.ls(bevelSetNode[0].flattened(), flatten=True) if bevelSetNode else []
-
-
-
-def isBevelSetBeveled(bevelSetName):
-    return len(bevelSetMembers(bevelSetName))
 
 
 
@@ -220,10 +229,6 @@ def disconnectFromMWBevelSet(MWBevelSetName, meshTransform):
 
 
 def isInDrawOverrideAttributesDict():
-    """
-    Problem: more than one objects are in edge selection type.
-    Solve: unhilite the other objects?
-    """
     mesh = pm.ls(dag=True, hilite=True, type='mesh', ni=True)
     mesh = pm.ls(dag=True, os=True, type='mesh', ni=True) if len(mesh) == 0 else mesh
     return len(mesh) > 0 and mesh[0].name() in (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
@@ -291,14 +296,15 @@ def restoreDrawOverrideAttributes(operation=None):
             # when you turn the intermediate flag on. So clear active selection list here.
             pm.select(cl=True)
 
-    ioMesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
-    mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
+    if options.drawOverredeAttributes['ioMesh'] != ' ':
+        ioMesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
+        mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
 
-    if operation is None:
-        _restore()
-    else:
-        with MayaUndoChuck(operation):
+        if operation is None:
             _restore()
+        else:
+            with MayaUndoChuck(operation):
+                _restore()
 
     options.drawOverredeAttributes.clear()
 
@@ -338,7 +344,7 @@ def displayIOMesh(meshTrans, operation=None):
             switchSelectionTypeToEdge(meshTrans)
 
     def _deleteHistory():
-        # switch the selection type to edge, then call displayIOMesh. Or this function would delete ch.
+        # NOTE switch the selection type to edge, then call displayIOMesh. Or this function would delete ch.
         modifiers = [i for i in pm.listConnections(originMesh[0], type='polyModifier') if not i.name().startswith('MWBevelSet')]
         (len(modifiers) > 0 or len(pm.ls(dag=True, hilite=True, io=True)) == 0) and pm.delete(meshTrans, ch=True)
 
@@ -664,19 +670,19 @@ def selectedMWBevelSets():
 
 
 def selectMWBevelSetMembers():
-    # TODO: Unhilite the mesh first?
     mesh = pm.ls(dag=True, os=True, io=True, type='mesh')
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
     if len(mesh):
         name = mesh[-1].name()
         # A mesh belongs to only a bevel set.
         MWBevelSets = [i for i in pm.listSets(object=name) if i.name().startswith('MWBevelSet')]
+
         if len(MWBevelSets):
             members = [i for i in bevelSetMembers(MWBevelSets[0].name()) if i.name().rpartition('.e')[0] == name]
             if len(members):
                 with MayaUndoChuck('Select {0} edges in {1}'.format(name, MWBevelSets[0].name())):
                     switchSelectionTypeToEdge(mesh[-1].getTransform())
-                    # switch the selection type to edge, then call displayIOMesh. Or problem happens
+                    # switch the selection type to edge, then call displayIOMesh. Or displayIOMesh doesn't work normally.
                     displayIOMesh(mesh[-1].getTransform())
                     pm.select(members, r=True)
 
@@ -685,8 +691,6 @@ def selectMWBevelSetMembers():
 @disableSelectionEventCallback()
 def delConstructionHistory():
     """
-    Solve problem: modify the origin mesh shape when it's in edge selection type.
-
     Delete the construction history if the origin mesh is modified.
     """
     if options.drawOverredeAttributes['mesh'] != ' ':
