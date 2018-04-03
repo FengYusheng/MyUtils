@@ -89,3 +89,5 @@ drawOverredeAttributes = defaultdict(lambda: ' ')
 
 disableIntermediate = deque()
 isVertexFace = Counter()
+
+displaySmoothnessPreview = True

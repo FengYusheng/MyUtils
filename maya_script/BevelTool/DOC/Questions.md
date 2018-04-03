@@ -55,5 +55,7 @@ Ex: itemFilter and selectionListOperator nodes.
 
 8. Expression Editor
 
+9. hotkey
+
 ## Private work
 1. Reverse link list: reverse the bevel nodes of a mesh in Maya.

@@ -259,6 +259,15 @@ def disableSelectionEventCallback():
 
 
 
+def displayOriginInSmoothnessPreview():
+    if options.drawOverredeAttributes['mesh'] != ' ':
+        if options.displaySmoothnessPreview:
+            pm.displaySmoothness(options.drawOverredeAttributes['mesh'], divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3)
+        else:
+            pm.displaySmoothness(options.drawOverredeAttributes['mesh'], divisionsU=0, divisionsV=0, pointsWire=4, pointsShaded=1, polygonObject=1)
+
+
+
 def saveDrawOverrideAttributes(originMesh):
     options.drawOverredeAttributes['mesh'] = originMesh.name()
     options.drawOverredeAttributes['originMesh overrideEnabled'] = originMesh.overrideEnabled.get()
@@ -319,7 +328,8 @@ def displayIOMesh(meshTrans, operation=None):
             originMesh[0].overrideDisplayType.set(2)
 
             # displaySmoothness isn't undoable.
-            pm.displaySmoothness(divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3)
+            # pm.displaySmoothness(divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3)
+            displayOriginInSmoothnessPreview()
 
             # Edit the latest intermediate object attributes.
             ioMesh[-1].intermediateObject.set(False)
@@ -333,13 +343,6 @@ def displayIOMesh(meshTrans, operation=None):
 
             pm.select(ioMesh[-1], r=True)
             switchSelectionTypeToEdge(ioMesh[-1])
-
-            # The display of intermediate is defective if the selection type of origin mesh is vertex face
-            # _origin = options.drawOverredeAttributes['mesh']
-            # if options.isVertexFace[_origin] > 0:
-            #     switchSelectionTypeToVf(options.drawOverredeAttributes['ioMesh'])
-            #     switchSelectionTypeToEdge(options.drawOverredeAttributes['ioMesh'])
-            #     del options.isVertexFace[_origin]
         else:
             switchSelectionTypeToEdge(meshTrans)
 
@@ -713,6 +716,4 @@ def turnConstructionHistoryOn():
 
 
 if __name__ == '__main__':
-    for i in om.MEventMessage.getEventNames():
-        if i.startswith('select') or i.startswith('Select'):
-            print(i)
+    displayOrigin('pCube1')

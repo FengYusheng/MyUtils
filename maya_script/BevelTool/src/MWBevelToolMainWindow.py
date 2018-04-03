@@ -292,11 +292,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.removeAction.setIcon(QIcon(':/trackRemove.png'))
         self.selectMemberAction.setIcon(QIcon(':/subdivMirror.png'))
         self.deleteAction.setIcon(QIcon(':/smallTrash.png'))
+        self.displaySmoothnessPreviewAction.setIcon(QIcon(':/Smooth.png'))
         self.bevelToolbar.addAction(self.newAction)
         self.bevelToolbar.addAction(self.addAction)
         self.bevelToolbar.addAction(self.removeAction)
         self.bevelToolbar.addAction(self.selectMemberAction)
         self.bevelToolbar.addAction(self.deleteAction)
+        self.bevelToolbar.addAction(self.displaySmoothnessPreviewAction)
         self.selectHardEdgeAction.setIcon(QIcon(':/polyHardEdge.png'))
         self.selectSoftEdgeAction.setIcon(QIcon(':/polySoftEdge.png'))
         self.selectionToolbar.addAction(self.selectHardEdgeAction)
@@ -324,6 +326,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.removeAction.triggered.connect(self.removeEdgesFromBevelSet)
         self.selectMemberAction.triggered.connect(self.selectMembers)
         self.deleteAction.triggered.connect(self.deleteBevelSet)
+        self.displaySmoothnessPreviewAction.triggered.connect(self.displaySmoothnessPreview)
         self.selectHardEdgeAction.triggered.connect(self.selectHardEdges)
         self.selectSoftEdgeAction.triggered.connect(self.selectSoftEdges)
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
@@ -685,6 +688,11 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
     def smoothingAngleFromSpinBoxToSlider(self, value):
         v = value * 10000
         self.smoothingAngleSlider.value() == v or self.smoothingAngleSlider.setValue(v)
+
+
+    def displaySmoothnessPreview(self):
+        options.displaySmoothnessPreview = True if self.displaySmoothnessPreviewAction.isChecked() else False
+        utils.displayOriginInSmoothnessPreview()
 
 
     def displayOverrideAttributes(self):

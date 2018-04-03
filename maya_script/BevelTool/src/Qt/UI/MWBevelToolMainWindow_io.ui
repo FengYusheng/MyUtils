@@ -82,6 +82,8 @@
     <addaction name="removeAction"/>
     <addaction name="selectMemberAction"/>
     <addaction name="deleteAction"/>
+    <addaction name="separator"/>
+    <addaction name="displaySmoothnessPreviewAction"/>
    </widget>
    <widget class="QMenu" name="viewMenu">
     <property name="title">
@@ -405,7 +407,7 @@
     <string>Create a bevel along the selected edges and create a bevel set containing the edges.</string>
    </property>
    <property name="statusTip">
-    <string>Create a bevel along the selected edges and create a bevel set containing the edges.</string>
+    <string/>
    </property>
    <property name="whatsThis">
     <string>Create a bevel along the selected edges and create an objectSet Create a bevel along the selected edges and create a bevel set containing the edges. the edges.</string>
@@ -422,7 +424,7 @@
     <string>Add the selected into the selected bevel set and bevel the edges.</string>
    </property>
    <property name="statusTip">
-    <string>Add the selected into the selected bevel set and bevel the edges.</string>
+    <string/>
    </property>
    <property name="whatsThis">
     <string>Add the selected into the selected bevel set and bevel the edges.</string>
@@ -439,7 +441,7 @@
     <string>Remove the selected edges from a bevel set  and restore the edges.</string>
    </property>
    <property name="statusTip">
-    <string>Remove the selected edges from a bevel set  and restore the edges.</string>
+    <string/>
    </property>
    <property name="whatsThis">
     <string>Remove the selected edges from a bevel set  and restore the edges.</string>
@@ -456,7 +458,7 @@
     <string>Delete the selected bevel set and restore its member edges</string>
    </property>
    <property name="statusTip">
-    <string>Delete the selected bevel set and restore its member edges</string>
+    <string/>
    </property>
    <property name="whatsThis">
     <string>Delete the selected bevel set and restore its member edges</string>
@@ -470,7 +472,7 @@
     <string>Select hard edges based on face angle.</string>
    </property>
    <property name="statusTip">
-    <string>Select hard edges based on face angle.</string>
+    <string/>
    </property>
    <property name="whatsThis">
     <string>Select hard edges based on face angle.</string>
@@ -484,7 +486,7 @@
     <string>Select soft edges based on face angle.</string>
    </property>
    <property name="statusTip">
-    <string>Select soft edges based on face angle.</string>
+    <string/>
    </property>
    <property name="whatsThis">
     <string>Select soft edges based on face angle.</string>
@@ -501,10 +503,27 @@
     <string>Select the edges of the selected object contained by a bevel set.</string>
    </property>
    <property name="statusTip">
-    <string>Select the edges of the selected object contained by a bevel set.</string>
+    <string/>
    </property>
    <property name="whatsThis">
     <string>Select the edges of the selected object contained by a bevel set.</string>
+   </property>
+  </action>
+  <action name="displaySmoothnessPreviewAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Display Smoothness Preview</string>
+   </property>
+   <property name="toolTip">
+    <string>Display origin object in smoothness preview.</string>
+   </property>
+   <property name="whatsThis">
+    <string>Display origin object in smoothness preview.</string>
    </property>
   </action>
  </widget>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/OptionTableViewWidget.ui'
 #
-# Created: Sun Apr 01 11:49:24 2018
+# Created: Tue Apr 03 15:06:14 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
