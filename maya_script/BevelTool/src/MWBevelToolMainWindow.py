@@ -49,6 +49,7 @@ class MWChooseDialog(QDialog, ui_MWChooseDialog.Ui_MWChooseDialog):
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.remeberCheckBox.setVisible(False)
         self.args[0] == 'createBevelSet' and self.textEdit.setHtml(
             "<b>{0} is already in {1}. Do you want to move it into a new bevel set?<b/>"\
             .format(self.mesh, self.args[1])
@@ -61,7 +62,7 @@ class MWChooseDialog(QDialog, ui_MWChooseDialog.Ui_MWChooseDialog):
 
         self.yesButton.clicked.connect(self.move)
         self.noButton.clicked.connect(self.maintain)
-        self.remeberCheckBox.stateChanged.connect(lambda : self.remeberCheckBox.isChecked() or self.parent.chooseAction.setChecked(True))
+        self.remeberCheckBox.stateChanged.connect(self.force)
 
 
     def move(self):
@@ -72,6 +73,13 @@ class MWChooseDialog(QDialog, ui_MWChooseDialog.Ui_MWChooseDialog):
     def maintain(self):
         self.remeberCheckBox.isChecked() and self.parent.maintainAction.setChecked(True)
         self.reject()
+
+
+    def force(self):
+        if self.remeberCheckBox.isChecked():
+            self.parent.forceAction.setChecked(True)
+        else:
+            self.parent.forceAction.setChecked(False)
 
 
 
@@ -272,8 +280,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         self.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.viewMenu.addAction(self.bevelSetDock.toggleViewAction())
-        self.viewMenu.addAction(self.selectionConstraintDock.toggleViewAction())
         self.viewMenu.addAction(self.bevelToolbar.toggleViewAction())
         self.viewMenu.addAction(self.selectionToolbar.toggleViewAction())
         self.dataModelInBevelSetTreeView = QStandardItemModel(self.bevelSetTreeView)
@@ -283,10 +289,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.bevelSetTreeView.mousePressEvent = self._mousePressEventInBevelSetTreeView
         self.controlDelegate = ControlDelegate(self)
         self.bevelSetTreeView.setItemDelegate(self.controlDelegate)
-        self.bevelSetActionGroup = QActionGroup(self)
-        self.bevelSetActionGroup.addAction(self.moveAction)
-        self.bevelSetActionGroup.addAction(self.maintainAction)
-        self.bevelSetActionGroup.addAction(self.chooseAction)
         self.newAction.setIcon(QIcon(':/newLayerSelected.png'))
         self.addAction.setIcon(QIcon(':/trackAdd.png'))
         self.removeAction.setIcon(QIcon(':/trackRemove.png'))
@@ -306,16 +308,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectionToolbar.addWidget(self.smoothingAngleCheckBox)
         self.selectionToolbar.addWidget(self.smoothingAngleSpinBox)
         self.selectionToolbar.addWidget(self.smoothingAngleSlider)
-        self.bevelSetDock.setVisible(False)
+        self.displayOverrideAction.setVisible(False)
         self.selectionConstraintDock.setVisible(False)
-        self.bevelSetLabel.setVisible(False)
-        self.selectionLabel.setVisible(False)
-        self.selectionTreeView.setVisible(False)
+        self.forceAction.setVisible(False)
 
-        self.createBevelSetButton.clicked.connect(self.createBevelSet)
-        self.addButton.clicked.connect(self.addEdgesIntoBevelSet)
-        self.removeButton.clicked.connect(self.removeEdgesFromBevelSet)
-        self.deleteButton.clicked.connect(self.deleteBevelSet)
         self.displayOverrideAction.triggered.connect(self.displayOverrideAttributes)
         self.smoothingAngleCheckBox.stateChanged.connect(self.toggleSmoothingAngle)
         self.selectSoftEdgesButton.clicked.connect(self.selectSoftEdges)
@@ -363,22 +359,18 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             # print("EDGE: {0}".format(utils.isSelectionTypeEdge()))
             if (not utils.isInDrawOverrideAttributesDict()) and utils.isSelectionTypeEdge():
                 utils.activeBevel()
-                self.createBevelSetButton.setEnabled(True)
-                self.addButton.setEnabled(True)
-                self.removeButton.setEnabled(True)
                 self.newAction.setEnabled(True)
                 self.addAction.setEnabled(True)
                 self.removeAction.setEnabled(True)
+                self.displaySmoothnessPreviewAction.setEnabled(True)
                 self.statusbar.showMessage('Edit "{0}"'.format(options.drawOverredeAttributes['mesh']))
 
             elif (not utils.isInDrawOverrideAttributesDict()) and (not utils.isSelectionTypeEdge()):
                 utils.restoreDrawOverrideAttributes('Select a new mesh')
-                self.createBevelSetButton.setEnabled(False)
-                self.addButton.setEnabled(False)
-                self.removeButton.setEnabled(False)
                 self.newAction.setEnabled(False)
                 self.addAction.setEnabled(False)
                 self.removeAction.setEnabled(False)
+                self.displaySmoothnessPreviewAction.setEnabled(False)
                 self.statusbar.clearMessage()
 
             elif utils.isInDrawOverrideAttributesDict() and utils.isSelectionTypeEdge():
@@ -386,12 +378,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
             elif utils.isInDrawOverrideAttributesDict() and (not utils.isSelectionTypeEdge()):
                 utils.restoreDrawOverrideAttributes("Selection type isn't edge.")
-                self.createBevelSetButton.setEnabled(False)
-                self.addButton.setEnabled(False)
-                self.removeButton.setEnabled(False)
                 self.newAction.setEnabled(False)
                 self.addAction.setEnabled(False)
                 self.removeAction.setEnabled(False)
+                self.displaySmoothnessPreviewAction.setEnabled(False)
                 self.statusbar.clearMessage()
 
         len(options.disableIntermediate) == 0 and _activeIntermdiate()
@@ -407,11 +397,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.newAction.setEnabled(False)
                 self.addAction.setEnabled(False)
                 self.removeAction.setEnabled(False)
+                self.displaySmoothnessPreviewAction.setEnabled(False)
             elif utils.isSelectionTypeEdge() and (not utils.isInDrawOverrideAttributesDict()):
                 utils.activeBevel()
                 self.newAction.setEnabled(True)
                 self.addAction.setEnabled(True)
                 self.removeAction.setEnabled(True)
+                self.displaySmoothnessPreviewAction.setEnabled(False)
 
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
         len(options.disableIntermediate) == 0 and _runCallback()
@@ -434,6 +426,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.newAction.setEnabled(False)
             self.addAction.setEnabled(False)
             self.removeAction.setEnabled(False)
+            self.displaySmoothnessPreviewAction.setEnabled(False)
 
 
     def showEvent(self, event):
@@ -581,27 +574,13 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         elif func.__name__ == 'createBevelSet' and num > 0:
             self.statusbar.showMessage('{0} is already in {1}'.format(mesh, MWBevelSetName[0]))
-
-            if self.moveAction.isChecked():
-                force = QDialog.Accepted
-            elif self.maintainAction.isChecked():
-                force = QDialog.Rejected
-            else:
-                force = MWChooseDialog(self, 'createBevelSet', MWBevelSetName[0]).exec_()
-
+            force = QDialog.Accepted if self.forceAction.isChecked() else MWChooseDialog(self, 'createBevelSet', MWBevelSetName[0]).exec_()
             success = force == QDialog.Accepted
             success and utils.force(MWBevelSetName[0])
 
         elif func.__name__ == 'addEdgesIntoBevelSet' and num > 0 and args[0] != MWBevelSetName[0]:
             self.statusbar.showMessage('{0} is already in {1}'.format(mesh, MWBevelSetName[0]))
-
-            if self.moveAction.isChecked():
-                force = QDialog.Accepted
-            elif self.maintainAction.isChecked():
-                force = QDialog.Rejected
-            else:
-                force = MWChooseDialog(self, 'addEdgesIntoBevelSet', MWBevelSetName[0], args[0]).exec_()
-
+            force = QDialog.Accepted if self.forceAction.isChecked() else MWChooseDialog(self, 'addEdgesIntoBevelSet', MWBevelSetName[0], args[0]).exec_()
             success = force == QDialog.Accepted
             success and utils.force(MWBevelSetName[0], args[0])
 
@@ -644,12 +623,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         angle = self.smoothingAngleSpinBox.value()
         self.smoothingAngleCheckBox.isChecked() and utils.setSmoothingAngle(angle)
         if utils.selectHardEdges() == 1:
-            self.createBevelSetButton.setEnabled(True)
-            self.addButton.setEnabled(True)
-            self.removeButton.setEnabled(True)
             self.newAction.setEnabled(True)
             self.addAction.setEnabled(True)
             self.removeAction.setEnabled(True)
+            self.displaySmoothnessPreviewAction.setEnabled(False)
             self.statusbar.showMessage('Edit {0}.'.format(options.drawOverredeAttributes['mesh']))
         else:
             self.statusbar.showMessage('Select an object per time.')
@@ -659,12 +636,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         angle = self.smoothingAngleSpinBox.value()
         self.smoothingAngleCheckBox.isChecked() and utils.setSmoothingAngle(angle)
         if utils.selectSoftEdges() == 1:
-            self.createBevelSetButton.setEnabled(True)
-            self.addButton.setEnabled(True)
-            self.removeButton.setEnabled(True)
             self.newAction.setEnabled(True)
             self.addAction.setEnabled(True)
             self.removeAction.setEnabled(True)
+            self.displaySmoothnessPreviewAction.setEnabled(False)
             self.statusbar.showMessage('Edit {0}'.format(options.drawOverredeAttributes['mesh']))
         else:
             self.statusbar.showMessage('Select an object per time.')

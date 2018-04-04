@@ -5,6 +5,7 @@ import functools
 
 import pymel.core as pm
 import maya.api.OpenMaya as om # Python api 2.0
+import maya.OpenMaya as om1 # Python api 1.0
 
 import options
 import bevelTool
@@ -38,6 +39,16 @@ class HashableMobjectHandle(om.MObjectHandle):
     """
     def __init__(self, object):
         super(HashableMobjectHandle, self).__init__(object)
+
+
+    def __hash__(self):
+        return self.hashCode()
+
+
+
+class HashableMObjectHandlePython1(om1.MObjectHandle):
+    def __init__(self, object):
+        super(HashableMObjectHandlePython1, self).__init__(object)
 
 
     def __hash__(self):
@@ -176,33 +187,6 @@ def MWBevelSets():
 def bevelSetMembers(MWBevelSetName):
     bevelSetNode = pm.ls(MWBevelSetName, type='objectSet')
     return pm.ls(bevelSetNode[0].flattened(), flatten=True) if bevelSetNode else []
-
-
-
-def clearBevelSet(bevelSetName):
-    bevelNode = pm.ls(bevelSetName, type='objectSet')
-    members = bevelSetMembers(bevelSetName)
-    members = pm.filterExpand(members, sm=32, ex=True) if len(members) else []
-    with UnlockBevelSet(bevelSetName):
-        len(members) and len(bevelNode) and bevelNode[0].removeMembers(members)
-
-
-
-def getMeshObject(edges=[]):
-    """
-    :param:
-        edges, results of pm.filterExpand command, e.g.[u'pCylinder1.e[54]'] or pm.MeshEdge list.
-    """
-    dagObject = list(set(e.partition('.')[0] for e in edges))
-    if len(dagObject) > 1:
-        pm.warning('More than one objects are selected.')
-    elif 0 == len(dagObject):
-        pm.warning('You need select several mesh edges.')
-    else:
-        dagObject = pm.ls(dagObject)
-        dagObject = dagObject if isinstance(dagObject[0], pm.nt.Mesh) else pm.listRelatives(dagObject[0], shapes=True, ni=True)
-
-    return dagObject if len(dagObject) == 1 else []
 
 
 
@@ -376,6 +360,59 @@ def activeBevel():
 
 
 
+def getObjectSetsContainingEdgesUsingAPI1(edges=None):
+    '''
+    :Reference:
+        getCreaseSetsContainingItems in  C:\Program Files\Autodesk\Maya2018\Python\Lib\site-packages\maya\app\general\creaseSetEditor.py
+
+        http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=__files_GUID_0B85C721_C3C6_47D7_9D85_4F27B787ABB6_htm
+    '''
+    setsContainingEdges = set()
+    processedMeshNodeHandles = set()
+    dagPath = om1.MDagPath()
+    component = om1.MObject()
+
+    selectionList = om1.MSelectionList()
+    if edges is not None:
+        map(lambda e:selectionList.add(e), edges)
+    else:
+        om1.MGlobal.getActiveSelectionList(selectionList)
+
+    selectionListIterator = om1.MItSelectionList(selectionList)
+    while not selectionListIterator.isDone():
+        if selectionListIterator.itemType() == om1.MItSelectionList.kDagSelectionItem:
+            selectionListIterator.getDagPath(dagPath, component)
+
+            if dagPath.hasFn(om1.MFn.kMesh):
+                dagPathMeshNodeHandle = HashableMobjectHandle(dagPath.extendToShape().node())
+
+                if (not component.isNull()) or (dagPathMeshNodeHandle not processedMeshNodeHandles):
+                    processedMeshNodeHandles.add(dagPathMeshNodeHandle)
+
+                    meshFn = om1.MFnMesh(dagPath)
+                    connectedSets = om1.MObjectArray()
+                    connectedSetMembers = om1.MObjectArray()
+                    meshFn.getConnectedSetsAndMembers(dagPath.instanceNumber(), connectedSets, connectedSetMembers, False)
+
+                    for iConnectedSets in range(connectedSets.length()):
+                        setFn = om1.MFnSet(connectedSets[iConnectedSets])
+                        if len(setFn.name().partition('MWBevelSet')[1]):
+                            memberList = om1.MSelectionList()
+                            len(connectedSetMembers) > 0 and memberList.add((dagPath, connectedSetMembers[iConnectedSets]))
+
+                            if (not component.isNull()) and (component.apiType == 'kMeshEdgeComponent'):
+                                selectionListToRemoveItems = om1.MSelectionList(memberList)
+                                selectionListToRemoveItems.merge(dagPath, component, om1.MSelectionList.kRemoveFromList)
+                                selectionListToRemoveItems.isEmpty() or memberList.merge(selectionListToRemoveItems, om1.MSelectionList.kRemoveFromList)
+
+                            memberList.isEmpty() or setsContainingEdges.add(setFn.name())
+
+        selectionListIterator.next()
+
+    return setsContainingEdges
+
+
+
 def getObjectSetsContainingEdgesUsingAPI2(edges=None):
     '''
     :Reference:
@@ -411,7 +448,7 @@ def getObjectSetsContainingEdgesUsingAPI2(edges=None):
                         setFn.setObject(connectedSets[iConnectedSets])
                         if len(setFn.name().partition('MWBevelSet')[1]):
                             memberList = om.MSelectionList()
-                            not len(connectedSetMembers) or memberList.add((dagPath, connectedSetMembers[iConnectedSets]))
+                            len(connectedSetMembers) > 0 and memberList.add((dagPath, connectedSetMembers[iConnectedSets]))
 
                             # NOTE: om.MSelectionList.intersect()
                             if (not component.isNull()) and (component.apiTypeStr == 'kMeshEdgeComponent'):
@@ -424,6 +461,14 @@ def getObjectSetsContainingEdgesUsingAPI2(edges=None):
         selectionListIterator.next()
 
     return setsContainingEdges
+
+
+
+def getObjectSetsContainingEdges(edges=None):
+    if pm.versions.current() >= 201700:
+        getObjectSetsContainingEdgesUsingAPI2(edges)
+    else:
+        getObjectSetsContainingEdgesUsingAPI1(edges)
 
 
 
@@ -712,8 +757,3 @@ def delConstructionHistory():
 
 def turnConstructionHistoryOn():
     pm.constructionHistory(q=True, tgl=True) or pm.constructionHistory(tgl=True)
-
-
-
-if __name__ == '__main__':
-    displayOrigin('pCube1')
