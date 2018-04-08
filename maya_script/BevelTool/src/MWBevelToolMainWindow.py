@@ -20,13 +20,11 @@ import maya.api.OpenMaya as om # Python api 2.0
 import options
 import utils
 import bevelTool
-import repairmen
 import ui_MWBevelToolMainWindow
 import ui_MWChooseDialog
 reload(options)
 reload(utils)
 reload(bevelTool)
-reload(repairmen)
 reload(ui_MWBevelToolMainWindow)
 reload(ui_MWChooseDialog)
 
@@ -626,7 +624,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.newAction.setEnabled(True)
             self.addAction.setEnabled(True)
             self.removeAction.setEnabled(True)
-            self.displaySmoothnessPreviewAction.setEnabled(False)
+            self.displaySmoothnessPreviewAction.setEnabled(True)
             self.statusbar.showMessage('Edit {0}.'.format(options.drawOverredeAttributes['mesh']))
         else:
             self.statusbar.showMessage('Select an object per time.')
@@ -639,7 +637,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.newAction.setEnabled(True)
             self.addAction.setEnabled(True)
             self.removeAction.setEnabled(True)
-            self.displaySmoothnessPreviewAction.setEnabled(False)
+            self.displaySmoothnessPreviewAction.setEnabled(True)
             self.statusbar.showMessage('Edit {0}'.format(options.drawOverredeAttributes['mesh']))
         else:
             self.statusbar.showMessage('Select an object per time.')

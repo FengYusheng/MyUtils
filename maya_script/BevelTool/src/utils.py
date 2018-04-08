@@ -11,6 +11,8 @@ import options
 import bevelTool
 reload(bevelTool)
 
+MAYA_VERSION = pm.versions.current()
+
 
 
 class MCallBackIdWrapper(object):
@@ -91,6 +93,19 @@ class UnlockBevelSet(object):
 
 
 
+def getTransform(item):
+    meshTrans = None
+    item = pm.ls(item)[0]
+
+    if isinstance(item, pm.nt.Transform):
+        meshTrans = item
+    elif isinstance(item, pm.nt.Mesh):
+        meshTrans = item.getTransform() if MAYA_VERSION >= 201700 else pm.listRelatives(item, p=True, type='transform')
+
+    return meshTrans[0] if isinstance(meshTrans, list) else meshTrans
+
+
+
 def isSelectionTypeVertexFace():
     mesh = pm.ls(hilite=True, dag=True, ni=True, type='mesh')
     ret = len(mesh) > 0 and pm.selectType(q=True, pvf=True)
@@ -137,7 +152,7 @@ def switchSelectionTypeToEdge(item):
         doMenuComponentSelection in C:/Program Files/Autodesk/Maya2017/scripts/others/dagMenuProc.mel
     '''
     def _switchSelectionTypeToEdge():
-        pm.mel.eval('HideManipulators')
+        MAYA_VERSION >= 201700 and pm.mel.eval('HideManipulators')
         if pm.selectMode(q=True, object=True):
             pm.selectType(ocm=True, alc=False)
             pm.selectType(ocm=True, edge=True)
@@ -386,7 +401,7 @@ def getObjectSetsContainingEdgesUsingAPI1(edges=None):
             if dagPath.hasFn(om1.MFn.kMesh):
                 dagPathMeshNodeHandle = HashableMobjectHandle(dagPath.extendToShape().node())
 
-                if (not component.isNull()) or (dagPathMeshNodeHandle not processedMeshNodeHandles):
+                if (not component.isNull()) or (dagPathMeshNodeHandle not in processedMeshNodeHandles):
                     processedMeshNodeHandles.add(dagPathMeshNodeHandle)
 
                     meshFn = om1.MFnMesh(dagPath)
@@ -465,10 +480,7 @@ def getObjectSetsContainingEdgesUsingAPI2(edges=None):
 
 
 def getObjectSetsContainingEdges(edges=None):
-    if pm.versions.current() >= 201700:
-        getObjectSetsContainingEdgesUsingAPI2(edges)
-    else:
-        getObjectSetsContainingEdgesUsingAPI1(edges)
+    return getObjectSetsContainingEdgesUsingAPI2(edges) if pm.versions.current() >= 201700 else getObjectSetsContainingEdgesUsingAPI1(edges)
 
 
 
@@ -502,7 +514,7 @@ def _addMembersIntoBevelSet(bevelSetName, edges=None):
         mesh = pm.ls(intermediate, type='mesh') if intermediate != ' ' else pm.ls(origin, type='mesh')
         edges = [mesh[0].e[i] for i in indices]
         MWBevelSet[0].forceElement(edges)
-        objectSetsContainingEdges = getObjectSetsContainingEdgesUsingAPI2([e.name() for e in edges])
+        objectSetsContainingEdges = getObjectSetsContainingEdges([e.name() for e in edges])
         objectSetsContainingEdges.discard(MWBevelSet[0].name())
         for objectSet in objectSetsContainingEdges:
             objectSet = pm.ls(objectSet, type='objectSet')[0]
@@ -513,10 +525,9 @@ def _addMembersIntoBevelSet(bevelSetName, edges=None):
 
 def addEdgesIntoBevelSet(MWBevelSetName, edges=None):
     mesh = options.drawOverredeAttributes['ioMesh'] if options.drawOverredeAttributes['ioMesh'] != ' ' else options.drawOverredeAttributes['mesh']
-    meshTrans = pm.ls(options.drawOverredeAttributes['mesh'])[0].getTransform()
+    meshTrans = getTransform(mesh)
     MWBevelSet = pm.ls(MWBevelSetName, type='objectSet')
     edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
-    _, bevelSetName = numBevelSet()
 
     if edges is not None:
         edges += [e.name() for e in bevelSetMembers(MWBevelSetName) if e.name().rpartition('.e')[0] == mesh]
@@ -543,7 +554,7 @@ def addEdgesIntoBevelSet(MWBevelSetName, edges=None):
 def removeEdgesFromBevelSet(edges=None):
     edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
     mesh = options.drawOverredeAttributes['ioMesh'] if options.drawOverredeAttributes['ioMesh'] != ' ' else options.drawOverredeAttributes['mesh']
-    meshTrans = pm.ls(mesh, type='mesh')[0].getTransform()
+    meshTrans = getTransform(mesh)
     _, MWBevelSetName = numBevelSet()
 
     if len(MWBevelSetName) and (edges is not None):
@@ -598,7 +609,7 @@ def createBevelSet(edges=None):
 
     if edges is not None:
         originMesh = pm.ls(options.drawOverredeAttributes['mesh'])
-        meshTrans = originMesh[0].getTransform()
+        meshTrans = getTransform(originMesh[0])
         edgeIndices = [int(e.name().partition('[')[2].partition(']')[0]) for e in pm.ls(edges, flatten=True)]
         with MayaUndoChuck('Create a MW bevel set.'):
             pm.select(cl=True)
@@ -606,8 +617,15 @@ def createBevelSet(edges=None):
             MWBevelSet = pm.sets(name='MWBevelSet#')
             MWBevelPartition = createPartition(MWBevelSet)
             MWBevelSetName = MWBevelSet.name()
-            bevelTool.bevelSelectedEdges(*(edgeIndices, options.drawOverredeAttributes['mesh'], MWBevelSetName), **copy.copy(options.bevelOptions))
+
+            bevelOptions = copy.copy(options.bevelOptions)
+            bevelTool.bevelSelectedEdges(*(edgeIndices, options.drawOverredeAttributes['mesh'], MWBevelSetName), **bevelOptions)
             pm.createNode('polyBevel3', name=MWBevelSetName+'_Bevel_Node', shared=True, skipSelect=True)
+            bevelTool.setMWBevelOption(MWBevelSetName, 'Fraction', bevelOptions['fraction'])
+            bevelTool.setMWBevelOption(MWBevelSetName, 'Segments', bevelOptions['segments'])
+            bevelTool.setMWBevelOption(MWBevelSetName, 'Mitering', bevelOptions['mitering'])
+            bevelTool.setMWBevelOption(MWBevelSetName, 'Miter Along', bevelOptions['miterAlong'])
+            bevelTool.setMWBevelOption(MWBevelSetName, 'Chamfer', bevelOptions['chamfer'])
 
             # The objectSet is locked automatically when it has no connection.
             # You can still add members into it.
@@ -637,7 +655,7 @@ def selectHardEdges():
     mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
     if len(mesh) == 1:
-        switchSelectionTypeToEdge(mesh[0].getTransform())
+        switchSelectionTypeToEdge(getTransform(mesh[0]))
         activeBevel()
 
         if options.drawOverredeAttributes['ioMesh'] != ' ':
@@ -660,7 +678,7 @@ def selectSoftEdges():
     mesh = pm.ls(dag=True, os=True, ni=True, type='mesh')
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
     if len(mesh) == 1:
-        switchSelectionTypeToEdge(mesh[0].getTransform())
+        switchSelectionTypeToEdge(getTransform(mesh[0]))
         activeBevel()
 
         if options.drawOverredeAttributes['ioMesh'] != ' ':
@@ -694,7 +712,7 @@ def setSmoothingAngle(angle):
         polySoftEdgeNodes = list(set([i for i in pm.listConnections(mesh[0], type='polySoftEdge')]) - set(MWPolySoftEdgeNodes))
         len(polySoftEdgeNodes) == 0 or pm.delete(polySoftEdgeNodes)
 
-        pm.select(mesh[0].getTransform(), r=True)
+        pm.select(getTransform(mesh[0]), r=True)
 
         if len(MWPolySoftEdgeNodes):
             MWPolySoftEdgeNodes[0].setAngle(angle)
@@ -702,7 +720,7 @@ def setSmoothingAngle(angle):
             pm.polySoftEdge(a=angle)[0].setName(polySoftEdgeName)
 
         # Delete construction history because the origin mesh is changed.
-        pm.delete(mesh[0].getTransform(), ch=True)
+        pm.delete(getTransform(mesh[0]), ch=True)
 
     else:
         pm.warning('Select an object per time.')
@@ -729,9 +747,9 @@ def selectMWBevelSetMembers():
             members = [i for i in bevelSetMembers(MWBevelSets[0].name()) if i.name().rpartition('.e')[0] == name]
             if len(members):
                 with MayaUndoChuck('Select {0} edges in {1}'.format(name, MWBevelSets[0].name())):
-                    switchSelectionTypeToEdge(mesh[-1].getTransform())
+                    switchSelectionTypeToEdge(getTransform(mesh[-1]))
                     # switch the selection type to edge, then call displayIOMesh. Or displayIOMesh doesn't work normally.
-                    displayIOMesh(mesh[-1].getTransform())
+                    displayIOMesh(getTransform(mesh[-1]))
                     pm.select(members, r=True)
 
 
@@ -745,12 +763,11 @@ def delConstructionHistory():
         mesh = pm.ls(options.drawOverredeAttributes['mesh'], type='mesh')
         modifiers = [i for i in pm.listConnections(mesh[0], type='polyModifier') if not i.name().startswith('MWBevelSet')]
         edges = pm.filterExpand(sm=32, ex=True)
-
         if len(modifiers):
             with MayaUndoChuck('Delete ch when origin mesh is modified.'):
                 restoreDrawOverrideAttributes()
-                pm.delete(mesh[0].getTransform(), ch=True)
-                displayIOMesh(mesh[0].getTransform())
+                pm.delete(getTransform(mesh[0]), ch=True)
+                displayIOMesh(getTransform(mesh[0]))
                 pm.select(edges, r=True)
 
 

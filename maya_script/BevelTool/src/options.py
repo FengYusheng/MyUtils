@@ -14,8 +14,8 @@ bevelOptions = {
     'offsetAsFraction'     : True,
     'autoFit'              : True,
     'depth'                : 1,
-    'mitering'             : 0,
-    'miterAlong'           : 0,
+    'mitering'             : 0,      # This option exists since Maya 2017
+    'miterAlong'           : 0,      # This option exists since Maya 2017
     'chamfer'              : False,
     'segments'             : 1,
     'worldSpace'           : True,
