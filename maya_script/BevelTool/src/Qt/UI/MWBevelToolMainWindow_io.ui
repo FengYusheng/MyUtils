@@ -65,6 +65,7 @@
     <addaction name="separator"/>
     <addaction name="displaySmoothnessPreviewAction"/>
     <addaction name="forceAction"/>
+    <addaction name="repairmenAction"/>
    </widget>
    <widget class="QMenu" name="viewMenu">
     <property name="title">
@@ -426,6 +427,11 @@
    </property>
    <property name="text">
     <string>Force</string>
+   </property>
+  </action>
+  <action name="repairmenAction">
+   <property name="text">
+    <string>repairmen</string>
    </property>
   </action>
  </widget>

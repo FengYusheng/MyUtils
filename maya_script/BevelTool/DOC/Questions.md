@@ -57,5 +57,7 @@ Ex: itemFilter and selectionListOperator nodes.
 
 9. hotkey
 
+10. scriptCtx, this command allows a user to create their own tools based on the selection tool. 
+
 ## Private work
 1. Reverse link list: reverse the bevel nodes of a mesh in Maya.

@@ -325,6 +325,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectSoftEdgeAction.triggered.connect(self.selectSoftEdges)
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
+        self.repairmenAction.triggered.connect(utils.repairman)
 
         self.updateBevelSetTreeView()
 
@@ -384,7 +385,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         len(options.disableIntermediate) == 0 and _activeIntermdiate()
         self.updateBevelSetTreeView()
-        # print('selction changed')
 
 
     def _selectionTypeChangedCallback(self, clientData=None):
@@ -405,7 +405,6 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
         len(options.disableIntermediate) == 0 and _runCallback()
-        # print('type changed')
 
 
     def _beforeSceneUpdateCallback(self, clientData=None):

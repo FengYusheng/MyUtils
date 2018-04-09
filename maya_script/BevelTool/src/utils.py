@@ -135,7 +135,7 @@ def switchSelectionTypeToVf(item):
         except pm.MelError:
             pass
 
-    name = item.name() if not isinstance(item, str) else item
+    name = item.name() if not (isinstance(item, str) or isinstance(item, unicode)) else item
     if pm.mel.eval('exists doMenuComponentSelection'):
         try:
             pm.mel.eval('doMenuComponentSelection("{0}", "pvf")'.format(name))
@@ -168,12 +168,7 @@ def switchSelectionTypeToEdge(item):
         except pm.MelError:
             pass
 
-    name = item.name() if not isinstance(item, str) else item
-
-    if name == options.drawOverredeAttributes['ioMesh']:
-        pm.hilite(item, u=True)
-        switchSelectionTypeToVf(item)
-
+    name = item.name() if not (isinstance(item, str) or isinstance(item, unicode)) else item
     if pm.mel.eval('exists doMenuComponentSelection'):
         try:
             pm.mel.eval('doMenuComponentSelection("{0}", "edge")'.format(name))
@@ -327,7 +322,6 @@ def displayIOMesh(meshTrans, operation=None):
             originMesh[0].overrideDisplayType.set(2)
 
             # displaySmoothness isn't undoable.
-            # pm.displaySmoothness(divisionsU=3, divisionsV=3, pointsWire=16, pointsShaded=4, polygonObject=3)
             displayOriginInSmoothnessPreview()
 
             # Edit the latest intermediate object attributes.
@@ -774,3 +768,17 @@ def delConstructionHistory():
 
 def turnConstructionHistoryOn():
     pm.constructionHistory(q=True, tgl=True) or pm.constructionHistory(tgl=True)
+
+
+
+@disableSelectionEventCallback()
+def repairman():
+    origin = options.drawOverredeAttributes['mesh']
+    intermediate = options.drawOverredeAttributes['ioMesh']
+
+    if intermediate != ' ':
+        pm.hilite(getTransform(origin), u=True)
+        if options.isVertexFace[origin] > 0:
+            switchSelectionTypeToVf(intermediate)
+            switchSelectionTypeToEdge(intermediate)
+            del options.isVertexFace[origin]
