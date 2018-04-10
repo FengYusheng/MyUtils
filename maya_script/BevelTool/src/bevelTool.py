@@ -94,44 +94,6 @@ def bevelMembers(bevelSetName):
 
 
 
-def bevelOnSelectedBevelSet(bevelSetName, *args, **kwargs):
-    members = utils.bevelSetMembers(bevelSetName)
-    if len(members):
-        meshObject = utils.getMeshObject(members)
-        bevelSet = pm.ls(bevelSetName, type='objectSet')
-        bevelOptions = kwargs
-
-        bevelNode = pm.polyBevel3(
-            members,
-            fraction=bevelOptions['fraction'],
-            offsetAsFraction=bevelOptions['offsetAsFraction'],
-            autoFit=bevelOptions['autoFit'],
-            depth=bevelOptions['depth'],
-            mitering=bevelOptions['mitering'],
-            miterAlong=bevelOptions['miterAlong'],
-            chamfer=bevelOptions['chamfer'],
-            segments=bevelOptions['segments'],
-            worldSpace=bevelOptions['worldSpace'],
-            smoothingAngle=bevelOptions['smoothingAngle'],
-            subdivideNgons=bevelOptions['subdivideNgons'],
-            mergeVertices=bevelOptions['mergeVertices'],
-            mergeVertexTolerance=bevelOptions['mergeVertexTolerance'],
-            miteringAngle=bevelOptions['miteringAngle'],
-            angleTolerance=bevelOptions['angleTolerance'],
-            forceParallel=bevelOptions['forceParallel'],
-            ch=bevelOptions['ch']
-        )
-
-        if bevelSetName.rpartition('_')[1] == '_':
-            bevelNode[0].setName('MWBevel_'+bevelSetName)
-        else:
-            bevelNode[0].setName('MWBevel_'+bevelSetName+'_#')
-            bevelSet[0].rename(bevelNode[0].name().partition('MWBevel_')[2])
-
-        utils.disconnectFromMWBevelSet(bevelSet[0].name(), meshObject)
-        utils.lockBevelSet(bevelSet, True)
-
-
 @disableSelectionEventCallback()
 def bevelSelectedEdges(*args, **kwargs):
     edgeIndices, mesh, MWBevelSetName = args

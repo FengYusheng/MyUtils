@@ -434,6 +434,17 @@
     <string>repairmen</string>
    </property>
   </action>
+  <action name="exportAction">
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="statusTip">
+    <string>Export members in the bevel set.</string>
+   </property>
+   <property name="whatsThis">
+    <string>Export members in the bevel set.</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

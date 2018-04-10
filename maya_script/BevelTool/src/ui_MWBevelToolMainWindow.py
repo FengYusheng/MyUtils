@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Mon Apr 09 17:58:08 2018
+# Created: Tue Apr 10 11:58:51 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -157,6 +157,8 @@ class Ui_MWBevelToolMainWindow(object):
         self.forceAction.setObjectName("forceAction")
         self.repairmenAction = QtWidgets.QAction(MWBevelToolMainWindow)
         self.repairmenAction.setObjectName("repairmenAction")
+        self.exportAction = QtWidgets.QAction(MWBevelToolMainWindow)
+        self.exportAction.setObjectName("exportAction")
         self.editMenu.addAction(self.displayOverrideAction)
         self.editMenu.addSeparator()
         self.editMenu.addAction(self.newAction)
@@ -224,4 +226,7 @@ class Ui_MWBevelToolMainWindow(object):
         self.displaySmoothnessPreviewAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Display origin object in smoothness preview.", None, -1))
         self.forceAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Force", None, -1))
         self.repairmenAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "repairmen", None, -1))
+        self.exportAction.setText(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Export", None, -1))
+        self.exportAction.setStatusTip(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Export members in the bevel set.", None, -1))
+        self.exportAction.setWhatsThis(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Export members in the bevel set.", None, -1))
 

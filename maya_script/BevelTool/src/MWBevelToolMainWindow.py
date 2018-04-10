@@ -401,7 +401,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.newAction.setEnabled(True)
                 self.addAction.setEnabled(True)
                 self.removeAction.setEnabled(True)
-                self.displaySmoothnessPreviewAction.setEnabled(False)
+                self.displaySmoothnessPreviewAction.setEnabled(True)
 
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
         len(options.disableIntermediate) == 0 and _runCallback()
