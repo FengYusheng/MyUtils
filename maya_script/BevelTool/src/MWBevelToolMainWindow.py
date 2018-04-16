@@ -353,6 +353,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         TODO: add log
         """
         def _activeIntermdiate():
+            utils.repairman2()
             # TODO: self.statusbar.showMessage("IN {0}. EDGE {1}".format(utils.isInDrawOverrideAttributesDict(), utils.isSelectionTypeEdge()))
             # print("IN: {0}".format(utils.isInDrawOverrideAttributesDict()))
             # print("EDGE: {0}".format(utils.isSelectionTypeEdge()))
@@ -389,6 +390,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def _selectionTypeChangedCallback(self, clientData=None):
         def _runCallback():
+            utils.repairman2()
             if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
                 #This restoration doesn't seem to appear in undo list.
                 utils.restoreDrawOverrideAttributes('type')

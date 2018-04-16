@@ -351,8 +351,8 @@ def displayIOMesh(meshTrans, operation=None):
     _deleteHistory()
 
     ioMesh = pm.ls(dag=True, hilite=True, io=True)
-    saveDrawOverrideAttributes(originMesh[0])
 
+    saveDrawOverrideAttributes(originMesh[0])
     if operation is not None:
         with MayaUndoChuck(operation):
             _displayIOMesh()
@@ -779,6 +779,19 @@ def repairman():
     if intermediate != ' ':
         pm.hilite(getTransform(origin), u=True)
         if options.isVertexFace[origin] > 0:
+            del options.isVertexFace[origin]
             switchSelectionTypeToVf(intermediate)
             switchSelectionTypeToEdge(intermediate)
-            del options.isVertexFace[origin]
+
+
+
+@disableSelectionEventCallback()
+def repairman2():
+    activeMesh = (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
+    inactiveTransforms = [getTransform(m) for m in pm.ls(dag=True, hilite=True, ni=True, type='mesh') if m.name() not in activeMesh]
+    if activeMesh[0] !=' ' \
+        and len(inactiveTransforms) > 0 and \
+        isSelectionTypeEdge():
+
+        pm.hilite(inactiveTransforms, u=True)
+        pm.warning("You are editing {0}. If you want to edite another object, left click it first.".format(activeMesh[0]))
