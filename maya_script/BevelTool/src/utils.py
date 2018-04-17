@@ -3,6 +3,7 @@ from collections import Counter
 import copy
 import functools
 
+from pymel.all import mayautils
 import pymel.core as pm
 import maya.api.OpenMaya as om # Python api 2.0
 import maya.OpenMaya as om1 # Python api 1.0
@@ -93,6 +94,27 @@ class UnlockBevelSet(object):
 
 
 
+def disableSelectionEventCallback():
+    def decorate(func):
+        @functools.wraps(func)
+        def decorator(*args, **kwargs):
+            options.disableIntermediate.append(func.__name__)
+            ret = func(*args, **kwargs)
+            options.disableIntermediate.pop()
+            return ret
+        return decorator
+    return decorate
+
+
+
+def runOnLater(func):
+    @functools.wraps(func)
+    def decorator(*args, **kwargs):
+        mayautils.executeDeferred(func, *args, **kwargs)
+    return decorator
+
+
+
 def getTransform(item):
     meshTrans = None
     item = pm.ls(item)[0]
@@ -117,6 +139,7 @@ def isSelectionTypeVertexFace():
 
 
 
+@disableSelectionEventCallback()
 def switchSelectionTypeToVf(item):
     def _switchSelectionTypeToVf():
         pm.mel.eval('HideManipulators')
@@ -146,6 +169,7 @@ def switchSelectionTypeToVf(item):
 
 
 
+@disableSelectionEventCallback()
 def switchSelectionTypeToEdge(item):
     '''
     :Reference:
@@ -237,19 +261,6 @@ def isSelectionTypeEdge():
 def lockBevelSet(bevelSetName, isLocked=True):
     bevelSet = pm.ls(bevelSetName, type='objectSet')
     len(bevelSet) and pm.lockNode(bevelSet, lock=isLocked)
-
-
-
-def disableSelectionEventCallback():
-    def decorate(func):
-        @functools.wraps(func)
-        def decorator(*args, **kwargs):
-            options.disableIntermediate.append(func.__name__)
-            ret = func(*args, **kwargs)
-            options.disableIntermediate.pop()
-            return ret
-        return decorator
-    return decorate
 
 
 
@@ -771,17 +782,21 @@ def turnConstructionHistoryOn():
 
 
 
-@disableSelectionEventCallback()
+@runOnLater
 def repairman():
     origin = options.drawOverredeAttributes['mesh']
     intermediate = options.drawOverredeAttributes['ioMesh']
 
     if intermediate != ' ':
+        # unhilite operation doesn't trigger any selection callback.
         pm.hilite(getTransform(origin), u=True)
         if options.isVertexFace[origin] > 0:
             del options.isVertexFace[origin]
+            # mayautils.executeDeferred(switchSelectionTypeToVf, intermediate)
+            # mayautils.executeDeferred(switchSelectionTypeToEdge, intermediate)
             switchSelectionTypeToVf(intermediate)
             switchSelectionTypeToEdge(intermediate)
+            pm.refresh()
 
 
 
@@ -790,8 +805,8 @@ def repairman2():
     activeMesh = (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
     inactiveTransforms = [getTransform(m) for m in pm.ls(dag=True, hilite=True, ni=True, type='mesh') if m.name() not in activeMesh]
     if activeMesh[0] !=' ' \
-        and len(inactiveTransforms) > 0 and \
-        isSelectionTypeEdge():
+        and len(inactiveTransforms) > 0 \
+        and isSelectionTypeEdge():
 
         pm.hilite(inactiveTransforms, u=True)
         pm.warning("You are editing {0}. If you want to edite another object, left click it first.".format(activeMesh[0]))

@@ -429,6 +429,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def showEvent(self, event):
+        # Switching selection mode from component to object triggers this callback.
         cb = om.MEventMessage.addEventCallback('SelectPreferenceChanged', self._selectionPreferenceChangedCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
 
