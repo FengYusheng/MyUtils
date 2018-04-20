@@ -306,7 +306,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectionToolbar.addWidget(self.smoothingAngleCheckBox)
         self.selectionToolbar.addWidget(self.smoothingAngleSpinBox)
         self.selectionToolbar.addWidget(self.smoothingAngleSlider)
-        self.displayOverrideAction.setVisible(False)
+        # self.displayOverrideAction.setVisible(False)
         self.selectionConstraintDock.setVisible(False)
         self.forceAction.setVisible(False)
 
@@ -384,6 +384,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.displaySmoothnessPreviewAction.setEnabled(False)
                 self.statusbar.clearMessage()
 
+            utils.repairman()
+
         len(options.disableIntermediate) == 0 and _activeIntermdiate()
         self.updateBevelSetTreeView()
 
@@ -393,7 +395,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             utils.repairman2()
             if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
                 #This restoration doesn't seem to appear in undo list.
-                utils.restoreDrawOverrideAttributes('type')
+                utils.restoreDrawOverrideAttributes()
                 self.newAction.setEnabled(False)
                 self.addAction.setEnabled(False)
                 self.removeAction.setEnabled(False)
@@ -404,6 +406,8 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.addAction.setEnabled(True)
                 self.removeAction.setEnabled(True)
                 self.displaySmoothnessPreviewAction.setEnabled(True)
+
+            utils.repairman()
 
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
         len(options.disableIntermediate) == 0 and _runCallback()

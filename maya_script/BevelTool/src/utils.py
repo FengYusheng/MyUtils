@@ -305,6 +305,7 @@ def restoreDrawOverrideAttributes(operation=None):
         if len(mesh):
             mesh[0].overrideDisplayType.set(options.drawOverredeAttributes['originMesh overrideDisplayType'])
             mesh[0].overrideEnabled.set(options.drawOverredeAttributes['originMesh overrideEnabled'])
+            pm.displaySmoothness(options.drawOverredeAttributes['mesh'], divisionsU=0, divisionsV=0, pointsWire=4, pointsShaded=1, polygonObject=1)
 
             # The selected components of the intermediate are still in active selection list
             # when you turn the intermediate flag on. So clear active selection list here.
@@ -321,6 +322,7 @@ def restoreDrawOverrideAttributes(operation=None):
                 _restore()
 
     options.drawOverredeAttributes.clear()
+
 
 
 @disableSelectionEventCallback()
@@ -533,7 +535,6 @@ def addEdgesIntoBevelSet(MWBevelSetName, edges=None):
     meshTrans = getTransform(mesh)
     MWBevelSet = pm.ls(MWBevelSetName, type='objectSet')
     edges = pm.filterExpand(edges, sm=32, ex=True) if edges is not None else pm.filterExpand(sm=32, ex=True)
-
     if edges is not None:
         edges += [e.name() for e in bevelSetMembers(MWBevelSetName) if e.name().rpartition('.e')[0] == mesh]
         indices = [int(e.rpartition('[')[2].rpartition(']')[0]) for e in pm.ls(edges, flatten=True)]
@@ -782,21 +783,28 @@ def turnConstructionHistoryOn():
 
 
 
-@runOnLater
+@disableSelectionEventCallback()
 def repairman():
     origin = options.drawOverredeAttributes['mesh']
     intermediate = options.drawOverredeAttributes['ioMesh']
 
     if intermediate != ' ':
+        meshTrans = getTransform(origin)
         # unhilite operation doesn't trigger any selection callback.
-        pm.hilite(getTransform(origin), u=True)
-        if options.isVertexFace[origin] > 0:
+        # TODO: it seems that unhilite operation works only in deferred mode.
+        pm.hilite(meshTrans, u=True)
+        if options.isVertexFace[origin]:
+            MWBevelSetName = [i.name() for i in pm.listSets(object=intermediate) if i.name().startswith('MWBevelSet')]
+            members = [i for i in bevelSetMembers(MWBevelSetName[0]) if i.name().rpartition('.e')[0] == intermediate ]
+            indices = [int(i.name().rpartition('[')[2].rpartition(']')[0]) for i in members]
+            mesh = pm.ls(origin, type='mesh')[0]
+            edges = [mesh.e[i] for i in indices]
+            removeEdgesFromBevelSet(members)
+            restoreDrawOverrideAttributes()
+            pm.delete(meshTrans, ch=True)
+            displayIOMesh(meshTrans)
+            addEdgesIntoBevelSet(MWBevelSetName[0], edges)
             del options.isVertexFace[origin]
-            # mayautils.executeDeferred(switchSelectionTypeToVf, intermediate)
-            # mayautils.executeDeferred(switchSelectionTypeToEdge, intermediate)
-            switchSelectionTypeToVf(intermediate)
-            switchSelectionTypeToEdge(intermediate)
-            pm.refresh()
 
 
 
