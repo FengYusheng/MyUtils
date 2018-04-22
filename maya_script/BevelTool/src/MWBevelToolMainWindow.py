@@ -22,11 +22,13 @@ import utils
 import bevelTool
 import ui_MWBevelToolMainWindow
 import ui_MWChooseDialog
+import repairmen
 reload(options)
 reload(utils)
 reload(bevelTool)
 reload(ui_MWBevelToolMainWindow)
 reload(ui_MWChooseDialog)
+reload(repairmen)
 
 
 
@@ -325,7 +327,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectSoftEdgeAction.triggered.connect(self.selectSoftEdges)
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
-        self.repairmenAction.triggered.connect(utils.repairman)
+        # self.repairmenAction.triggered.connect(utils.repairman)
 
         self.updateBevelSetTreeView()
 
@@ -353,7 +355,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         TODO: add log
         """
         def _activeIntermdiate():
-            utils.repairman2()
+            repairmen.repairman2()
             # TODO: self.statusbar.showMessage("IN {0}. EDGE {1}".format(utils.isInDrawOverrideAttributesDict(), utils.isSelectionTypeEdge()))
             # print("IN: {0}".format(utils.isInDrawOverrideAttributesDict()))
             # print("EDGE: {0}".format(utils.isSelectionTypeEdge()))
@@ -384,7 +386,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.displaySmoothnessPreviewAction.setEnabled(False)
                 self.statusbar.clearMessage()
 
-            utils.repairman()
+            repairmen.repairman()
 
         len(options.disableIntermediate) == 0 and _activeIntermdiate()
         self.updateBevelSetTreeView()
@@ -392,7 +394,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
     def _selectionTypeChangedCallback(self, clientData=None):
         def _runCallback():
-            utils.repairman2()
+            repairmen.repairman2()
             if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
                 #This restoration doesn't seem to appear in undo list.
                 utils.restoreDrawOverrideAttributes()
@@ -407,7 +409,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.removeAction.setEnabled(True)
                 self.displaySmoothnessPreviewAction.setEnabled(True)
 
-            utils.repairman()
+            repairmen.repairman()
 
         options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
         len(options.disableIntermediate) == 0 and _runCallback()

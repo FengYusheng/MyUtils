@@ -349,6 +349,7 @@ def displayIOMesh(meshTrans, operation=None):
 
             pm.select(ioMesh[-1], r=True)
             switchSelectionTypeToEdge(ioMesh[-1])
+            repairman3()
         else:
             switchSelectionTypeToEdge(meshTrans)
 
@@ -780,41 +781,3 @@ def delConstructionHistory():
 
 def turnConstructionHistoryOn():
     pm.constructionHistory(q=True, tgl=True) or pm.constructionHistory(tgl=True)
-
-
-
-@disableSelectionEventCallback()
-def repairman():
-    origin = options.drawOverredeAttributes['mesh']
-    intermediate = options.drawOverredeAttributes['ioMesh']
-
-    if intermediate != ' ':
-        meshTrans = getTransform(origin)
-        # unhilite operation doesn't trigger any selection callback.
-        # TODO: it seems that unhilite operation works only in deferred mode.
-        pm.hilite(meshTrans, u=True)
-        if options.isVertexFace[origin]:
-            MWBevelSetName = [i.name() for i in pm.listSets(object=intermediate) if i.name().startswith('MWBevelSet')]
-            members = [i for i in bevelSetMembers(MWBevelSetName[0]) if i.name().rpartition('.e')[0] == intermediate ]
-            indices = [int(i.name().rpartition('[')[2].rpartition(']')[0]) for i in members]
-            mesh = pm.ls(origin, type='mesh')[0]
-            edges = [mesh.e[i] for i in indices]
-            removeEdgesFromBevelSet(members)
-            restoreDrawOverrideAttributes()
-            pm.delete(meshTrans, ch=True)
-            displayIOMesh(meshTrans)
-            addEdgesIntoBevelSet(MWBevelSetName[0], edges)
-            del options.isVertexFace[origin]
-
-
-
-@disableSelectionEventCallback()
-def repairman2():
-    activeMesh = (options.drawOverredeAttributes['mesh'], options.drawOverredeAttributes['ioMesh'])
-    inactiveTransforms = [getTransform(m) for m in pm.ls(dag=True, hilite=True, ni=True, type='mesh') if m.name() not in activeMesh]
-    if activeMesh[0] !=' ' \
-        and len(inactiveTransforms) > 0 \
-        and isSelectionTypeEdge():
-
-        pm.hilite(inactiveTransforms, u=True)
-        pm.warning("You are editing {0}. If you want to edite another object, left click it first.".format(activeMesh[0]))
