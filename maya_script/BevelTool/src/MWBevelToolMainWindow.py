@@ -33,7 +33,6 @@ reload(repairmen)
 
 
 def getMayaWindow():
-    # TODO: pm.lsUI(windows=True)
     ptr = apiUI.MQtUtil.mainWindow()
     if ptr is not None:
         return wrapInstance(long(ptr), QWidget)
@@ -308,9 +307,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectionToolbar.addWidget(self.smoothingAngleCheckBox)
         self.selectionToolbar.addWidget(self.smoothingAngleSpinBox)
         self.selectionToolbar.addWidget(self.smoothingAngleSlider)
-        # self.displayOverrideAction.setVisible(False)
+        self.displayOverrideAction.setVisible(False)
         self.selectionConstraintDock.setVisible(False)
         self.forceAction.setVisible(False)
+        self.repairmenAction.setVisible(False)
 
         self.displayOverrideAction.triggered.connect(self.displayOverrideAttributes)
         self.smoothingAngleCheckBox.stateChanged.connect(self.toggleSmoothingAngle)
@@ -327,7 +327,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.selectSoftEdgeAction.triggered.connect(self.selectSoftEdges)
         self.smoothingAngleSlider.valueChanged.connect(self.smoothingAngleFromSliderToSpinBox)
         self.smoothingAngleSpinBox.valueChanged.connect(self.smoothingAngleFromSpinBoxToSlider)
-        # self.repairmenAction.triggered.connect(utils.repairman)
+        # self.repairmenAction.triggered.connect(repairmen.repairman)
 
         self.updateBevelSetTreeView()
 
@@ -337,6 +337,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         super(QTreeView, self.bevelSetTreeView).mousePressEvent(event)
 
 
+    # Changing selection list triggers this callback. This callback isn't triggered
+    # if you switch selection type by clicking right button directly without left
+    # clicking.
     def _selectionChangedCallback(self, clientData=None):
         """
         The Mesh is in drawOverredeAttributes dict.       Selection Type is edge.                  Description.                            Operation
@@ -349,18 +352,14 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
              True                                              False                 The artist switches the selection type of the            Restore.
                                                                                      mesh beveling directly. Handling this case in
-                                                                                     _selectionTypeChangedCallback seems better
+                                                                                     _selectionTypeChangedCallback is better
                                                                                      because active selection list isn't changed.
 
-        TODO: add log
         """
-        def _activeIntermdiate():
+        def _activateIntermdiate():
             repairmen.repairman2()
-            # TODO: self.statusbar.showMessage("IN {0}. EDGE {1}".format(utils.isInDrawOverrideAttributesDict(), utils.isSelectionTypeEdge()))
-            # print("IN: {0}".format(utils.isInDrawOverrideAttributesDict()))
-            # print("EDGE: {0}".format(utils.isSelectionTypeEdge()))
             if (not utils.isInDrawOverrideAttributesDict()) and utils.isSelectionTypeEdge():
-                utils.activeBevel()
+                utils.activateBevel()
                 self.newAction.setEnabled(True)
                 self.addAction.setEnabled(True)
                 self.removeAction.setEnabled(True)
@@ -387,13 +386,16 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.statusbar.clearMessage()
 
             repairmen.repairman()
+            repairmen.repairman3()
 
-        len(options.disableIntermediate) == 0 and _activeIntermdiate()
+        len(options.disableIntermediate) == 0 and _activateIntermdiate()
         self.updateBevelSetTreeView()
 
 
+    # Changing selection type triggers this callback. Switching seleciton mode
+    # from component to object doesn't trigger this callback.
     def _selectionTypeChangedCallback(self, clientData=None):
-        def _runCallback():
+        def _activateIntermdiate():
             repairmen.repairman2()
             if options.drawOverredeAttributes['ioMesh'] != ' ' and (not utils.isSelectionTypeEdge()):
                 #This restoration doesn't seem to appear in undo list.
@@ -403,27 +405,20 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.removeAction.setEnabled(False)
                 self.displaySmoothnessPreviewAction.setEnabled(False)
             elif utils.isSelectionTypeEdge() and (not utils.isInDrawOverrideAttributesDict()):
-                utils.activeBevel()
+                utils.activateBevel()
                 self.newAction.setEnabled(True)
                 self.addAction.setEnabled(True)
                 self.removeAction.setEnabled(True)
                 self.displaySmoothnessPreviewAction.setEnabled(True)
 
             repairmen.repairman()
+            repairmen.repairman3()
 
-        options.drawOverredeAttributes['ioMesh'] == ' ' and utils.isSelectionTypeVertexFace()
-        len(options.disableIntermediate) == 0 and _runCallback()
-
-
-    def _beforeSceneUpdateCallback(self, clientData=None):
-        self.setEnabled(False)
+        utils.isSelectionTypeVertexFace()
+        len(options.disableIntermediate) == 0 and _activateIntermdiate()
 
 
-    def _sceneUpdateCallback(self, clientDate=None):
-        self.setEnabled(True)
-        self.updateBevelSetTreeView()
-
-
+    # Switching selection mode from component to object triggers this callback.
     def _selectionPreferenceChangedCallback(self, clientData=None):
         if options.drawOverredeAttributes['ioMesh'] != ' ' and not(utils.isSelectionTypeEdge()):
             # This restoration doesn't seem to appear in undo list.
@@ -432,6 +427,20 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
             self.addAction.setEnabled(False)
             self.removeAction.setEnabled(False)
             self.displaySmoothnessPreviewAction.setEnabled(False)
+
+
+    def _beforeSceneUpdateCallback(self, clientData=None):
+        utils.restoreDrawOverrideAttributes()
+        self.setEnabled(False)
+
+
+    def _sceneUpdateCallback(self, clientDate=None):
+        self.setEnabled(True)
+        self.updateBevelSetTreeView()
+
+
+    def _sceneBeforeSaveCallback(self, clientData=None):
+        utils.restoreDrawOverrideAttributes()
 
 
     def showEvent(self, event):
@@ -443,6 +452,9 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
 
         cb = om.MEventMessage.addEventCallback('SelectTypeChanged', self._selectionTypeChangedCallback, None)
+        self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
+
+        cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeSave, self._sceneBeforeSaveCallback, None)
         self.registeredMayaCallbacks.append(utils.MCallBackIdWrapper(cb))
 
         cb = om.MSceneMessage.addCallback(om.MSceneMessage.kBeforeNew, self._beforeSceneUpdateCallback, None)
@@ -614,6 +626,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
     def selectMembers(self):
+        repairmen.repairman2()
         utils.selectMWBevelSetMembers()
 
 

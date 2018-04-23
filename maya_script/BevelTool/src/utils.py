@@ -107,14 +107,6 @@ def disableSelectionEventCallback():
 
 
 
-def runOnLater(func):
-    @functools.wraps(func)
-    def decorator(*args, **kwargs):
-        mayautils.executeDeferred(func, *args, **kwargs)
-    return decorator
-
-
-
 def getTransform(item):
     meshTrans = None
     item = pm.ls(item)[0]
@@ -349,7 +341,6 @@ def displayIOMesh(meshTrans, operation=None):
 
             pm.select(ioMesh[-1], r=True)
             switchSelectionTypeToEdge(ioMesh[-1])
-            repairman3()
         else:
             switchSelectionTypeToEdge(meshTrans)
 
@@ -375,7 +366,7 @@ def displayIOMesh(meshTrans, operation=None):
 
 
 
-def activeBevel():
+def activateBevel():
     transforms = pm.ls(dag=True, hilite=True, transforms=True)
     hasSelection = len(transforms) > 0
     hasSelection and displayIOMesh(transforms[-1], 'Start to bevel {0}.'.format(transforms[-1].name()))
@@ -663,7 +654,7 @@ def selectHardEdges():
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
     if len(mesh) == 1:
         switchSelectionTypeToEdge(getTransform(mesh[0]))
-        activeBevel()
+        activateBevel()
 
         if options.drawOverredeAttributes['ioMesh'] != ' ':
             mesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
@@ -686,7 +677,7 @@ def selectSoftEdges():
     mesh = pm.ls(dag=True, hilite=True, ni=True, type='mesh') if len(mesh) == 0 else mesh
     if len(mesh) == 1:
         switchSelectionTypeToEdge(getTransform(mesh[0]))
-        activeBevel()
+        activateBevel()
 
         if options.drawOverredeAttributes['ioMesh'] != ' ':
             mesh = pm.ls(options.drawOverredeAttributes['ioMesh'], type='mesh')
@@ -781,3 +772,9 @@ def delConstructionHistory():
 
 def turnConstructionHistoryOn():
     pm.constructionHistory(q=True, tgl=True) or pm.constructionHistory(tgl=True)
+
+
+
+if __name__ == '__main__':
+    for m in om.MEventMessage.getEventNames():
+        print(m)
