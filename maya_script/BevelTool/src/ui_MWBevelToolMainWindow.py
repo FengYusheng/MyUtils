@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\private_work\p4KuaiSync\MyUtils\maya_script\BevelTool/src/Qt/UI/MWBevelToolMainWindow_io.ui'
 #
-# Created: Tue Apr 10 11:58:51 2018
+# Created: Tue Apr 24 13:50:17 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -180,7 +180,7 @@ class Ui_MWBevelToolMainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MWBevelToolMainWindow)
 
     def retranslateUi(self, MWBevelToolMainWindow):
-        MWBevelToolMainWindow.setWindowTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Mindwalk Bevel Tool", None, -1))
+        MWBevelToolMainWindow.setWindowTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Mindwalk Bevel Tool v1.0", None, -1))
         self.editMenu.setTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Edit", None, -1))
         self.viewMenu.setTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "View", None, -1))
         self.selectionMenu.setTitle(QtWidgets.QApplication.translate("MWBevelToolMainWindow", "Selection", None, -1))

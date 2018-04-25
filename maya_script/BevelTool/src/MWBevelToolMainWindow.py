@@ -375,6 +375,10 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
                 self.statusbar.clearMessage()
 
             elif utils.isInDrawOverrideAttributesDict() and utils.isSelectionTypeEdge():
+                self.newAction.setEnabled(True)
+                self.addAction.setEnabled(True)
+                self.removeAction.setEnabled(True)
+                self.displaySmoothnessPreviewAction.setEnabled(True)
                 self.statusbar.showMessage('Edit "{0}"'.format(options.drawOverredeAttributes['mesh']))
 
             elif utils.isInDrawOverrideAttributesDict() and (not utils.isSelectionTypeEdge()):
@@ -697,6 +701,7 @@ class MWBevelToolMainWindow(QMainWindow, ui_MWBevelToolMainWindow.Ui_MWBevelTool
 
 
 def run():
+    utils.deleteOldWindow()
     window = MWBevelToolMainWindow(getMayaWindow())
     window.show()
 

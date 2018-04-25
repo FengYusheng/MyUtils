@@ -3,7 +3,6 @@ from collections import Counter
 import copy
 import functools
 
-from pymel.all import mayautils
 import pymel.core as pm
 import maya.api.OpenMaya as om # Python api 2.0
 import maya.OpenMaya as om1 # Python api 1.0
@@ -585,9 +584,9 @@ def deleteBevelSet(MWBevelSetName):
     if len(MWBevelSet):
         MWBevelNodes = [i for i in pm.ls(type='polyBevel3') if i.name().startswith(MWBevelSetName+'_Bevel_')]
         with MayaUndoChuck('Delete {0}.'.format(MWBevelSetName)):
+            restoreDrawOverrideAttributes()
             len(MWBevelNodes) > 0 and pm.delete(MWBevelNodes)
             pm.lockNode(MWBevelSet, lock=False)
-            restoreDrawOverrideAttributes()
             pm.delete(MWBevelSet)
 
 
@@ -746,7 +745,7 @@ def selectMWBevelSetMembers():
             if len(members):
                 with MayaUndoChuck('Select {0} edges in {1}'.format(name, MWBevelSets[0].name())):
                     switchSelectionTypeToEdge(getTransform(mesh[-1]))
-                    # switch the selection type to edge, then call displayIOMesh. Or displayIOMesh doesn't work normally.
+                    # NOTE: switch the selection type to edge, then call displayIOMesh. Or displayIOMesh doesn't work normally.
                     displayIOMesh(getTransform(mesh[-1]))
                     pm.select(members, r=True)
 
@@ -772,6 +771,11 @@ def delConstructionHistory():
 
 def turnConstructionHistoryOn():
     pm.constructionHistory(q=True, tgl=True) or pm.constructionHistory(tgl=True)
+
+
+
+def deleteOldWindow():
+    pm.window('MWBevelToolMainWindow', exists=True) and pm.deleteUI('MWBevelToolMainWindow')
 
 
 
