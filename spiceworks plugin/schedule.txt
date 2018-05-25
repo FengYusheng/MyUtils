@@ -1,0 +1,21 @@
+Spiceworks schedule.
+
+
+Stage 1. Learn JS programming. (in progress)
+I want to finish this stage within 10 days.
+
+The above picture is my road map to learn JS. Before writing the Spiceworks plugin, 
+I must understand how to control html DOM via both raw Javascript and JQuery. 
+
+This my learning progress so far:
+    Day 1, April 28th 
+    Learn the basic JS syntax and functions 
+
+    Day 2, May 2nd
+    Finish reading the part of Javascript functions and start to learn Javascript objects.
+    
+    Day 3, today
+    Continue learning the JS objects, expecially the regular expression in JS.
+
+Stage 2. Write the plugin. (not start)
+I'm going to start writing plugin when I have learnt the JQuery events part (blue line in the picture).

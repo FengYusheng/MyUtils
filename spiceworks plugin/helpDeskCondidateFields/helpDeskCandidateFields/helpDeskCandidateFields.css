@@ -1,0 +1,16 @@
+message-panel.Mindwalk { margin-bottom: 14px; }
+
+
+.Mindwalk div.setting { display: none !important; }
+.Mindwalk .plugin-configure { padding: 0 !important; }
+.Mindwalk .footer-actions { margin: 10px 15px; }
+#MWHDCF { padding: 0 !important; font-family: 'Open Sans',Arial,Helvetica; }
+#MWHDCF .nav-tab-region { padding: 0 !important; }
+#MWHDCF .nav-tabs { padding-top: 10px; background: none !important; }
+#MWHDCF .tab-content-region { padding: 15px; background-color: white; border-bottom: 1px solid #ddd; }
+#MWHDCF table { width: 100%; }
+#MWHDCF td ul { margin: 0; padding: 0; list-style-type: none; }
+#MWHDCF label { width: auto; }
+#MWHDCF select { width: 100%; }
+#MWHDCF select.member {  width: 70%;  cursor: pointer;}
+#MWHDCF select option:hover { background-color: cornflowerblue; }

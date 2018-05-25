@@ -1,0 +1,193 @@
+<html>
+    <head>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                font-family: Arial;
+            }
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #ddd;
+                font-size: 18px;
+                color: white;
+            }
+
+            table, th, td {
+                text-align: left;
+                padding: 12px;
+            }
+
+            tr {
+                border-bottom: 1px solid #ddd;
+            }
+
+            .header, tr:hover {
+                background-color: darkslateblue;
+            }
+
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+            .column {
+                float: left;
+                width: 50%;
+                padding: 50px;
+                text-align: center;
+                font-size: 25px;
+                cursor: pointer;
+                color: white;
+            }
+
+            .containerTab {
+                padding: 20px;
+                color: white;
+            }
+
+            .closebtn {
+                width: 4%;
+                float: right;
+                color: white;
+                font-size: 35px;
+                cursor: pointer;
+            }
+
+            .deletebtn {
+                cursor: pointer;
+                color: red;
+            }
+
+            .addbtn {
+                cursor: pointer;
+            }
+
+            .displayRule input {
+                display: none;
+            }
+
+            .displayRule span {
+                display: block;
+            }
+
+            #filterFields {
+                width: 90%;
+                font-size: 16px;
+                border: 1px solid #ddd;
+                margin-bottom: 12px;
+                padding: 12px 20px 12px 40px;
+            }
+        </style>
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script>
+            function openTab (tabId) {
+                var i;
+                var tabs = document.getElementsByClassName('containerTab');
+
+                for (i=0; i<tabs.length; i++) {
+                    tabs[i].style.display = 'none';
+                }
+
+                document.getElementById(tabId).style.display = 'block';
+            }
+
+            function addRuleIntoWhitekList () {
+               $('#whiteListTable').append(function () {
+                   var newRule = '<tr>';
+                   newRule += '<td class="displayRule"><span></span><input type="text" autofocus></td>';
+                   newRule += '<td class="displayRule"><span></span><input type="text" autofocus></td>';
+                   newRule += '<td class="displayRule"><span></span><input type="text" autofocus></td>';
+                   newRule += '<td class="deletebtn"><span>X</span></td>';
+                   newRule += '</tr>';
+
+                   return newRule;
+               });
+            }
+
+            function addRuleIntoBlackList () {
+                $('#blackListTable').append(function () {
+                    var newRule = '<tr>';
+                    newRule += '<td class="displayRule"><span></span><input type="text" autofocus></td>';
+                    newRule += '<td class="displayRule"><span></span><input type="text" autofocus></td>';
+                    newRule += '<td class="displayRule"><span></span><input type="text" autofocus></td>';
+                    newRule += '<td class="deletebtn"><span>X</span></td>';
+                    newRule += '</tr>';
+
+                    return newRule;
+                });
+            }
+
+            // Refer to https://api.jquery.com/focus/.
+            $(document).on('click', 'td.displayRule', function () {
+                $(this).children(':first').hide();
+                $(this).children(':last').show();
+                $(this).children(':last').focus();
+            });
+
+            $(document).on('focusout', 'td.displayRule', function () {
+                $(this).children(':first').show();
+                $(this).children(':last').hide();
+            });
+
+            $(document).on('click', 'td.deletebtn', function () {
+                $(this).parent().remove();
+            });
+
+        </script>
+    </head>
+    <body>
+        <div class="row">
+            <div class="column" onclick="openTab('whiteList')" style="background: green">White List</div>
+            <div class="column" onclick="openTab('blackList')" style="background: blue">Black List</div>
+        </div>
+        <div id="whiteList" class="containerTab" style="background: green; display: none">
+            <input type="text" id="filterFields" placeholder="Search for categories...">
+            <span class="closebtn" onclick="this.parentElement.style.display='none'">x</span>
+            <table id="whiteListTable">
+                <tr class="header">
+                    <th>Category</th>
+                    <th>Fields</th>
+                    <th>Subcategory</th>
+                    <th>Delete</th>
+                </tr>
+                <tr>
+                    <td class="displayRule"><span>Category</span><input type="text" autofocus></td>
+                    <td class="displayRule"><span>Hardware</span><input type="text" autofocus></td>
+                    <td class="displayRule"><span>Select a hardware</span><input type="text" autofocus></td>
+                    <td class="deletebtn"><span>X</span></td>
+                </tr>
+            </table>
+            <div>
+                <button class="addbtn" onclick="addRuleIntoWhitekList()">Add</button>
+            </div>
+        </div>
+        <div id="blackList" class="containerTab" style="background: blue; display: none">
+            <input type="text" id="filterFields" placeholder="Search for categories...">
+            <span class="closebtn" onclick="this.parentElement.style.display='none'">x</span>
+            <table id="blackListTable">
+                <tr class="header">
+                    <th>Category</th>
+                    <th>Fields</th>
+                    <th>Subcategory</th>
+                    <th>Delete</th>
+                </tr>
+                <tr>
+                    <td class="displayRule"><span>Category</span><input type="text" autofocus></td>
+                    <td class="displayRule"><span>Hardware</span><input type="text" autofocus></td>
+                    <td class="displayRule"><span>Select a hardware</span><input type="text" autofocus></td>
+                    <td class="deletebtn"><span>X</span></td>
+                </tr>
+            </table>
+            <div>
+                <button class="addbtn" onclick="addRuleIntoBlackList()">Add</button>
+            </div>
+        </div>
+    </body>
+</html>

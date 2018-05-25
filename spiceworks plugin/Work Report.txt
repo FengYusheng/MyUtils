@@ -1,0 +1,18 @@
+This is the work report about Spiceworks' plugin for April 26th to April 27th
+
+Current state and achievements:
+1. Wang Xiao has built a temporary Spiceworks on a virtural machine as my test environment;
+2. I have read the plugin tutorials and figure out what we are going to do:
+
+We need to write code to control the display of "Spiceworks' User Portal" page. 
+In other words, we need implement the callback function:
+"SPICEWORKS.portalv2.ready( callback )"
+
+Current problem:
+The plugin is written in Javascipt. And unfortunately I'm unfamiliar with it. I have to take serval days to 
+learn it.
+
+I have found two JS tutorials:
+https://www.tutorialspoint.com/javascript/index.htm
+
+https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000

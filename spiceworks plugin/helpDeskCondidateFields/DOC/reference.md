@@ -1,0 +1,2 @@
+1. [Helpdsk v2 Events](https://community.spiceworks.com/blogs/developers/5-helpdesk-v2-events)
+2. [Query data from SPICEWORKS](https://community.spiceworks.com/topic/160999-users-api-call-how-to-retrieve-records-by-id?page=1#entry-965540)
