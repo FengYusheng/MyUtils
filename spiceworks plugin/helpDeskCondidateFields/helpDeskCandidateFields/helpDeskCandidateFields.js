@@ -33,6 +33,8 @@ plugin.includeStyles();
 
         categories : [],
 
+        defaultValues : {},
+
         initialCategories : ['category'],
 
         dbg : function (msg) {
@@ -57,22 +59,48 @@ plugin.includeStyles();
             return location.pathname.includes(path);
         },
 
+        installPage : function () {
+            setTimeout(function () {
+                if (CANDIDATE.categories.length) {
+                    CANDIDATE.settings.app = $('.sw-app-name:contains("Mindwalk Help Desk Candidate Fields")').closest('.sw-app-row');
+                    CANDIDATE.settings.init();
+                }
+                else {
+                    CANDIDATE.installPage();
+                }
+            }, 10);
+        },
+
         init : function () {
-             SPICEWORKS.data.query({'tickets' : {'class' : 'Ticket'}}, function (result) {
-                $.each(result.tickets[0], function (key, value) {
-                    if (key.startsWith('c_')) {
+            //  SPICEWORKS.data.query({'tickets' : {'class' : 'Ticket'}}, function (result) {
+            //     $.each(result.tickets[0], function (key, value) {
+            //         if (key.startsWith('c_')) {
 
-                        CANDIDATE.categories.push( key.split('c_')[1].replace(/_/g, ' ').trim() );
+            //             CANDIDATE.categories.push( key.split('c_')[1].replace(/_/g, ' ').trim() );
 
-                    }
-                });
+            //         }
+            //     });
+            // });
+
+            // Get the custom attributes.
+            $.getJSON('/api/custom_attributes', function (data) {
+                var c;
+                var attrs = data.custom_attributes;
+                for (var i=0; i<attrs.length; i++) {
+                    c = attrs[i].name.split('c_')[1].replace(/_/g, ' ').trim();
+                    CANDIDATE.categories.push(c);
+                    CANDIDATE.defaultValues[c] = attrs[i].default;
+                }
+
+                CANDIDATE.dbg(CANDIDATE.categories);
+                CANDIDATE.dbg(CANDIDATE.defaultValues);
+
             });
 
             if (CANDIDATE.matchURL('/settings')) {
                 SPICEWORKS.observe('plugin:componentRendered', function () {
                     if (CANDIDATE.matchURL('/settings/apps')) {
-                        CANDIDATE.settings.app = $('.sw-app-name:contains("Mindwalk Help Desk Candidate Fields")').closest('.sw-app-row');
-                        CANDIDATE.settings.init();
+                        CANDIDATE.installPage();
                     }
                 });
             }
@@ -139,6 +167,50 @@ plugin.includeStyles();
     
                             $('label[for=initialCategories]').text('Initial Categories (' + String(CANDIDATE.initialCategories.length) + '): ');
                         }
+                    });
+
+                    $('#AddWhite').click(function () {
+                        var n = '<tr class="MW-table-row">';
+                        n += '<td class="MW-table-content category"><span>None</span></td>'
+                        n += '<td class="MW-table-content fields"><span>None</span></td>';
+                        n += '<td class="MW-table-content subcategory"><span>None</span></td>';
+                        n += '<td class="MW-action-delete"><span>X</span></td>';
+                        n += '</tr>';
+
+                        $('#MWHDCF-white').children(':first').append(n);
+                    });
+
+                    $('#AddBlack').click(function () {
+                        console.log('Black');
+                    });
+
+                    $(document).on('click', 'td.MW-table-content span', function () {
+                        var i;
+                        var p = $(this).parent();
+
+                        if (p.hasClass('category')) {
+
+                            p.html('<select autofocus class="member"></select>');
+
+                            for (i=0; i<CANDIDATE.categories.length; i++) {
+                                p.children(':first').append( '<option value="' + CANDIDATE.categories[i] + '">' + CANDIDATE.categories[i] + '</option>' );
+                            }
+
+                        }
+                        else if (p.hasClass('fields')) {
+
+                            p.html('<select autofocus class="member" multiple="multiple"></select>');
+
+                        }
+                        else if (p.hasClass('subcategory')) {
+
+                        }
+
+                        p.children(':first').focus();
+                    });
+
+                    $(document).on('focusout', 'td.MW-table-content', function () {
+                        console.log($(this).val());
                     });
                 });
             },
