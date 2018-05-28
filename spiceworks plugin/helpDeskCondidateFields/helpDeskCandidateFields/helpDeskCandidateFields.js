@@ -29,7 +29,7 @@ plugin.includeStyles();
     CANDIDATE = {
         VERSION : '0.1',
 
-        debug : true,
+        debug : false,
 
         categories : [],
 
@@ -71,6 +71,13 @@ plugin.includeStyles();
             }, 10);
         },
 
+        // This function fill the plugin.setting data into our setting html page.
+        fillSettings : function () {
+            console.log(plugin.settings.initial);
+            console.log(plugin.settings.ctree);
+        },
+
+        // This function install our own setting html page.
         init : function () {
             //  SPICEWORKS.data.query({'tickets' : {'class' : 'Ticket'}}, function (result) {
             //     $.each(result.tickets[0], function (key, value) {
@@ -101,10 +108,12 @@ plugin.includeStyles();
                 SPICEWORKS.observe('plugin:componentRendered', function () {
                     if (CANDIDATE.matchURL('/settings/apps')) {
                         CANDIDATE.installPage();
+                        CANDIDATE.fillSettings();
                     }
                 });
             }
         },
+
 
         settings : {
             app : null,
@@ -205,7 +214,7 @@ plugin.includeStyles();
                                 p.children(':first').append( '<option value="' + CANDIDATE.categories[i] + '">' + CANDIDATE.categories[i] + '</option>' );
                             }
                             
-                            $('td.MW-table-content.subcategory').html('<span>None</span>');
+                            $(this).parent().children('.subcategory').html('<span>None</span>');
 
                         }
                         else if (p.hasClass('fields')) {
@@ -275,8 +284,44 @@ plugin.includeStyles();
                 });
             },
 
-            save : function () {
+            validate : function () {
+                var i;
+                var v = [];
 
+                // Initial categories.
+                $.each(CANDIDATE.settings.app.find('#initialCategories').children(), function (index, element) {
+                    v.push($(element).val().trim());
+                });
+
+                CANDIDATE.settings.app.find('input[id^="initial_"]').text(v.join(';')+';');
+
+                // White list.
+                var rows = CANDIDATE.settings.app.find('#MWHDCF-white tr');
+                var w_c, w_fields, w_sub;
+                v = [];
+                for (i=1; i<rows.length; i++) {
+                    w_c = $(rows[i]).children(':first').text().trim();
+                    w_fields = $(rows[i]).children(':nth-child(2)').text().trim();
+                    w_sub = $(rows[i]).children(':nth-child(3)').text().trim();
+                    
+                    if (w_c !== 'None' && w_fields !== 'None' && w_sub !== 'None') {
+                        v.push(w_c+','+w_fields+','+w_sub+';');
+                    }
+                }
+                
+                // Black list.
+                rows = CANDIDATE.settings.app.find('#MWHDCF-black tr');
+                for (i=1; i<rows.length; i++) {
+                    w_c = $(rows[i]).children(':first').text().trim();
+                    w_fields = $(rows[i]).children(':nth-child(2)').text().trim();
+                    w_sub = $(rows[i]).children(':nth-child(3)').text().trim();
+                    
+                    if (w_c !== 'None' && w_fields !== 'None' && w_sub !== 'None') {
+                        v.push(w_c+','+w_fields+','+w_sub+','+'no;');
+                    }
+                }
+
+                CANDIDATE.settings.app.find('input[id^="ctree_"]').text(v);
             },
 
             // Check whether our own setting page has been installed.
@@ -297,6 +342,11 @@ plugin.includeStyles();
                             '.Mindwalk .plugin-configure > form', function () {
                                 CANDIDATE.settings.form = CANDIDATE.settings.app.find('.plugin-configure > form');
                                 CANDIDATE.settings.load(CANDIDATE.settings.form);
+
+                                // Validate the settings before save.
+                                CANDIDATE.settings.app.find('.sui-bttn-primary:contains("Save")').on('mousedown', function (e) {
+                                    CANDIDATE.settings.validate();
+                                });
                             }
                         );
                     }
