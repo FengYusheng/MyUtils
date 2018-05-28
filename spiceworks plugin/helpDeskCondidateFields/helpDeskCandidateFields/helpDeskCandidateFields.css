@@ -17,5 +17,5 @@ message-panel.Mindwalk { margin-bottom: 14px; }
 #MWHDCF select.member {  width: 70%;  cursor: pointer; }
 #MWHDCF select option:hover { background-color: cornflowerblue; }
 #MWHDCF table {  width: 100%; }
-#MWHDCF-white table { border-collapse: collapse;  border: 1px solid #ddd; font-size: 10px; width: 100%; }
-#MWHDCF-black table { border-collapse: collapse;  border: 1px solid #ddd; font-size: 10px; width: 100%; }
+#MWHDCF-white table { border-collapse: collapse;  border: 1px solid #ddd; font-size: 15px; width: 100%; }
+#MWHDCF-black table { border-collapse: collapse;  border: 1px solid #ddd; font-size: 15px; width: 100%; }

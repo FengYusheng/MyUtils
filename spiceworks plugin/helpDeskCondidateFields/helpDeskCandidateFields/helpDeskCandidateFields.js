@@ -111,6 +111,8 @@ plugin.includeStyles();
 
             form : null,
 
+            temp : [],
+
             load : function (form) {
                 var i, c;
 
@@ -171,7 +173,7 @@ plugin.includeStyles();
 
                     $('#AddWhite').click(function () {
                         var n = '<tr class="MW-table-row">';
-                        n += '<td class="MW-table-content category"><span>None</span></td>'
+                        n += '<td class="MW-table-content category"><span>None</span></td>';
                         n += '<td class="MW-table-content fields"><span>None</span></td>';
                         n += '<td class="MW-table-content subcategory"><span>None</span></td>';
                         n += '<td class="MW-action-delete"><span>X</span></td>';
@@ -181,11 +183,18 @@ plugin.includeStyles();
                     });
 
                     $('#AddBlack').click(function () {
-                        console.log('Black');
+                        var n = '<tr class="MW-table-row">';
+                        n += '<td class="MW-table-content category"><span>None</span></td>';
+                        n += '<td class="MW-table-content fields"><span>None</span></td>';
+                        n += '<td class="MW-table-content subcategory"><span>None</span></td>';
+                        n += '<td class="MW-action-delete"><span>X</span></td>';
+                        n += '</tr>';
+
+                        $('#MWHDCF-black').children(':first').append(n);
                     });
 
                     $(document).on('click', 'td.MW-table-content span', function () {
-                        var i;
+                        var i, c, fields;
                         var p = $(this).parent();
 
                         if (p.hasClass('category')) {
@@ -195,23 +204,74 @@ plugin.includeStyles();
                             for (i=0; i<CANDIDATE.categories.length; i++) {
                                 p.children(':first').append( '<option value="' + CANDIDATE.categories[i] + '">' + CANDIDATE.categories[i] + '</option>' );
                             }
+                            
+                            $('td.MW-table-content.subcategory').html('<span>None</span>');
 
                         }
                         else if (p.hasClass('fields')) {
 
-                            p.html('<select autofocus class="member" multiple="multiple"></select>');
+                            c = $(this).closest('.MW-table-row').children(':first').text().trim();
+                            
+                            // p.html('<input type="text"></input><select autofocus class="member" multiple="multiple"></select>');
+                            
+                            // if (CANDIDATE.defaultValues.hasOwnProperty(c)) {
+                                
+                            //     fields = CANDIDATE.defaultValues[c].split(',');
+
+                            //     for (i=0; i<fields.length; i++) {
+                            //         p.children(':last').append( '<option value="' + fields[i].trim() + '">' + fields[i].trim() + '</option>' );
+                            //     }
+                            // }
+
+                            p.html('<input type="text">');
 
                         }
                         else if (p.hasClass('subcategory')) {
+                            
+                            c = $(this).closest('.MW-table-row').children(':first').text().trim();
+                            p.html('<select autofocus class="member"></select>');
 
+                            for (i=0; i<CANDIDATE.categories.length; i++) {
+                                if (CANDIDATE.categories[i] !== c) {
+                                    p.children(':first').append( '<option value="' + CANDIDATE.categories[i] + '">' + CANDIDATE.categories[i] + '</option>' );
+                                }
+                            }
                         }
 
                         p.children(':first').focus();
                     });
 
                     $(document).on('focusout', 'td.MW-table-content', function () {
-                        console.log($(this).val());
+                        var value;
+
+                        if ($(this).hasClass('category')) {
+                            value = $(this).children(':first').val();
+                            $(this).html('<span>' + value + '</span>');
+                        }
+                        else if ($(this).hasClass('fields')) {
+                            value = $(this).children(':first').val();
+                            
+                            if (value === '') {
+                                value = 'None';
+                            }
+
+                            $(this).html('<span>' + value + '</span>');
+                        }
+                        else if ($(this).hasClass('subcategory')) {
+                            
+                            value = $(this).children(':first').val();
+                            $(this).html('<span>' + value + '</span>');
+
+                        }
                     });
+
+                    $(document).on('click', '.MW-action-delete', function () {
+                        $(this).closest('.MW-table-row').remove();
+                    });
+
+                    // $(document).on('dblclick', 'td.MW-table-content.fields select option', function () {
+
+                    // });
                 });
             },
 
