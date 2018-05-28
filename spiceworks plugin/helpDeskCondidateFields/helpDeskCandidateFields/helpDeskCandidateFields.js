@@ -211,7 +211,7 @@ plugin.includeStyles();
                         else if (p.hasClass('fields')) {
 
                             c = $(this).closest('.MW-table-row').children(':first').text().trim();
-                            
+
                             // p.html('<input type="text"></input><select autofocus class="member" multiple="multiple"></select>');
                             
                             // if (CANDIDATE.defaultValues.hasOwnProperty(c)) {
@@ -273,6 +273,10 @@ plugin.includeStyles();
 
                     // });
                 });
+            },
+
+            save : function () {
+
             },
 
             // Check whether our own setting page has been installed.
