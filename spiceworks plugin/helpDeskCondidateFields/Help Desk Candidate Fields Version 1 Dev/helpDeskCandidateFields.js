@@ -16,14 +16,6 @@ Hr Category, SWAT Password Reset, Office Location, no;
 plugin.configure({
     settingDefinitions:[
         {
-            name: 'initial',
-            label: 'Initial Categories',
-            type: 'text',
-            defaultValue: '',
-            example: 'Category1;Category2;'
-        },
-        
-        {
             name: 'ctree',
             label: 'Categories',
             type: 'text',
@@ -47,6 +39,8 @@ plugin.includeStyles();
         categories : [],
 
         defaultValues : {},
+
+        userPortal : null,
 
         dbg : function (msg) {
             if (CANDIDATE.debug && console) {
@@ -73,7 +67,7 @@ plugin.includeStyles();
         // This function install our own setting html page.
         installPage : function () {
             setTimeout(function () {
-                if (CANDIDATE.categories.length) {
+                if (CANDIDATE.categories.length && CANDIDATE.userPortal !== null) {
                     CANDIDATE.settings.app = $('.sw-app-name:contains("Mindwalk Help Desk Candidate Fields")').closest('.sw-app-row');
                     CANDIDATE.settings.init();
                 }
@@ -101,9 +95,25 @@ plugin.includeStyles();
 
             });
 
-            // Get user portal
-            var page = $.get('/user_portal/custom_ticket_forms?element_id=custom-ticket-form_1527568538&end_user_mode=true&id=1');
-            console.log(page);
+            // Get user portal 
+            // cross domain
+            // dataType, Accepts in $.ajax : https://stackoverflow.com/questions/33060712/datatype-vs-accepts-ajax-request
+            $.ajax({
+                url : '/user_portal/custom_ticket_forms?element_id=custom-ticket-form_1527931995&end_user_mode=true&id=1',
+
+                dataType : 'text', // Expect the server to return a text result.
+
+                crossDomain : true,
+
+                success : function (data) {
+                    console.log(data);
+                    // TODO: Extract labels from the user portal page.
+                },
+                
+                error : function (r, d, e) {
+                    console.log(d);
+                }
+            });
 
             if (CANDIDATE.matchURL('/settings')) {
                 SPICEWORKS.observe('plugin:componentRendered', function () {
