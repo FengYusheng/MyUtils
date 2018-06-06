@@ -40,7 +40,7 @@ plugin.includeStyles();
 
         defaultValues : {},
 
-        userPortal : null,
+        userPortal : false,
 
         dbg : function (msg) {
             if (CANDIDATE.debug && console) {
@@ -67,7 +67,7 @@ plugin.includeStyles();
         // This function install our own setting html page.
         installPage : function () {
             setTimeout(function () {
-                if (CANDIDATE.categories.length && CANDIDATE.userPortal !== null) {
+                if (CANDIDATE.categories.length && CANDIDATE.userPortal) {
                     CANDIDATE.settings.app = $('.sw-app-name:contains("Mindwalk Help Desk Candidate Fields")').closest('.sw-app-row');
                     CANDIDATE.settings.init();
                 }
@@ -99,15 +99,39 @@ plugin.includeStyles();
             // cross domain
             // dataType, Accepts in $.ajax : https://stackoverflow.com/questions/33060712/datatype-vs-accepts-ajax-request
             $.ajax({
-                url : '/user_portal/custom_ticket_forms?element_id=custom-ticket-form_1527931995&end_user_mode=true&id=1',
+                url : '/user_portal/custom_ticket_forms?element_id=custom-ticket-form_1527568538&end_user_mode=true&id=1',
 
                 dataType : 'text', // Expect the server to return a text result.
 
                 crossDomain : true,
 
                 success : function (data) {
-                    console.log(data);
+                    var t;
+                    var ids = [];
+                    var pageText = decodeURIComponent(encodeURIComponent(data));
                     // TODO: Extract labels from the user portal page.
+                    // Get labels : \\u003Clabel\s*?for=\\"(custom_ticket_form_field_\d*?)\\"\s*?style=\\"\\"\\u003E(.*?)\\u003C/label
+                    // Get ids : \\u003Cli\s*?class=\\"(.*?)\\"\s*?id=\\"(.*?)\\"\\u003E
+                    var pattern = /\\u003Cli\s*?class=\\"(.*?)\\"\s*?id=\\"(.*?)\\"\\u003E/g;
+
+                    // Skip custom attribute's ids.
+                    var match = pattern.exec(pageText);
+                    while (match) {
+                        t = match[1].split(' ');
+                        if (t[1].trim() === 'custom-form-field' && t[0].trim() !== 'custom-ticket-attribute-form-field') {
+                            ids.push(match[2].trim());
+                        }
+                        match = pattern.exec(pageText);
+                    }
+
+                    // Extract the labels.
+                    pattern = /\\u003Clabel\s*?for=\\"(custom_ticket_form_field_\d*?)\\"\s*?style=\\"\\"\\u003E(.*?)\\u003C\/label/g;
+                    pattern = '\\\\u003Clabel\\s*?for=\\\\"' + ids[0] + '\\\"';
+                    pattern = new RegExp(pattern, 'g');
+                    console.log(pattern.exec(pageText));
+
+                    CANDIDATE.userPortal = true;
+
                 },
                 
                 error : function (r, d, e) {
@@ -268,15 +292,20 @@ plugin.includeStyles();
 
                         if (p.hasClass('category')) {
 
+                            c = $(this).closest('.MW-table-row').children(':nth-child(3)').text().trim();
                             p.html('<select autofocus class="member"></select>');
 
                             for (i=0; i<CANDIDATE.categories.length; i++) {
 
-                                if (oldValue === CANDIDATE.categories[i]) {
-                                    p.children(':first').append( '<option selected="selected" value="' + CANDIDATE.categories[i] + '">' + CANDIDATE.categories[i] + '</option>' );
-                                }
-                                else {
-                                    p.children(':first').append( '<option value="' + CANDIDATE.categories[i] + '">' + CANDIDATE.categories[i] + '</option>' );
+                                if (c !== CANDIDATE.categories[i]) {
+
+                                    if (oldValue === CANDIDATE.categories[i]) {
+                                        p.children(':first').append( '<option selected="selected" value="' + CANDIDATE.categories[i] + '">' + CANDIDATE.categories[i] + '</option>' );
+                                    }
+                                    else{
+                                        p.children(':first').append( '<option value="' + CANDIDATE.categories[i] + '">' + CANDIDATE.categories[i] + '</option>' );
+                                    }
+
                                 }
                             }
                             
