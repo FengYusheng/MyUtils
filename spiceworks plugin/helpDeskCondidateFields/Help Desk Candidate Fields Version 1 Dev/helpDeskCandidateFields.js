@@ -125,10 +125,10 @@ plugin.includeStyles();
                     }
 
                     // Extract the labels.
-                    pattern = /\\u003Clabel\s*?for=\\"(custom_ticket_form_field_\d*?)\\"\s*?style=\\"\\"\\u003E(.*?)\\u003C\/label/g;
-                    pattern = '\\\\u003Clabel\\s*?for=\\\\"' + ids[0] + '\\\"';
-                    pattern = new RegExp(pattern, 'g');
-                    console.log(pattern.exec(pageText));
+                    // pattern = /\\u003Clabel\s*?for=\\"(custom_ticket_form_field_\d*?)\\"\s*?style=\\"\\"\\u003E(.*?)\\u003C\/label/g;
+                    // pattern = '\\\\u003Clabel\\s*?for=\\\\"' + ids[0] + '\\';
+                    // pattern = new RegExp(pattern, 'g');
+                    // console.log(pattern.exec(pageText));
 
                     CANDIDATE.userPortal = true;
 
