@@ -33,7 +33,7 @@ def _initialize():
         print('WARNING: Suggset to run this tool with Python3.')
 
     globalSettings['LOGINNAME'] = getpass.getuser()
-    if globalSettings['LOGINNAME'] != 'fengyusheng': # perforce
+    if globalSettings['LOGINNAME'] != 'skywalker': # perforce
         raise InvalideUserException(sys.exc_info())
 
 
@@ -41,7 +41,20 @@ def _initialize():
 def _realMain(argv=None):
     _initialize()
     setProcessTitle('MW-P4Proxy-Guider')
-    options.parseOptions()
+
+    opts, parser = options.parseOptionsSubCommand()
+    print(opts)
+
+    # Analyze the options.
+    len(opts.keys()) == 0 and parser.print_help()
+
+    #TODO: Deploy a P4P service.
+    if list(opts.keys())[0].startswith('proxy_'):
+        print(type(opts.keys()))
+
+    #TODO: Preload.
+    if list(opts.keys())[0].startswith('preload_'):
+        print(opts.keys())
 
 
 def main(argv=None):
