@@ -43,18 +43,15 @@ def _realMain(argv=None):
     setProcessTitle('MW-P4Proxy-Guider')
 
     opts, parser = options.parseOptionsSubCommand()
-    print(opts)
+    # print(opts)
 
     # Analyze the options.
-    len(opts.keys()) == 0 and parser.print_help()
-
-    #TODO: Deploy a P4P service.
-    if list(opts.keys())[0].startswith('proxy_'):
-        print(type(opts.keys()))
-
-    #TODO: Preload.
-    if list(opts.keys())[0].startswith('preload_'):
-        print(opts.keys())
+    if len(opts.keys()) <= 1:
+        parser.print_help()
+    elif list(opts.keys())[1].startswith('proxy_'):
+        options.parseProxyOptions(opts)
+    elif list(opts.keys())[1].startswith('preload_'):
+        options.parsePreloadOptions(opts)
 
 
 def main(argv=None):
