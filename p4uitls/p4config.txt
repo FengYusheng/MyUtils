@@ -1,0 +1,3 @@
+net.maxwait=20
+filesys.bufsize=2M
+net.tcpsize=2M

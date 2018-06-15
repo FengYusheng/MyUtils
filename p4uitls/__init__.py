@@ -9,11 +9,18 @@ import logging
 import platform
 import getpass
 
+import P4
+
 from utils import (
     globalSettings,
     setProcessTitle,
     InvalidPlatformException,
-    InvalideUserException
+    InvalideUserException,
+    KeyboardInterruption,
+    DeployP4Proxy,
+    LackBinaryFiles,
+    PortOccupiedException,
+    RunCommandFailed
 )
 
 import options
@@ -33,7 +40,7 @@ def _initialize():
         print('WARNING: Suggset to run this tool with Python3.')
 
     globalSettings['LOGINNAME'] = getpass.getuser()
-    if globalSettings['LOGINNAME'] != 'skywalker': # perforce
+    if globalSettings['LOGINNAME'] != 'fengyusheng': # perforce
         raise InvalideUserException(sys.exc_info())
 
 
@@ -46,12 +53,17 @@ def _realMain(argv=None):
     # print(opts)
 
     # Analyze the options.
-    if len(opts.keys()) <= 1:
+    if len(opts.keys()) <= 4:
         parser.print_help()
-    elif list(opts.keys())[1].startswith('proxy_'):
-        options.parseProxyOptions(opts)
-    elif list(opts.keys())[1].startswith('preload_'):
-        options.parsePreloadOptions(opts)
+    elif list(opts.keys())[5].startswith('proxy_'):
+        opts = options.parseProxyOptions(opts)
+        with DeployP4Proxy(opts) as dp:
+            dp.createProject()
+            dp.copyToolsIntoProject()
+            dp.startProxy(**opts)
+
+    elif list(opts.keys())[5].startswith('preload_'):
+        opts = options.parsePreloadOptions(opts)
 
 
 def main(argv=None):
@@ -61,6 +73,16 @@ def main(argv=None):
         sys.exit('ERROR: run this tool in a linux system.')
     except InvalideUserException as e:
         sys.exit('ERROR: "{0}" is not a perforce user'.format(globalSettings['LOGINNAME']))
+    except KeyboardInterruption as e:
+        sys.exit('\n\n# WARNING: User interrupt the program from keyboard.')
+    except LackBinaryFiles as e:
+        sys.exit(e)
+    except P4.P4Exception as e:
+        sys.exit(e)
+    except PortOccupiedException as e:
+        sys.exit(e)
+    except RunCommandFailed as e:
+        sys.exit(e)
 
 
 __all__ = [

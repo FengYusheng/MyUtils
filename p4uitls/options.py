@@ -10,12 +10,17 @@ import argparse
 import getpass
 
 from version import __version__
+from utils import (
+    globalSettings,
+    KeyboardInterruption
+)
 
 
 g_proxy_conf = {}
 
 g_preload_conf = {}
 
+# TODO: Supply default values.
 
 def parseOptions():
     columns = shutil.get_terminal_size(fallback=(80, 24)).columns
@@ -65,8 +70,6 @@ def parseOptionsSubCommand():
     kwargs = {
         'prog' : 'MWP4ProxyGuider',
 
-        'usage' : '%(prog)s [OPTIONS]',
-
         'description' : '''This program guides you to deploy a P4P service on this machine.''',
 
         'formatter_class' : argparse.RawDescriptionHelpFormatter,
@@ -77,10 +80,20 @@ def parseOptionsSubCommand():
     }
 
     parser = argparse.ArgumentParser(**kwargs)
-
     parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.1')
 
-    parser.add_argument('--Project', action='store', help='Specify your project name, all the things will be in PROJECT directory.', required=True, type=str, dest='project', metavar='PROJECT')
+    global_group = parser.add_argument_group('Global options')
+    # global_group.add_argument('-P', '--project', action='store', help='Specify your project name, all the things will be in PROJECT directory.', metavar='PROJECT_NAME', type=str, dest='project')
+    # global_group.add_argument('-t', '--target-p4port', action='store', help='Specify the port on which P4P will listen for requests from Perforce applications.', metavar='TARGET_P4PORT', type=str, dest='target_p4port')
+    # global_group.add_argument('-u', '--target-p4user', action='store', help='Specify your Perforce user name.', metavar='P4USER_NAME', type=str, dest='target_p4user')
+    # global_group.add_argument('-p', '--target-p4port', action='store', help='Specify your Perforce password.', metavar='P4PASSWORD', type=str, dest='target_p4passwd')
+
+    global_group.add_argument('project', action='store', help='Specify your project name, all the things will be in $HOME/PROJECT directory.', metavar='PROJECT_NAME', type=str)
+    global_group.add_argument('target_p4port', action='store', help='Specify the port of the target Perforce server (that is, the Perforce server for which P4P acts as a proxy).', metavar='TARGET_P4PORT', type=str)
+    global_group.add_argument('target_p4user', action='store', help='Specify your Perforce user name.', metavar='P4USER_NAME', type=str)
+    global_group.add_argument('target_p4passwd', action='store', help='Specify your Perforce password.', metavar='P4PASSWORD', type=str)
+
+    # global_group.add_argument('-c', '--clean', action='store_true', help='Clean your last configuration.', dest='clean')
 
     subparsers = parser.add_subparsers(title='Mindwalk P4Proxy Guider Commands')
 
@@ -89,77 +102,139 @@ def parseOptionsSubCommand():
 
     p4proxy_parser.add_argument('-p', '--p4port', action='store', help='Specify the port on which P4P will listen for requests from Perforce applications.', metavar='PORT', type=str, dest='proxy_p4port')
 
-    p4proxy_parser.add_argument('-r', '--p4cache', action='store', help='Specify the directory where revisions are cached.', metavar='ROOT_DIR', type=str, dest='proxy_p4cache')
+    p4proxy_parser.add_argument('-r', '--p4cache', action='store', help='Specify the directory where revisions are cached. Default is P4PCACHE, or the directory from which p4p is started if P4PCACHE is not set.', metavar='ROOT_DIR', type=str, dest='proxy_p4cache')
 
-    p4proxy_parser.add_argument('-L', '--p4log', action='store', help='Specify the location of the log file.', metavar='LOGFILE', type=str, dest='proxy_p4log')
+    p4proxy_parser.add_argument('-L', '--p4log', action='store', help='Specify the location of the log file. Default is P4LOG, or the directory from which p4p is started if P4LOG is not set. ', metavar='LOGFILE', type=str, dest='proxy_p4log')
 
-    p4proxy_parser.add_argument('-t', '--p4target', action='store', help='Specify the port of the target Perforce server (that is, the Perforce server for which P4P acts as a proxy).', metavar='PORT', type=str, dest='proxy_p4target')
+    # p4proxy_parser.add_argument('-t', '--p4target', action='store', help='Specify the port of the target Perforce server (that is, the Perforce server for which P4P acts as a proxy).', metavar='PORT', type=str, dest='proxy_p4target')
+
+    # p4proxy_parser.add_argument('-P', '--p4passwd', action='store', help='Specify your Perforce user password.', metavar='PASSWORD', type=str, dest='p4_password')
 
     # Preload the cache directory.
-    preload_parser = subparsers.add_parser('p4', help='This command is used to preload the cache directory for optimal initial performance.', description='"%(prog)s" is used to preload the cache directory for optimal initial performance.')
+    preload_parser = subparsers.add_parser('preload', help='This command is used to preload the cache directory for optimal initial performance.', description='"%(prog)s" is used to preload the cache directory for optimal initial performance.')
 
-    preload_parser.add_argument('-p', '--p4port', action='store', help='Specify the the port of target Perforce server (that is, the Perforce server for which P4P acts as a proxy).', metavar='PORT', type=str, dest='preload_p4port')
+    preload_parser.add_argument('-p', '--p4port', action='store', help='Specify the port on which P4P is listening for requests from Perforce applications.', metavar='PORT', type=str, dest='proxy_p4port')
 
-    preload_parser.add_argument('-u', '--p4user', action='store', help='Specify your Perforce user name.', metavar='P4USER NAME', type=str, dest='preload_p4user')
+    # preload_parser.add_argument('-u', '--p4user', action='store', help='Specify your Perforce user name.', metavar='P4USER NAME', type=str, dest='preload_p4user')
 
-    preload_parser.add_argument('-P', '-p4passwd', action='store', help='Specify current Perforce user password.', metavar='PASSWORD', type=str, dest='preload_p4passwd')
+    # preload_parser.add_argument('-P', '-p4passwd', action='store', help='Specify current Perforce user password.', metavar='PASSWORD', type=str, dest='preload_p4passwd')
 
     preload_parser.add_argument('-c', '--p4client', action='store', help='Specify your client workspace', metavar='P4CLIENT', type=str, dest='preload_p4client')
 
     # TODO: argparse.FileType seems better.
-    preload_parser.add_argument('-d', '--p4Depot', action='append', help='Add the depot paths which you want to sync.', metavar='DEPOT', nargs='+', type=str, dest='preload_p4depots', default=[])
+    preload_parser.add_argument('-d', '--p4Depot', action='store', help='Add the depot paths which you want to sync.', metavar='DEPOT', type=argparse.FileType('r', encoding=globalSettings['encoding']), dest='preload_p4depots')
 
     return vars(parser.parse_args()), parser
 
 
 # TODO: Validate the configuration.
-# TODO: Catch the keyboard interrupt.
 def parseProxyOptions(opts):
     print('Deloying a Perforce proxy service.')
     print('-'*50)
 
+    g_proxy_conf['project'] = opts['project']
+    g_proxy_conf['target_p4port'] = opts['target_p4port']
+    g_proxy_conf['target_p4user'] = opts['target_p4user']
+    g_proxy_conf['target_p4passwd'] = opts['target_p4passwd']
+
     if opts['proxy_p4port'] is None:
-        opts['proxy_p4port'] = input('Enter the port which P4P will listen for p4 requests: ')
+        try:
+            opts['proxy_p4port'] = input('Enter the port on which P4P is listening for requests from Perforce applications: ')
+            while opts['proxy_p4port'] == '':
+                opts['proxy_p4port'] = input('Enter the port on which P4P is listening for requests from Perforce applications: ')
+        except (IOError, EOFError, KeyboardInterrupt) as e:
+            raise KeyboardInterruption(sys.exc_info())
+
     g_proxy_conf['proxy_p4port'] = opts['proxy_p4port']
 
     if opts['proxy_p4cache'] is None:
-        opts['proxy_p4cache'] = input('Enter the directory name where revisions are cached: ')
+        try:
+            opts['proxy_p4cache'] = input('Enter the directory name where revisions are cached [{0}]: '.format(opts['project']+'/cache'))
+            if opts['proxy_p4cache'] == '':
+                opts['proxy_p4cache'] = 'cache'
+        except (IOError, EOFError, KeyboardInterrupt) as e:
+            raise KeyboardInterruption(sys.exc_info())
+
     g_proxy_conf['proxy_p4cache'] = opts['proxy_p4cache']
 
     if opts['proxy_p4log'] is None:
-        opts['proxy_p4log'] = input('Enter the location of the log file: ')
+        try:
+            opts['proxy_p4log'] = input('Enter the location of the log file [{0}]: '.format(opts['project']+'/log'))
+            if opts['proxy_p4log'] == '':
+                opts['proxy_p4log'] = 'log'
+        except (IOError, EOFError, KeyboardInterrupt) as e:
+            raise KeyboardInterruption(sys.exc_info())
+
     g_proxy_conf['proxy_p4log'] = opts['proxy_p4log']
 
-    if opts['proxy_p4target'] is None:
-        opts['proxy_p4target'] = input('Specify the port of the target Perforce server: ')
-    g_proxy_conf['proxy_p4target'] = opts['proxy_p4target']
-
-    print(g_proxy_conf)
+    # print(g_proxy_conf)
+    return g_proxy_conf
 
 
 def parsePreloadOptions(opts):
     print('Preloading the cache directory for optimal initial performance.')
     print('-'*50)
 
-    if opts['preload_p4port'] is None:
-        opts['preload_p4port'] = input('Specify the port of target Perforce server: ')
-    g_preload_conf['preload_p4port'] = opts['preload_p4port']
+    g_preload_conf['project'] = opts['project']
+    g_preload_conf['proxy_p4port'] = opts['proxy_p4port']
+    g_preload_conf['target_p4user'] = opts['target_p4user']
+    g_preload_conf['target_p4passwd'] = opts['target_p4passwd']
 
-    if opts['preload_p4user'] is None:
-        opts['preload_p4user'] = input('Enter your Perforce user name: ')
-    g_preload_conf['preload_p4user'] = opts['preload_p4user']
+    if opts['proxy_p4port'] is None:
+        try:
+            opts['proxy_p4port'] = input('Perforce proxy port: ')
+            while opts['proxy_p4port'] == '':
+                opts['proxy_p4port'] = input('Perforce proxy port: ')
+        except (IOError, EOFError, KeyboardInterrupt) as e:
+            raise KeyboardInterruption(sys.exc_info())
 
-    if opts['preload_p4passwd'] is None:
-        opts['preload_p4passwd'] = getpass.getpass()
-        # opts['preload_p4passwd'] = input('Enter your Perforce password: ')
-    g_preload_conf['preload_p4passwd'] = opts['preload_p4passwd']
+    g_preload_conf['proxy_p4port'] = opts['proxy_p4port']
 
     if opts['preload_p4client'] is None:
-        opts['preload_p4client'] = input('Specify your workspace: ')
+        try:
+            opts['preload_p4client'] = input('Specify your workspace [{0}/workspace]: '.format(opts['project']))
+            if opts['preload_p4client'] == '':
+                opts['preload_p4client'] = opts['project'] + '/workspace'
+        except (IOError, EOFError, KeyboardInterrupt) as e:
+            raise KeyboardInterruption(sys.exc_info())
+
     g_preload_conf['preload_p4client'] = opts['preload_p4client']
 
-    if len(opts['preload_p4depots']) == 0:
-        pass
-    g_preload_conf['preload_p4depots'] = opts['preload_p4depots']
+    if opts['preload_p4depots'] is not None:
+        g_preload_conf['preload_p4depots'] = list(set([i.strip() for i in opts['preload_p4depots']]))
+    else:
+        i = 1
+        opts['preload_p4depots'] = []
 
-    print(g_preload_conf)
+        print('Enter the depots which you want to cache, type "Q" to quit: ')
+
+        try:
+            depot = input('[{0}]: '.format(i))
+        except (IOError , EOFError, KeyboardInterrupt) as e:
+            raise KeyboardInterruption(sys.exc_info())
+
+        while depot != 'Q':
+            opts['preload_p4depots'].append(depot)
+            i += 1
+
+            try:
+                depot = input('[{0}]: '.format(i))
+            except (IOError, EOFError, KeyboardInterrupt) as e:
+                raise KeyboardInterruption(sys.exc_info())
+
+        g_preload_conf['preload_p4depots'] = list(set(opts['preload_p4depots']))
+
+    # print(g_preload_conf)
+    return g_preload_conf
+
+
+def saveConf(opts, dest):
+    pass
+
+
+def validateProxyOpts(opts):
+    return True
+
+
+def validatePreloadOpts(opts):
+    return True

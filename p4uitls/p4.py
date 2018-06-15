@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+import os
+import re
+import sys
 
 import P4
-import os
-import sys
 
 
 P4PORT = '127.0.0.1:1818'
@@ -37,9 +38,65 @@ class P4Utils():
         # Indicate the version of your program.
         p4.version = '0.1'
 
-        
+
+class P4Connection(P4.P4):
+    """Create a P4 connecton.
+
+    kwargs:
+
+    port:       The address of the target Perforce server.
+    user:       The Perforce account.
+    password:   The Perforce account's password
+    """
+    def __init__(self, **kwargs):
+        super(P4Connection, self).__init__()
+
+        # Set these p4 connection options before connecting th the Perforce server.
+        self.port = kwargs['target_p4port']
+        self.user = kwargs['target_p4user']
+        self.password = kwargs['target_p4passwd']
+        self.prog = 'MW-P4Proxy-Guider'
+        self.version = '0.1'
+
+        #NOTE: Document says set_env() only works on Windows and OS X.
+        # self.set_env('P4CONFIG', './p4config.txt')
 
 
+    def __enter__(self):
+        # print('p4 encoding: {0}'.format(self.encoding))
+        # print('p4 cwd: {0}'.format(self.cwd))
+        # print('p4 exception_level: {0}'.format(self.exception_level))
+        # print('p4 host: {0}'.format(self.host))
+        # print('p4 maxlocktime: {0}'.format(self.maxlocktime))
+        # print('p4 prog: {0}'.format(self.prog))
+        # print('config: {0}'.format(self.p4config_file))
+
+        self.connect()
+        return self
+
+
+    def __exit__(self, *args, **kwargs):
+        self.connected() and self.disconnect()
+
+
+    def server_version(self):
+        info = self.run_info()
+        if len(info) > 0:
+            info = info[0]
+            version = info['serverVersion']
+            pattern = re.compile(r'(\d{4}\.\d)/(\d+?)\s')
+            m = pattern.search(version)
+
+            return m.group(1) + '-' + m.group(2)
+
+        else:
+            #TODO: Raise a p4 exception.
+            pass
+
+
+    #TODO: Create a p4 workspace.
+    def createWorkspace(self, **kwargs):
+        pass
 
 
 if __name__ == '__main__':
