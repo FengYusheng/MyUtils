@@ -157,7 +157,6 @@ class DeployP4Proxy(object):
         if dest is None:
             dest = self.opts['project']
 
-        # TODO: Select the appropriate p4p file.
         with p4.P4Connection(**self.opts) as p4conn:
             version = p4conn.server_version()
 
@@ -215,8 +214,95 @@ class PreloadProxyCache(object):
         self.opts = opts
 
 
-    def _initializeWorkspace(self):
-        pass
+    def _modifyOption(self, option_name, old_value, reason=None):
+        if reason is not None:
+            print('#WARING: You need to modify {0}, because {1}'.format(option_name, reason))
+
+        print('Old {0} value: {1}'.format(option_name, old_value))
+        new_value = input('New "{0}": '.format(option_name))
+        while new_value == old_value:
+            new_value =  input('New "{0}": '.format(option_name))
+
+        return new_value
+
+
+    def _remind(self, option_name, opt_value, reason):
+        modified = input('{0}. Do you want to specify a new "{1}"? [y/n]: '.format(reason, option_name)).lower()
+        while modified not in ('y', 'n'):
+            modified = input('{0}. Do you want to specify a new "{1}"? [y/n]: '.format(reason, option_name)).lower()
+
+        return modified
+
+
+    def createProject(self, dest=None):
+        if dest is None:
+            dest = self.opts['project'] + '_' + self.opts['proxy_p4port']
+
+        dest = '~/' + dest
+        dest = os.path.expandvars(os.path.expanduser(dest))
+
+        while os.path.islink(dest):
+            self.opts['project'] = self._modifyOption('project', '"{0}" is a symbolic link.'.format(dest))
+            dest = '~/' + self.opts['project']
+            dest = os.path.expandvars(os.path.expanduser(dest))
+
+        while os.path.isdir(dest):
+            if 'y' == self._remind('project', dest, '"{0}" is an existing directory'.format(dest)):
+                self.opts['project'] = self._modifyOption('project', self.opts['project'])
+                dest = '~/' + self.opts['project'] + '_' + self.opts['proxy_p4port']
+                dest = os.path.expandvars(os.path.expanduser(dest))
+            else:
+                break
+
+        os.path.isdir(dest) == False and os.mkdir(dest)
+        self.opts['project'] = dest
+
+
+    def copyToolsIntoProject(self, dest=None):
+        if dest is None:
+            dest = self.opts['project']
+
+        with p4.P4Connection(**self.opts) as p4conn:
+            version = p4conn.server_version()
+
+        src = os.path.dirname(os.path.dirname(os.path.realpath(os.path.abspath(__file__)))) + '/bin/p4/' + version
+        p4File = src + '/p4'
+
+        if os.path.isdir(src) and os.access(p4File, os.R_OK):
+            dst = self.opts['project'] + '/bin'
+            os.path.isdir(dst) or os.mkdir(dst)
+
+            try:
+                # TODO: Assign appropriate permissions to the p4 file.
+                shutil.copy2(p4File, dst)
+            except OSError as e:
+                # This OSError ("Text file busy") indicates that this proxy is preloading now.
+                raise PortOccupiedException('#WARNING: The Proxy {0} is preloading now.'.format(self.opts['project']))
+
+            self.opts['p4FileLocation'] = dst + '/p4'
+        else:
+            raise LackBinaryFiles("The p4 of version {0} doesn't exists.".format(version), sys.exc_info())
+
+
+    def createP4Workspace(self, workspace=None):
+        if workspace is None:
+            workspace = self.opts['preload_p4client']
+
+        workspace = self.opts['project'] + '/' + workspace
+        os.path.isdir(workspace) or os.mkdir(workspace)
+
+
+        self.opts['target_p4port'] = '127.0.0.1:' + self.opts['proxy_p4port']
+
+        with p4.P4Connection(**self.opts) as p4conn:
+            p4conn.createWorkspace(self.opts['preload_p4client'], workspace)
+
+
+    def preload(self):
+        # TODO: Connection to proxy
+        self.opts['target_p4port'] = '127.0.0.1:' + self.opts['proxy_p4port']
+        with p4.P4Connection(**self.opts) as p4conn:
+            p4conn.preload()
 
 
     def __enter__(self):

@@ -47,12 +47,6 @@ def parseOptions():
 
     p4p_option_group = parser.add_argument_group('P4P options', 'These options are used to start a p4p process.')
 
-    # root_dir, required
-    # log_dir, default:root_dir/log
-    # port, required
-    # project_port, required
-    # p4_remote, required
-
     p4p_option_group.add_argument('-p', '--p4port', action='store', help='Specify the port on which P4P will listen for requests from Perforce applications.', metavar='port', type=str, dest='p4port')
 
     p4p_option_group.add_argument('-r', '--p4cache', action='store', help='Specify the directory where revisions are cached.', metavar='root', type=str, dest='p4cache')
@@ -176,7 +170,7 @@ def parsePreloadOptions(opts):
     print('-'*50)
 
     g_preload_conf['project'] = opts['project']
-    g_preload_conf['proxy_p4port'] = opts['proxy_p4port']
+    g_preload_conf['target_p4port'] = opts['target_p4port']
     g_preload_conf['target_p4user'] = opts['target_p4user']
     g_preload_conf['target_p4passwd'] = opts['target_p4passwd']
 
@@ -192,9 +186,9 @@ def parsePreloadOptions(opts):
 
     if opts['preload_p4client'] is None:
         try:
-            opts['preload_p4client'] = input('Specify your workspace [{0}/workspace]: '.format(opts['project']))
+            opts['preload_p4client'] = input('Specify your workspace [{0}/{0}_{1}_workspace]: '.format(opts['project'], opts['proxy_p4port']))
             if opts['preload_p4client'] == '':
-                opts['preload_p4client'] = opts['project'] + '/workspace'
+                opts['preload_p4client'] = opts['project'] + '_' + opts['proxy_p4port'] + '_workspace'
         except (IOError, EOFError, KeyboardInterrupt) as e:
             raise KeyboardInterruption(sys.exc_info())
 

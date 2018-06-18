@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+import shutil
 
 import P4
 
@@ -58,6 +59,14 @@ class P4Connection(P4.P4):
         self.prog = 'MW-P4Proxy-Guider'
         self.version = '0.1'
 
+        if 'preload_p4client' in kwargs:
+            self.client = kwargs['preload_p4client']
+            self.cwd = kwargs['project'] + '/' + kwargs['preload_p4client']
+            self.protocol('proxyload', '') # p4 -Zproxyload sync
+
+            print(self.client)
+            print('*'*10 + self.password + '*'*10)
+
         #NOTE: Document says set_env() only works on Windows and OS X.
         # self.set_env('P4CONFIG', './p4config.txt')
 
@@ -70,13 +79,17 @@ class P4Connection(P4.P4):
         # print('p4 maxlocktime: {0}'.format(self.maxlocktime))
         # print('p4 prog: {0}'.format(self.prog))
         # print('config: {0}'.format(self.p4config_file))
+        # Support SSL?
 
         self.connect()
+        self.run_login()
         return self
 
 
     def __exit__(self, *args, **kwargs):
-        self.connected() and self.disconnect()
+        if self.connected():
+            self.run_logout()
+            self.disconnect()
 
 
     def server_version(self):
@@ -94,9 +107,26 @@ class P4Connection(P4.P4):
             pass
 
 
-    #TODO: Create a p4 workspace.
-    def createWorkspace(self, **kwargs):
-        pass
+    def createWorkspace(self, client, path):
+        workspaces = [(c['client'], c['Root']) for c in self.run_clients()]
+
+        if (client, path) not in workspaces:
+            shutil.rmtree(path)
+            os.mkdir(path)
+        else:
+            #TODO: Delete the workspace.
+            pass
+
+        client_spec = self.fetch_client(client)
+        client_spec['Client'] = client
+        client_spec['Root'] = path
+        client_spec['View'] = client_spec['View'][:-1] # No default depot.
+        self.save_client(client_spec)
+
+
+    def preload(self):
+        # Set "-Zproxyload" with p4python https://community.perforce.com/s/article/5338
+        self.run_sync()
 
 
 if __name__ == '__main__':

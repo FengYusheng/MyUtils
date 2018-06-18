@@ -18,6 +18,7 @@ from utils import (
     InvalideUserException,
     KeyboardInterruption,
     DeployP4Proxy,
+    PreloadProxyCache,
     LackBinaryFiles,
     PortOccupiedException,
     RunCommandFailed
@@ -40,7 +41,7 @@ def _initialize():
         print('WARNING: Suggset to run this tool with Python3.')
 
     globalSettings['LOGINNAME'] = getpass.getuser()
-    if globalSettings['LOGINNAME'] != 'fengyusheng': # perforce
+    if globalSettings['LOGINNAME'] != 'skywalker': # perforce
         raise InvalideUserException(sys.exc_info())
 
 
@@ -64,6 +65,11 @@ def _realMain(argv=None):
 
     elif list(opts.keys())[5].startswith('preload_'):
         opts = options.parsePreloadOptions(opts)
+        with PreloadProxyCache(opts) as preload:
+            preload.createProject()
+            preload.copyToolsIntoProject()
+            preload.createP4Workspace()
+            preload.preload()
 
 
 def main(argv=None):
