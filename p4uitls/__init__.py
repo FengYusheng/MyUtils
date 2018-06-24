@@ -50,26 +50,14 @@ def _realMain(argv=None):
     _initialize()
     setProcessTitle('MW-P4Proxy-Guider')
 
-    opts, parser = options.parseOptionsSubCommand()
-    # print(opts)
+    opts, parser = options.parseOptions3()
+    opts = options.readConf(opts)
 
-    # Analyze the options.
-    if len(opts.keys()) <= 4:
-        parser.print_help()
-    elif list(opts.keys())[5].startswith('proxy_'):
-        opts = options.parseProxyOptions(opts)
-        with DeployP4Proxy(opts) as dp:
-            dp.createProject()
-            dp.copyToolsIntoProject()
-            dp.startProxy(**opts)
-
-    elif list(opts.keys())[5].startswith('preload_'):
-        opts = options.parsePreloadOptions(opts)
-        with PreloadProxyCache(opts) as preload:
-            preload.createProject()
-            preload.copyToolsIntoProject()
-            preload.createP4Workspace()
-            preload.preload()
+    with DeployP4Proxy(opts) as dp:
+        dp.createProject()
+        dp.copyToolsIntoProject()
+        dp.createP4Workspace()
+        dp.startProxy()
 
 
 def main(argv=None):
