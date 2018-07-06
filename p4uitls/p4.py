@@ -40,6 +40,37 @@ class P4Utils():
         p4.version = '0.1'
 
 
+class OutputHandler(P4.OutputHandler):
+    """Process the output messages during preloading.
+
+    https://github.com/rptb1/p4python/blob/master/p4test.py
+    """
+    def __init__(self):
+        super(OutputHandler, self).__init__()
+        self.totalFileCount = 0
+        self.totalFileSize = 0
+        self.syncedFileCount = 0
+
+
+    def outputStat(self, stat):
+        if 'totalFileCount' in stat:
+            self.totalFileCount = int(stat['totalFileCount'])
+            self.totalFileSize = int(stat['totalFileSize'])
+            print('totalFileCount: {0}, totalFileSize: {1}'.format(stat['totalFileCount'], stat['totalFileSize']))
+
+        self.syncedFileCount += 1
+        fmt = 'Preloading files: {0}/{1}\r' if self.syncedFileCount < self.totalFileCount else 'Preloading files: {0}/{1}\n'
+        print(fmt.format(self.syncedFileCount, self.totalFileCount), end='')
+
+        return self.HANDLED
+
+
+    def outputMessage(self, msg):
+        print('\n'+'#'*10+'Server messages'+'#'*10)
+        print(msg)
+        return self.HANDLED
+
+
 class P4Connection(P4.P4):
     """Create a P4 connecton.
 
@@ -64,23 +95,11 @@ class P4Connection(P4.P4):
             self.cwd = kwargs['project'] + '/' + kwargs['preload_p4client']
             self.protocol('proxyload', '') # p4 -Zproxyload sync
 
-            print(self.client)
-            print('*'*10 + self.password + '*'*10)
-
         #NOTE: Document says set_env() only works on Windows and OS X.
         # self.set_env('P4CONFIG', './p4config.txt')
 
 
     def __enter__(self):
-        # print('p4 encoding: {0}'.format(self.encoding))
-        # print('p4 cwd: {0}'.format(self.cwd))
-        # print('p4 exception_level: {0}'.format(self.exception_level))
-        # print('p4 host: {0}'.format(self.host))
-        # print('p4 maxlocktime: {0}'.format(self.maxlocktime))
-        # print('p4 prog: {0}'.format(self.prog))
-        # print('config: {0}'.format(self.p4config_file))
-        # Support SSL?
-
         self.connect()
         self.run_login()
         return self
@@ -90,6 +109,17 @@ class P4Connection(P4.P4):
         if self.connected():
             self.run_logout()
             self.disconnect()
+
+
+    def apiMessage(self):
+        print('p4 encoding: {0}'.format(self.encoding))
+        print('p4 cwd: {0}'.format(self.cwd))
+        print('p4 exception_level: {0}'.format(self.exception_level))
+        print('p4 host: {0}'.format(self.host))
+        print('p4 maxlocktime: {0}'.format(self.maxlocktime))
+        print('p4 prog: {0}'.format(self.prog))
+        print('config: {0}'.format(self.p4config_file))
+        # TODO: Support SSL?
 
 
     def server_version(self):
@@ -107,26 +137,38 @@ class P4Connection(P4.P4):
             pass
 
 
-    def createWorkspace(self, client, path):
+    def createWorkspace(self, client, path, depots):
         workspaces = [(c['client'], c['Root']) for c in self.run_clients()]
 
         if (client, path) not in workspaces:
             shutil.rmtree(path)
             os.mkdir(path)
         else:
-            #TODO: Delete the workspace.
-            pass
+            self.run_client('-d', client)
 
         client_spec = self.fetch_client(client)
         client_spec['Client'] = client
         client_spec['Root'] = path
-        client_spec['View'] = client_spec['View'][:-1] # No default depot.
+        client_spec['View'] = [d+' '+'//'+client+'/'+d.partition('//')[2] for d in depots]
         self.save_client(client_spec)
 
 
+    def createWorkspace2(self, client, path, depots):
+        workspaces = [(c['client'], c['Root']) for c in self.run_clients()]
+
+        if (client, path) not in workspaces:
+            shutil.rmtree(path)
+            os.mkdir(path)
+            client_spec = self.fetch_client(client)
+            client_spec['Client'] = client
+            client_spec['Root'] = path
+            client_spec['View'] = [d+' '+'//'+client+'/'+d.partition('//')[2] for d in depots]
+            self.save_client(client_spec)
+
+
     def preload(self):
-        # Set "-Zproxyload" with p4python https://community.perforce.com/s/article/5338
-        self.run_sync()
+        # Set "-Zproxyload" with p4python. https://community.perforce.com/s/article/5338
+        self.run_sync(handler=OutputHandler())
 
 
 if __name__ == '__main__':

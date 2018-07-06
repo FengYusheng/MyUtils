@@ -9,11 +9,12 @@ import sys
 import json
 import shlex
 import shutil
-import logging
 import ctypes.util
 import subprocess
 
 import p4
+
+from preload import Preload
 
 globalSettings = {
     'encoding' : 'utf-8'
@@ -103,7 +104,6 @@ class DeployP4Proxy(object):
 
 
     def _saveConf(self):
-        # TODO: Save global options
         dst = self.opts['project'] + '/proxyConf.json'
         with open(dst, 'w', encoding='utf-8') as f:
             json.dump(self.opts, f, indent=4)
@@ -160,7 +160,7 @@ class DeployP4Proxy(object):
         with p4.P4Connection(**self.opts) as p4conn:
             version = p4conn.server_version()
 
-        # Copy "p4p".
+        # Copy "p4p"
         src = os.path.dirname(os.getcwd()) + '/bin/proxy/' + version
         p4pFile = src + '/p4p'
 
@@ -180,7 +180,7 @@ class DeployP4Proxy(object):
             raise LackBinaryFiles("The p4p of version {0} doesn't exists.".format(version), sys.exc_info())
 
         # Copy 'p4'.
-        src = os.path.dirname(os.getcwd()) + '/bin/p4/' + version
+        src = os.path.dirname(os.getcwd()) + '/bin/p4cl/' + version
         p4File = src + '/p4'
 
         if os.path.isdir(src) and os.access(p4File, os.R_OK):
@@ -199,6 +199,28 @@ class DeployP4Proxy(object):
             raise LackBinaryFiles("The p4 of version {0} doesn't exists.".format(version), sys.exc_info())
 
 
+    def installPreloader(self):
+        if not hasattr(sys, 'frozen'):
+            src = os.path.dirname(os.path.realpath(os.path.abspath(__file__))) + '/preload.py'
+        else:
+            src = os.getcwd() + '/preload'
+
+        dst = self.opts['project'] + '/bin'
+
+        try:
+            shutil.copy2(src, dst)
+        except OSError as e:
+            raise PortOccupiedException('#WARNING: The Proxy {0} is preloading now.'.format(self.opts['project']))
+
+        if not hasattr(sys, 'frozen'):
+            cmd = '#!/usr/bin/env bash\n\n\n' + self.opts['project'] + '/bin/preload.py' + ' ' + self.opts['project'] + ' ' + self.opts['proxy_p4port'] + ' ' + self.opts['target_p4user'] + ' ' + self.opts['target_p4passwd'] + ' ' + self.opts['preload_p4client'] + '\n'
+        else:
+            cmd = '#!/usr/bin/env bash\n\n\n' + self.opts['project'] + '/bin/preload' + ' ' + self.opts['project'] + ' ' + self.opts['proxy_p4port'] + ' ' + self.opts['target_p4user'] + ' ' + self.opts['target_p4passwd'] + ' ' + self.opts['preload_p4client'] + '\n'
+
+        with open(dst+'/preload.bash', 'w+', encoding=globalSettings['encoding']) as f:
+            f.write(cmd)
+
+
     def createP4Workspace(self, workspace=None):
         if workspace is None:
             workspace = self.opts['preload_p4client']
@@ -206,11 +228,12 @@ class DeployP4Proxy(object):
         workspace = self.opts['project'] + '/' + workspace
         os.path.isdir(workspace) or os.mkdir(workspace)
 
-
         self.opts['target_p4port'] = '127.0.0.1:' + self.opts['proxy_p4port']
 
         with p4.P4Connection(**self.opts) as p4conn:
-            p4conn.createWorkspace(self.opts['preload_p4client'], workspace)
+            p4conn.createWorkspace(self.opts['preload_p4client'], workspace, self.opts['preload_p4depots'])
+
+        shutil.copy2('./p4config.txt', workspace)
 
 
     def startProxy(self, **kwargs):
@@ -229,7 +252,7 @@ class DeployP4Proxy(object):
         result = ps.wait()
 
         if result == 0:
-            print('Success! Your Perforce proxy is running and pid is {0}'.format(pid))
+            print('Success! Your Perforce proxy is running')
         else:
             raise RunCommandFailed('Failed to start Perforce proxy. Port "{0}" may have been occupied by another p4 proxy process. Error number: {1}'.format(self.opts['proxy_p4port'], result))
 
@@ -238,7 +261,6 @@ class DeployP4Proxy(object):
         self.opts['target_p4port'] = '127.0.0.1:' + self.opts['proxy_p4port']
         with p4.P4Connection(**self.opts) as p4conn:
             p4conn.preload()
-
 
 
     def __enter__(self):
@@ -306,7 +328,8 @@ class PreloadProxyCache(object):
         with p4.P4Connection(**self.opts) as p4conn:
             version = p4conn.server_version()
 
-        src = os.path.dirname(os.path.dirname(os.path.realpath(os.path.abspath(__file__)))) + '/bin/p4/' + version
+        # src = os.path.dirname(os.path.dirname(os.path.realpath(os.path.abspath(__file__)))) + '/bin/p4cl/' + version
+        src = os.path.dirname(os.getcwd()) + '/bin/p4cl/' + version
         p4File = src + '/p4'
 
         if os.path.isdir(src) and os.access(p4File, os.R_OK):
@@ -332,18 +355,35 @@ class PreloadProxyCache(object):
         workspace = self.opts['project'] + '/' + workspace
         os.path.isdir(workspace) or os.mkdir(workspace)
 
-
+        #NOTE: I use the localhost directly here.
         self.opts['target_p4port'] = '127.0.0.1:' + self.opts['proxy_p4port']
 
         with p4.P4Connection(**self.opts) as p4conn:
-            p4conn.createWorkspace(self.opts['preload_p4client'], workspace)
+            p4conn.createWorkspace(self.opts['preload_p4client'], workspace, self.opts['preload_p4depots'])
+
+        shutil.copy2('./p4config.txt', workspace)
 
 
     def preload(self):
-        # TODO: Connection to proxy
+        #NOTE: I use the localhost directly here.
         self.opts['target_p4port'] = '127.0.0.1:' + self.opts['proxy_p4port']
         with p4.P4Connection(**self.opts) as p4conn:
             p4conn.preload()
+
+
+    def installPreloader(self):
+        src = os.getcwd() + '/preload.py'
+        src = os.path.dirname(os.path.realpath(os.path.abspath(__file__))) + '/preload.py'
+        dst = self.opts['project'] + '/bin'
+
+        try:
+            shutil.copy2(src, dst)
+        except OSError as e:
+            raise PortOccupiedException('#WARNING: The Proxy {0} is preloading now.'.format(self.opts['project']))
+
+        cmd = '#!/usr/bin/env bash\n\n\n' + self.opts['project'] + '/bin/preload.py' + ' ' + self.opts['project'] + ' ' + self.opts['target_p4port'] + ' ' + self.opts['target_p4user'] + ' ' + self.opts['target_p4passwd'] + ' ' + self.opts['preload_p4client'] + '\n'
+        with open(dst+'/preload.bash', 'w+', encoding=globalSettings['encoding']) as f:
+            f.write(cmd)
 
 
     def __enter__(self):

@@ -27,7 +27,7 @@ from utils import (
 import options
 
 
-def _initialize():
+def initialize():
     '''Initialize the running environment.'''
 
     globalSettings['platform'] = sys.platform
@@ -41,23 +41,25 @@ def _initialize():
         print('WARNING: Suggset to run this tool with Python3.')
 
     globalSettings['LOGINNAME'] = getpass.getuser()
-    if globalSettings['LOGINNAME'] != 'skywalker': # perforce
+    if globalSettings['LOGINNAME'] != 'fengyusheng': # perforce
         raise InvalideUserException(sys.exc_info())
 
 
 
 def _realMain(argv=None):
-    _initialize()
+    initialize()
     setProcessTitle('MW-P4Proxy-Guider')
 
     opts, parser = options.parseOptions3()
     opts = options.readConf(opts)
+    print(opts)
 
     with DeployP4Proxy(opts) as dp:
         dp.createProject()
         dp.copyToolsIntoProject()
-        dp.createP4Workspace()
+        dp.installPreloader()
         dp.startProxy()
+        dp.createP4Workspace()
 
 
 def main(argv=None):
